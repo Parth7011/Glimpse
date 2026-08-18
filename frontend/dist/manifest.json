@@ -1,0 +1,21 @@
+{
+  "name": "Cosmicathon",
+  "short_name": "Cosmicathon",
+  "description": "AI-powered event photo delivery. Find your photos with a single selfie.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F7F5",
+  "theme_color": "#6C63FF",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
