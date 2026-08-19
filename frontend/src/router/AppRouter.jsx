@@ -14,6 +14,8 @@ import SharePage from '../pages/SharePage';
 import GuestEventPage from '../pages/GuestEventPage';
 import SelfiePage from '../pages/SelfiePage';
 import ResultsPage from '../pages/ResultsPage';
+import HowItWorksPage from '../pages/HowItWorksPage';
+import ForPhotographersPage from '../pages/ForPhotographersPage';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', icon: LayoutDashboard, to: '/dashboard' },
@@ -127,6 +129,8 @@ export default function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/how-it-works" element={<HowItWorksPage />} />
+      <Route path="/for-photographers" element={<ForPhotographersPage />} />
       <Route path="/login" element={<LoginPage />} />
       
       <Route element={<DashboardLayout />}>

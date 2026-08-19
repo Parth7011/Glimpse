@@ -62,19 +62,21 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] font-sans selection:bg-[var(--accent-soft)] selection:text-[var(--accent)] overflow-x-hidden">
       
-      {/* Navigation - Glass Pill style */}
+      {/* Navigation - Dynamic Shrinking Glass Header/Pill */}
       <nav className={cn(
-        "fixed top-6 left-1/2 -translate-x-1/2 w-[90%] md:w-[75%] max-w-[1200px] z-50 px-6 py-4 bg-white/40 backdrop-blur-md border border-white/40 shadow-sm rounded-full transition-all duration-300",
-        isNavScrolled && "nav-scrolled"
+        "fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-in-out",
+        isNavScrolled
+          ? "top-6 w-[90%] md:w-[75%] max-w-[1200px] px-6 py-3 bg-white/70 backdrop-blur-lg border border-white/40 shadow-md rounded-full"
+          : "top-0 w-full max-w-full px-8 md:px-16 py-6 bg-transparent border-b border-transparent shadow-none rounded-none"
       )}>
-        <div className="w-full flex items-center justify-between">
+        <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold tracking-tighter text-[var(--text-primary)] flex items-center gap-1.5">
             Glimpse
           </Link>
           
           <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
             <a href="#features" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Features</a>
-            <a href="#how-it-works" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">How it works</a>
+            <Link to="/how-it-works" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">How it works</Link>
             <a href="#photographers" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">For photographers</a>
             <a href="#pricing" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Pricing</a>
           </div>
@@ -637,12 +639,12 @@ export default function LandingPage() {
             <div className="md:col-span-4 lg:col-span-3">
               <h4 className="text-[10px] font-bold tracking-widest text-[#6B6661] uppercase mb-6">EXPLORE</h4>
               <ul className="space-y-4 text-sm font-medium text-[#A19D98]">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">How it works</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">For photographers</a></li>
+                <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
+                <li><Link to="/how-it-works" className="hover:text-white transition-colors">How it works</Link></li>
+                <li><a href="#photographers" className="hover:text-white transition-colors">For photographers</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
               </ul>
             </div>
 
