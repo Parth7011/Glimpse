@@ -58,3 +58,11 @@ export function sleep(ms) {
 export function generateId() {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 }
+
+/** Get time-based greeting */
+export function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}

@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/utils/constants';
 import { Button } from '@/components/ui';
+import { Navbar, Footer } from '@/components/layout';
+import { ComparisonTable, FAQAccordion } from '@/components/landing';
 import {
   Check, X as XIcon, ChevronDown, Plus,
   Camera, Sparkles, Share2, Clock, Image, UploadCloud, Lock,
@@ -51,12 +53,6 @@ const EVENT_TABS = [
   },
 ];
 
-const PAIN_COMPARISON = [
-  { pain: '“When will we get our photos?”', fix: 'Guests find them themselves with one selfie.' },
-  { pain: 'Hours spent sorting photos manually.', fix: 'Every guest automatically sees only their own photos.' },
-  { pain: 'Every gallery looks like generic software.', fix: 'Every gallery carries your own studio branding.' },
-  { pain: 'Links get forwarded everywhere.', fix: 'Secure links put access and downloads under your control.' },
-];
 
 const FAQS = [
   { q: 'How do guests find their photos?', a: "Guests open your event link, take a single selfie, and Glimpse's face-match AI gathers every photo they appear in into a personal gallery. When you upload more photos later, their gallery updates automatically." },
@@ -78,9 +74,7 @@ const FEATURES_GRID = [
 ];
 
 export default function ForPhotographersPage() {
-  const [isNavScrolled, setIsNavScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState('wedding');
-  const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
@@ -89,48 +83,15 @@ export default function ForPhotographersPage() {
     return () => lenis.destroy();
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => setIsNavScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+
 
   const activeEvent = EVENT_TABS.find(t => t.id === activeTab);
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] font-sans selection:bg-[var(--accent-soft)] selection:text-[var(--accent)] overflow-x-hidden">
 
-      {/* Navigation - Dynamic Shrinking Glass Header/Pill */}
-      <nav className={cn(
-        "fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-in-out",
-        isNavScrolled
-          ? "top-6 w-[90%] md:w-[75%] max-w-[1200px] px-6 py-3 bg-white/70 backdrop-blur-lg border border-white/40 shadow-md rounded-full"
-          : "top-0 w-full max-w-full px-8 md:px-16 py-6 bg-transparent border-b border-transparent shadow-none rounded-none"
-      )}>
-        <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold tracking-tighter text-[var(--text-primary)] flex items-center gap-1.5">
-            Glimpse
-          </Link>
-
-          <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-            <Link to="/" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Home</Link>
-            <Link to="/how-it-works" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">How it works</Link>
-            <Link to="/for-photographers" className="text-sm font-semibold text-[var(--accent)] transition-colors">For photographers</Link>
-            <a href="#pricing" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Pricing</a>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link to={ROUTES.LOGIN} className="text-sm font-semibold text-[var(--text-primary)] hover:text-[var(--text-secondary)] transition-colors hidden sm:block px-2">
-              Login
-            </Link>
-            <Link to={ROUTES.DASHBOARD}>
-              <Button className="rounded-full px-6 shadow-sm font-semibold tracking-wide bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white">
-                Start free →
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      {/* Navigation */}
+      <Navbar activePage="photographers" />
 
       {/* HERO */}
       <section className="pt-40 pb-24 px-6 relative overflow-hidden">
@@ -306,28 +267,7 @@ export default function ForPhotographersPage() {
               Less time answering guests.<br />More control over delivery.
             </h2>
           </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-            <div className="grid grid-cols-2 border-b border-[var(--border)] bg-[var(--surface-soft)]">
-              <div className="grid place-content-center px-6 py-4 text-[13px] font-bold text-[var(--text-muted)] border-r border-[var(--border)]">
-                What slows you down
-              </div>
-              <div className="grid place-content-center px-6 py-4 text-[13px] font-bold text-[var(--text-primary)]">
-                What changes with Glimpse
-              </div>
-            </div>
-            {PAIN_COMPARISON.map((row, i) => (
-              <motion.div key={i}
-                initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}
-                className="grid grid-cols-2 border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-soft)] transition-colors">
-                <div className="px-6 py-5 text-sm text-[var(--text-muted)] border-r border-[var(--border)] flex items-start gap-3">
-                  <span className="text-red-400 shrink-0 mt-0.5">✕</span>{row.pain}
-                </div>
-                <div className="px-6 py-5 text-sm text-[var(--text-primary)] font-medium flex items-start gap-3">
-                  <span className="text-[var(--accent)] shrink-0 mt-0.5">✓</span>{row.fix}
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <ComparisonTable />
         </div>
       </section>
 
@@ -434,100 +374,15 @@ export default function ForPhotographersPage() {
             <p className="text-lg text-[var(--text-secondary)]">What to know about guests, branding, privacy, and the free plan.</p>
           </div>
           <div className="lg:col-span-7">
-            {FAQS.map((faq, i) => (
-              <motion.div key={i}
-                initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-                className="border-b border-[var(--border)] last:border-0">
-                <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full text-left py-6 flex items-center justify-between gap-4 group">
-                  <span className="font-semibold text-[15px] md:text-base text-[var(--text-primary)] transition-colors group-hover:text-[var(--accent)]">{faq.q}</span>
-                  <Plus className={cn('w-4 h-4 text-[var(--accent)] shrink-0 transition-transform duration-300', openFaq === i ? 'rotate-45' : '')} />
-                </button>
-                <AnimatePresence>
-                  {openFaq === i && (
-                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
-                      <div className="pb-6 text-sm text-[var(--text-secondary)] leading-relaxed">
-                        {faq.a}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
+            <FAQAccordion faqs={FAQS} />
           </div>
         </div>
       </section>
 
 
 
-      {/* FOOTER — matches LandingPage */}
-      <footer className="bg-[#1C1814] relative overflow-hidden text-white font-sans border-t border-[#2C2620]">
-        {/* Hexagon Pattern Background */}
-        <div
-          className="absolute inset-0 z-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='103.923' viewBox='0 0 60 103.923' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 17.32V51.96L30 69.28L0 51.96V17.32L30 0ZM30 103.92L60 86.6V51.96L30 34.64L0 51.96V86.6L30 103.92Z' fill='none' stroke='%23FFFFFF' stroke-width='1.5'/%3E%3C/svg%3E")`,
-            backgroundSize: '120px',
-            backgroundPosition: 'top center'
-          }}
-        />
-        <div className="relative z-10 max-w-[1300px] mx-auto px-6 pt-24 pb-10">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-24">
-
-            {/* Left Column */}
-            <div className="md:col-span-5 lg:col-span-4 space-y-6">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="text-3xl font-bold tracking-tighter text-white">Glimpse</div>
-              </div>
-              <p className="text-[#A19D98] text-sm leading-relaxed max-w-[280px]">
-                AI-powered event photo delivery for photographers and studios across India.
-              </p>
-              <p className="text-[#84807C] text-xs max-w-[280px]">One browser link. Private matching. Your brand.</p>
-              <div className="pt-2 flex items-center gap-2 text-[#A19D98] hover:text-white transition-colors cursor-pointer w-fit">
-                <Mail className="w-4 h-4 text-[var(--accent)]" />
-                <span className="text-sm font-semibold">hello@glimpse.in</span>
-              </div>
-              <div className="flex items-center gap-3 pt-4">
-                {[Instagram, Facebook, XIcon, LinkIcon, Youtube].map((Icon, i) => (
-                  <a key={i} href="#" className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all">
-                    <Icon className="w-4 h-4" />
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* Spacer */}
-            <div className="hidden lg:block md:col-span-2 lg:col-span-3" />
-
-            {/* Explore Column */}
-            <div className="md:col-span-4 lg:col-span-3">
-              <h4 className="text-[10px] font-bold tracking-widest text-[#6B6661] uppercase mb-6">EXPLORE</h4>
-              <ul className="space-y-4 text-sm font-medium text-[#A19D98]">
-                <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
-                <li><Link to="/how-it-works" className="hover:text-white transition-colors">How it works</Link></li>
-                <li><Link to="/for-photographers" className="hover:text-white transition-colors">For photographers</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-              </ul>
-            </div>
-
-            {/* Legal Column */}
-            <div className="md:col-span-3 lg:col-span-2">
-              <h4 className="text-[10px] font-bold tracking-widest text-[#6B6661] uppercase mb-6">LEGAL</h4>
-              <ul className="space-y-4 text-sm font-medium text-[#A19D98]">
-                <li><a href="#" className="hover:text-white transition-colors">Terms &amp; Conditions</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Copyright Bar */}
-          <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-medium text-[#6B6661]">
-            <div>© 2026 Glimpse India. All rights reserved.</div>
-            <div>A product of Logicbyts Software Solutions.</div>
-          </div>
-        </div>
-      </footer>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

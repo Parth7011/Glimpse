@@ -1,6 +1,6 @@
 {
-  "name": "Cosmicathon",
-  "short_name": "Cosmicathon",
+  "name": "Glimpse",
+  "short_name": "Glimpse",
   "description": "AI-powered event photo delivery. Find your photos with a single selfie.",
   "start_url": "/",
   "display": "standalone",

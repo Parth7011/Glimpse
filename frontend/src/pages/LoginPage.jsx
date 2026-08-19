@@ -18,12 +18,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F2EF] flex items-center justify-center p-4 md:p-8 font-sans text-[#171717]">
-      <div className="w-full max-w-[1300px] h-[90vh] min-h-[700px] max-h-[900px] bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row">
+      <div className="w-full max-w-[1300px] h-[90vh] min-h-[650px] max-h-[900px] bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row">
         
         {/* Left Side: Form */}
-        <div className="w-full lg:w-[45%] bg-[#FDF9F2] h-full flex flex-col p-8 md:p-12 relative overflow-y-auto">
+        <div className="w-full lg:w-[45%] bg-[#FDF9F2] h-full flex flex-col p-6 md:p-8 relative overflow-y-auto">
           {/* Logo */}
-          <Link to="/" className="flex flex-col mb-12 w-fit group">
+          <Link to="/" className="flex flex-col mb-8 w-fit group">
             <div className="flex items-center gap-2 mb-1">
               <Camera className="w-7 h-7 text-[#171717]" />
               <span className="text-2xl font-bold tracking-tight">Glimpse</span>
@@ -34,7 +34,7 @@ export default function LoginPage() {
           </Link>
 
           <div className="flex-1 flex flex-col justify-center max-w-[400px] w-full mx-auto">
-            <div className="mb-8">
+            <div className="mb-6">
               <h1 className="text-3xl font-bold tracking-tight mb-2">
                 {isLogin ? 'Welcome back' : 'Create an account'}
               </h1>
@@ -44,7 +44,7 @@ export default function LoginPage() {
             </div>
 
             {/* Role Toggle */}
-            <div className="flex items-center gap-6 mb-8 text-sm font-medium">
+            <div className="flex items-center gap-6 mb-6 text-sm font-medium">
               <label className="flex items-center gap-2 cursor-pointer">
                 <div className={cn(
                   "w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors",
@@ -78,7 +78,7 @@ export default function LoginPage() {
             </div>
 
             {/* Social Logins */}
-            <div className="space-y-3 mb-8">
+            <div className="space-y-2.5 mb-6">
               <button className="w-full bg-white border border-[#E5E5E0] rounded-xl py-3 px-4 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -96,7 +96,7 @@ export default function LoginPage() {
               </button>
             </div>
 
-            <div className="flex items-center gap-4 mb-8">
+            <div className="flex items-center gap-4 mb-6">
               <div className="h-[1px] flex-1 bg-[#E5E5E0]" />
               <span className="text-[10px] uppercase font-bold text-[#9C9C97] tracking-widest">OR</span>
               <div className="h-[1px] flex-1 bg-[#E5E5E0]" />
@@ -173,7 +173,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <p className="text-center text-sm text-[#6B6B67] mt-8">
+            <p className="text-center text-sm text-[#6B6B67] mt-6">
               {isLogin ? "Don't have an account? " : "Already have an account? "}
               <button onClick={() => setIsLogin(!isLogin)} className="text-[var(--accent)] font-bold hover:underline">
                 {isLogin ? 'Sign up' : 'Sign in'}

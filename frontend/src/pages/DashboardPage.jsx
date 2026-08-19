@@ -7,54 +7,8 @@ import { ROUTES } from '@/utils/constants';
 import { Button, Card, Badge, Skeleton } from '@/components/ui';
 import { Camera, ImageIcon, Users, Plus, Calendar, ArrowRight } from 'lucide-react';
 
-// Animated counter hook
-function useCountUp(end, duration = 1500) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    if (end == null || hasAnimated.current) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          const startTime = performance.now();
-          const numEnd = typeof end === 'string' ? parseInt(end.replace(/,/g, ''), 10) : end;
-
-          const animate = (currentTime) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            // Ease out cubic
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setCount(Math.floor(eased * numEnd));
-            if (progress < 1) {
-              requestAnimationFrame(animate);
-            } else {
-              setCount(numEnd);
-            }
-          };
-          requestAnimationFrame(animate);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [end, duration]);
-
-  return { count, ref };
-}
-
-// Get time-based greeting
-function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
-}
+import { StatCard, EventCard } from '@/components/dashboard';
+import { getGreeting } from '@/utils/utils';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -170,83 +124,5 @@ export default function DashboardPage() {
         </div>
       </motion.div>
     </motion.div>
-  );
-}
-
-function StatCard({ label, value, icon, accent, accentSoft }) {
-  const { count, ref } = useCountUp(value);
-
-  return (
-    <div
-      ref={ref}
-      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-xl)] p-6 flex items-center gap-5 shadow-sm hover:shadow-md transition-shadow duration-300"
-    >
-      <div
-        className="w-12 h-12 rounded-[var(--radius-lg)] flex items-center justify-center shrink-0"
-        style={{ backgroundColor: accentSoft, color: accent }}
-      >
-        {icon}
-      </div>
-      <div>
-        <span className="text-sm font-medium text-[var(--text-secondary)] uppercase tracking-wide block mb-1">{label}</span>
-        <span className="text-3xl font-bold text-[var(--text-primary)] tabular-nums">
-          {value != null ? count.toLocaleString() : '—'}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function EventCard({ event }) {
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'ready': return 'success';
-      case 'processing': return 'warning';
-      default: return 'neutral';
-    }
-  };
-
-  return (
-    <Link to={ROUTES.EVENT(event.id)} className="block group">
-      <div className="bg-[var(--surface)] rounded-[var(--radius-xl)] overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-lg hover:border-[var(--border-strong)] transition-all duration-300 flex flex-col h-full">
-        <div className="aspect-[16/10] bg-[var(--surface-soft)] relative overflow-hidden">
-          {event.cover_photo_url ? (
-            <img
-              src={event.cover_photo_url}
-              alt={event.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80'; }}
-            />
-          ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--text-muted)] bg-gradient-to-br from-[var(--surface-soft)] to-[var(--border)]">
-              <Camera className="w-10 h-10 mb-2 opacity-40" />
-              <span className="text-sm font-medium opacity-60">No Cover</span>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
-          {/* Status badge on image */}
-          <div className="absolute top-3 right-3">
-            <Badge variant={getStatusColor(event.status)} className="capitalize font-medium shadow-sm backdrop-blur-sm">
-              {event.status}
-            </Badge>
-          </div>
-        </div>
-        <div className="p-5 flex flex-col flex-1">
-          <h3 className="font-semibold text-[var(--text-primary)] text-lg line-clamp-1 mb-1 group-hover:text-[var(--accent)] transition-colors">{event.name}</h3>
-          <p className="text-sm text-[var(--text-secondary)] mb-5 flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5" />
-            {new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-          </p>
-          <div className="mt-auto flex items-center justify-between text-sm text-[var(--text-secondary)] pt-4 border-t border-[var(--border)]/50">
-            <span className="flex items-center gap-1.5">
-              <ImageIcon className="w-3.5 h-3.5" /> {event.photo_count.toLocaleString()} photos
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5" /> {event.guest_count} guests
-            </span>
-          </div>
-        </div>
-      </div>
-    </Link>
   );
 }

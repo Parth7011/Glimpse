@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { ROUTES } from '@/utils/constants';
 import { Button } from '@/components/ui';
 import { Check, X as XIcon, Link as LinkIcon, Camera, CheckCircle2, Mail, Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
+import { Navbar, Footer } from '@/components/layout';
+import { ComparisonTable, FAQAccordion } from '@/components/landing';
 import { cn } from '@/utils/utils';
 import Lenis from 'lenis';
 
@@ -44,12 +46,7 @@ export default function LandingPage() {
     offset: ["start start", "end start"]
   });
 
-  const [isNavScrolled, setIsNavScrolled] = useState(false);
-  useEffect(() => {
-    return scrollY.onChange((latest) => {
-      setIsNavScrolled(latest > 50);
-    });
-  }, [scrollY]);
+
 
   // Parallax calculations for Hero
   const yImage1 = useTransform(heroScroll, [0, 1], ['0%', '25%']);
@@ -62,37 +59,8 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] font-sans selection:bg-[var(--accent-soft)] selection:text-[var(--accent)] overflow-x-hidden">
       
-      {/* Navigation - Dynamic Shrinking Glass Header/Pill */}
-      <nav className={cn(
-        "fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-in-out",
-        isNavScrolled
-          ? "top-6 w-[90%] md:w-[75%] max-w-[1200px] px-6 py-3 bg-white/70 backdrop-blur-lg border border-white/40 shadow-md rounded-full"
-          : "top-0 w-full max-w-full px-8 md:px-16 py-6 bg-transparent border-b border-transparent shadow-none rounded-none"
-      )}>
-        <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold tracking-tighter text-[var(--text-primary)] flex items-center gap-1.5">
-            Glimpse
-          </Link>
-          
-          <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-            <a href="#features" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Features</a>
-            <Link to="/how-it-works" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">How it works</Link>
-            <a href="#photographers" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">For photographers</a>
-            <a href="#pricing" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Pricing</a>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link to={ROUTES.LOGIN} className="text-sm font-semibold text-[var(--text-primary)] hover:text-[var(--text-secondary)] transition-colors hidden sm:block px-2">
-              Login
-            </Link>
-            <Link to={ROUTES.DASHBOARD}>
-              <Button className="rounded-full px-6 shadow-sm font-semibold tracking-wide bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white">
-                Start free →
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      {/* Navigation */}
+      <Navbar activePage="home" />
 
       {/* Immersive Photography Hero (Layered Parallax) */}
       <section ref={heroRef} className="relative min-h-[100dvh] flex flex-col items-center justify-center px-4 pt-20 overflow-hidden perspective-container bg-[var(--background)]">
@@ -444,53 +412,7 @@ export default function LandingPage() {
             Glimpse takes the repetitive work out of the handoff without taking your studio out of the experience.
           </p>
 
-          <div className="border-t border-[var(--border)]">
-            {/* Headers */}
-            <div className="grid grid-cols-1 md:grid-cols-2 py-6">
-              <div className="text-[10px] font-bold tracking-widest text-[var(--text-muted)] uppercase hidden md:block">WHAT SLOWS YOU DOWN</div>
-              <div className="text-[10px] font-bold tracking-widest text-[var(--text-muted)] uppercase hidden md:block">WHAT CHANGES WITH GLIMPSE</div>
-            </div>
-
-            {/* Rows */}
-            <div className="space-y-0">
-              {[
-                { 
-                  old: '"When will we get our photos?"', 
-                  new: 'Guests find themselves with one selfie.' 
-                },
-                { 
-                  old: 'Hours spent sorting photos manually.', 
-                  new: 'Every guest automatically sees only their own photos.' 
-                },
-                { 
-                  old: 'Every gallery looks like generic software.', 
-                  new: 'Every gallery carries your own studio branding.' 
-                },
-                { 
-                  old: 'Links get forwarded everywhere.', 
-                  new: 'Secure matching puts access under your control.' 
-                }
-              ].map((row, i) => (
-                <div key={i} className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center py-6 border-t border-[var(--border)] gap-4 md:gap-8">
-                  <div className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[var(--surface-soft)] flex items-center justify-center shrink-0 mt-0.5">
-                      <XIcon className="w-3 h-3 text-[var(--text-muted)]" />
-                    </div>
-                    <span className="text-[var(--text-secondary)]">{row.old}</span>
-                  </div>
-                  
-                  <div className="text-[var(--border-strong)] hidden md:block">→</div>
-                  
-                  <div className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[var(--accent-soft)] flex items-center justify-center shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 text-[var(--accent)]" />
-                    </div>
-                    <span className="font-semibold text-[var(--text-primary)]">{row.new}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ComparisonTable />
         </div>
       </section>
 
@@ -504,7 +426,12 @@ export default function LandingPage() {
             <p className="text-[var(--text-secondary)]">What to know about guests, branding, privacy, and security.</p>
           </div>
           
-          <FAQAccordion />
+          <FAQAccordion faqs={[
+              { q: "How do guests find their photos?", a: "Guests simply open the gallery link and take a quick selfie. Our secure facial matching technology instantly finds every photo they appear in." },
+              { q: "Do guests need to install an app?", a: "No. Everything happens right in their mobile browser. No apps to download, no accounts to create, and no passwords to remember." },
+              { q: "Is the gallery white-label?", a: "Yes. Your studio's name, logo, and branding are front and center. Glimpse stays invisible in the background." },
+              { q: "What happens to the selfies?", a: "Selfies are securely processed for matching and then immediately discarded. We do not store or use guest selfies for any other purpose." }
+            ]} />
         </div>
       </section>
 
@@ -592,118 +519,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Dark Footer (Separated from CTA) */}
-      <footer className="bg-[#1C1814] relative overflow-hidden text-white font-sans border-t border-[#2C2620]">
-        {/* Hexagon Pattern Background */}
-        <div 
-          className="absolute inset-0 z-0 opacity-10 pointer-events-none" 
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='103.923' viewBox='0 0 60 103.923' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 17.32V51.96L30 69.28L0 51.96V17.32L30 0ZM30 103.92L60 86.6V51.96L30 34.64L0 51.96V86.6L30 103.92Z' fill='none' stroke='%23FFFFFF' stroke-width='1.5'/%3E%3C/svg%3E")`,
-            backgroundSize: '120px',
-            backgroundPosition: 'top center'
-          }}
-        />
-        <div className="relative z-10 max-w-[1300px] mx-auto px-6 pt-24 pb-10">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-24">
-            
-            {/* Left Column (Brand & Info) */}
-            <div className="md:col-span-5 lg:col-span-4 space-y-6">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="text-3xl font-bold tracking-tighter text-white">Glimpse</div>
-              </div>
-              <p className="text-[#A19D98] text-sm leading-relaxed max-w-[280px]">
-                AI-powered event photo delivery for photographers and studios across India.
-              </p>
-              <p className="text-[#84807C] text-xs max-w-[280px]">
-                One browser link. Private matching. Your brand.
-              </p>
-              
-              <div className="pt-2 flex items-center gap-2 text-[#A19D98] hover:text-white transition-colors cursor-pointer w-fit">
-                <Mail className="w-4 h-4 text-[var(--accent)]" />
-                <span className="text-sm font-semibold">hello@glimpse.in</span>
-              </div>
+      {/* Footer */}
+      <Footer />
 
-              <div className="flex items-center gap-3 pt-4">
-                {[Instagram, Facebook, XIcon, LinkIcon, Youtube].map((Icon, i) => (
-                  <a key={i} href="#" className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all">
-                    <Icon className="w-4 h-4" />
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* Spacer */}
-            <div className="hidden lg:block md:col-span-2 lg:col-span-3" />
-
-            {/* Middle Column (Explore) */}
-            <div className="md:col-span-4 lg:col-span-3">
-              <h4 className="text-[10px] font-bold tracking-widest text-[#6B6661] uppercase mb-6">EXPLORE</h4>
-              <ul className="space-y-4 text-sm font-medium text-[#A19D98]">
-                <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
-                <li><Link to="/how-it-works" className="hover:text-white transition-colors">How it works</Link></li>
-                <li><a href="#photographers" className="hover:text-white transition-colors">For photographers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-              </ul>
-            </div>
-
-            {/* Right Column (Legal) */}
-            <div className="md:col-span-3 lg:col-span-2">
-              <h4 className="text-[10px] font-bold tracking-widest text-[#6B6661] uppercase mb-6">LEGAL</h4>
-              <ul className="space-y-4 text-sm font-medium text-[#A19D98]">
-                <li><a href="#" className="hover:text-white transition-colors">Terms & Conditions</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Copyright Bar */}
-          <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-medium text-[#6B6661]">
-            <div>© 2026 Glimpse India. All rights reserved.</div>
-            <div>A product of Logicbyts Software Solutions.</div>
-          </div>
-        </div>
-      </footer>
-
-    </div>
-  );
-}
-
-function FAQAccordion() {
-  const [openIndex, setOpenIndex] = useState(null);
-
-  const faqs = [
-    { q: "How do guests find their photos?", a: "Guests simply open the gallery link and take a quick selfie. Our secure facial matching technology instantly finds every photo they appear in." },
-    { q: "Do guests need to install an app?", a: "No. Everything happens right in their mobile browser. No apps to download, no accounts to create, and no passwords to remember." },
-    { q: "Is the gallery white-label?", a: "Yes. Your studio's name, logo, and branding are front and center. Glimpse stays invisible in the background." },
-    { q: "What happens to the selfies?", a: "Selfies are securely processed for matching and then immediately discarded. We do not store or use guest selfies for any other purpose." }
-  ];
-
-  return (
-    <div className="space-y-0">
-      {faqs.map((faq, i) => (
-        <div 
-          key={i} 
-          className="py-6 border-b border-[var(--border)] flex flex-col cursor-pointer group"
-          onClick={() => setOpenIndex(openIndex === i ? null : i)}
-        >
-          <div className="flex justify-between items-center">
-            <span className="font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors pr-4">{faq.q}</span>
-            <span 
-              className="text-[var(--accent)] text-xl font-light transition-transform duration-300"
-              style={{ transform: openIndex === i ? 'rotate(45deg)' : 'none' }}
-            >
-              +
-            </span>
-          </div>
-          <div className={cn("faq-answer", openIndex === i ? "open" : "")}>
-            <div className="pt-4 text-[var(--text-secondary)] leading-relaxed">
-              {faq.a}
-            </div>
-          </div>
-        </div>
-      ))}
     </div>
   );
 }
