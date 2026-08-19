@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { eventService } from '@/services/eventService';
+import { photoService } from '@/services/photoService';
 import { ROUTES, UPLOAD } from '@/utils/constants';
 import { Button, Skeleton } from '@/components/ui';
 import { useToast } from '@/components/ui/toast';
@@ -11,7 +12,7 @@ import { cn } from '@/utils/utils';
 export default function UploadPage() {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const { addToast } = useToast();
+  const { toast } = useToast();
   
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState([]);
@@ -53,7 +54,7 @@ export default function UploadPage() {
   const handleFiles = (newFiles) => {
     const imageFiles = newFiles.filter(file => file.type.startsWith('image/'));
     if (imageFiles.length !== newFiles.length) {
-      addToast('Some files were ignored because they are not images.', 'warning');
+      toast('Some files were ignored because they are not images.', 'warning');
     }
     
     const filesWithPreviews = imageFiles.map(file => Object.assign(file, {
@@ -77,14 +78,24 @@ export default function UploadPage() {
     setUploading(true);
     setProgress(0);
 
-    const totalSteps = 10;
-    for (let i = 1; i <= totalSteps; i++) {
-      await new Promise(r => setTimeout(r, 400));
-      setProgress((i / totalSteps) * 100);
-    }
+    try {
+      let completed = 0;
+      // Upload each photo sequentially (or could be Promise.all for concurrent)
+      for (const file of files) {
+        await photoService.uploadPhoto(eventId, file);
+        completed++;
+        setProgress((completed / files.length) * 100);
+      }
+      
+      // Trigger backend processing once all photos are uploaded
+      await photoService.triggerProcessing(eventId);
 
-    addToast(`Successfully uploaded ${files.length} photos!`, 'success');
-    navigate(ROUTES.EVENT(eventId));
+      toast(`Successfully uploaded ${files.length} photos!`, 'success');
+      navigate(ROUTES.EVENT(eventId));
+    } catch (err) {
+      toast(err.message || 'Error uploading photos', 'error');
+      setUploading(false);
+    }
   };
 
   if (isLoading) return <div className="p-8 max-w-4xl mx-auto"><Skeleton className="h-96 w-full rounded-[var(--radius-xl)] bg-[var(--surface)]" /></div>;

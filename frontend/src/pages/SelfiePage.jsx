@@ -1,6 +1,9 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { eventService } from '@/services/eventService';
+import { matchingService } from '@/services/matchingService';
 import { ROUTES } from '@/utils/constants';
 import { Button } from '@/components/ui';
 import { ProcessStep } from '@/components/guest';
@@ -10,7 +13,7 @@ import { Camera, RefreshCw, ChevronLeft, Search, Upload } from 'lucide-react';
 export default function SelfiePage() {
   const { eventSlug } = useParams();
   const navigate = useNavigate();
-  const { addToast } = useToast();
+  const { toast } = useToast();
   
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -34,9 +37,9 @@ export default function SelfiePage() {
     } catch (err) {
       console.error("Camera error:", err);
       setHasPermission(false);
-      addToast('Camera access denied. Please allow camera permissions to continue.', 'error');
+      toast('Camera access denied. Please allow camera permissions to continue.', 'error');
     }
-  }, [addToast]);
+  }, [toast]);
 
   useEffect(() => {
     startCamera();
@@ -82,19 +85,35 @@ export default function SelfiePage() {
     startCamera();
   };
 
+  const { data: event } = useQuery({
+    queryKey: ['guest_event', eventSlug],
+    queryFn: () => eventService.getEventBySlug(eventSlug),
+    enabled: !!eventSlug
+  });
+
   const processSelfie = async () => {
+    if (!event) {
+      toast('Event not found', 'error');
+      return;
+    }
+    
     setIsProcessing(true);
-    
     setProcessingStep(1); 
-    await new Promise(r => setTimeout(r, 800));
     
-    setProcessingStep(2); 
-    await new Promise(r => setTimeout(r, 1000));
-    
-    setProcessingStep(3); 
-    await new Promise(r => setTimeout(r, 600));
-    
-    navigate(ROUTES.GUEST_RESULTS(eventSlug));
+    try {
+      const sessionId = crypto.randomUUID();
+      
+      setProcessingStep(2); 
+      await matchingService.matchSelfie(event.id, sessionId, capturedImage);
+      
+      setProcessingStep(3); 
+      await new Promise(r => setTimeout(r, 600));
+      
+      navigate(ROUTES.GUEST_RESULTS(eventSlug), { state: { sessionId } });
+    } catch (err) {
+      toast(err.message || 'Failed to find photos', 'error');
+      setIsProcessing(false);
+    }
   };
 
   return (

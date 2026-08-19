@@ -10,7 +10,7 @@ import { ArrowLeft, Copy, Download, ExternalLink } from 'lucide-react';
 
 export default function SharePage() {
   const { eventId } = useParams();
-  const { addToast } = useToast();
+  const { toast } = useToast();
 
   const { data: event, isLoading: eventLoading } = useQuery({
     queryKey: ['event', eventId],
@@ -27,7 +27,7 @@ export default function SharePage() {
   const handleCopyLink = () => {
     if (!shareInfo) return;
     navigator.clipboard.writeText(shareInfo.share_url);
-    addToast('Link copied to clipboard', 'success');
+    toast('Link copied to clipboard', 'success');
   };
 
   const handleDownloadQR = () => {

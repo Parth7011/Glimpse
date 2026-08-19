@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { eventService } from '@/services/eventService';
@@ -11,8 +11,12 @@ import { useToast } from '@/components/ui/toast';
 
 export default function ResultsPage() {
   const { eventSlug } = useParams();
-  const { addToast } = useToast();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+
+  const sessionId = location.state?.sessionId;
 
   const { data: event, isLoading: eventLoading } = useQuery({
     queryKey: ['guest_event', eventSlug],
@@ -21,18 +25,22 @@ export default function ResultsPage() {
   });
 
   const { data: matchesData, isLoading: matchesLoading } = useQuery({
-    queryKey: ['matches', eventSlug],
-    queryFn: () => matchingService.getGuestMatches('mock-session'),
-    enabled: !!eventSlug
+    queryKey: ['matches', sessionId],
+    queryFn: () => matchingService.getMatches(sessionId),
+    enabled: !!sessionId
   });
 
+  if (!sessionId) {
+    return <Navigate to={ROUTES.GUEST_EVENT(eventSlug)} replace />;
+  }
+
   const handleDownloadAll = () => {
-    addToast('Preparing your high-res zip file...', 'success');
+    toast('Preparing your high-res zip file...', 'success');
   };
 
   const handleDownloadSingle = (e, photo) => {
     e.stopPropagation();
-    addToast('Downloading photo...', 'success');
+    toast('Downloading photo...', 'success');
   };
 
   if (eventLoading || matchesLoading) {
@@ -56,7 +64,7 @@ export default function ResultsPage() {
     );
   }
 
-  const matches = matchesData.matches || [];
+  const matches = Array.isArray(matchesData) ? matchesData : (matchesData?.matches || []);
 
   return (
     <div className="flex-1 flex flex-col bg-[var(--background)] relative min-h-[100dvh]">
@@ -103,17 +111,17 @@ export default function ResultsPage() {
                   show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 20 } }
                 }}
                 className="aspect-[3/4] relative rounded-[var(--radius-lg)] overflow-hidden bg-[var(--surface-soft)] cursor-pointer group shadow-sm hover:shadow-md transition-shadow"
-                onClick={() => setSelectedPhoto(match.photo)}
+                onClick={() => setSelectedPhoto(match)}
               >
                 <img 
-                  src={match.photo.preview_url || `https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80&random=${i}`} 
+                  src={match.preview_url || match.photo?.preview_url || `https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80&random=${i}`} 
                   alt="Gallery" 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                 />
                 {/* Minimal gradient for the icon only */}
                 <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <button 
-                  onClick={(e) => handleDownloadSingle(e, match.photo)}
+                  onClick={(e) => handleDownloadSingle(e, match)}
                   className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md text-[var(--text-primary)] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm hover:scale-110 active:scale-95"
                 >
                   <Download className="w-5 h-5" />

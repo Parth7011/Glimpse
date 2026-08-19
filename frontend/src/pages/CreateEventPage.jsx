@@ -10,7 +10,7 @@ import { ArrowLeft, CalendarPlus } from 'lucide-react';
 export default function CreateEventPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { addToast } = useToast();
+  const { toast } = useToast();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -21,11 +21,11 @@ export default function CreateEventPage() {
     mutationFn: (data) => eventService.createEvent(data),
     onSuccess: (newEvent) => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
-      addToast('Event created successfully', 'success');
+      toast('Event created successfully', 'success');
       navigate(ROUTES.EVENT(newEvent.id));
     },
     onError: () => {
-      addToast('Failed to create event. Please try again.', 'error');
+      toast('Failed to create event. Please try again.', 'error');
     }
   });
 

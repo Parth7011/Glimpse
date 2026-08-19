@@ -18,26 +18,29 @@ export const photoService = {
     return await response.json();
   },
   
-  /** Upload a photo metadata record to the backend */
+  /** Upload a photo file to the backend */
   async uploadPhoto(eventId, file) {
-    // In a real flow, you'd upload the file to Supabase Storage first,
-    // then send the metadata to the backend.
-    // Since we're not touching Supabase Storage in this Express-only mode yet,
-    // we just send a mock payload representing the uploaded file.
-    const payload = {
-      filename: file.name,
-      storage_path: `/events/${eventId}/originals/${file.name}`,
-      size_bytes: file.size,
-      width: 4000,
-      height: 2667
-    };
+    const formData = new FormData();
+    formData.append('photo', file);
     
+    // We can also append other metadata if we want, but the backend can read file.name and file.size from multer
+    formData.append('width', '4000'); // mock or get real width
+    formData.append('height', '2667'); // mock or get real height
+
+    const headers = getAuthHeaders();
+    // Remove Content-Type so browser sets it automatically with boundary for multipart/form-data
+    delete headers['Content-Type'];
+
     const response = await fetch(`${API_URL}/photos/event/${eventId}/upload`, {
       method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(payload)
+      headers: headers,
+      body: formData
     });
-    if (!response.ok) throw new Error('Failed to upload photo record');
+    
+    if (!response.ok) {
+      const err = await response.json().catch(()=>({}));
+      throw new Error(err.error || 'Failed to upload photo record');
+    }
     return await response.json();
   },
   

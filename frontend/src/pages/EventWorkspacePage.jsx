@@ -5,7 +5,7 @@ import { eventService } from '@/services/eventService';
 import { photoService } from '@/services/photoService';
 import { ROUTES } from '@/utils/constants';
 import { Button, Badge, Skeleton } from '@/components/ui';
-import { ArrowLeft, ImagePlus, Share2, Users } from 'lucide-react';
+import { ArrowLeft, ImagePlus, Share2, Users, Camera } from 'lucide-react';
 
 export default function EventWorkspacePage() {
   const { eventId } = useParams();
@@ -18,7 +18,7 @@ export default function EventWorkspacePage() {
 
   const { data: photosData, isLoading: photosLoading } = useQuery({
     queryKey: ['event_photos', eventId],
-    queryFn: () => photoService.listEventPhotos(eventId),
+    queryFn: () => photoService.listPhotos(eventId),
     enabled: !!eventId
   });
 

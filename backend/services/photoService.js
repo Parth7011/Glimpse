@@ -9,25 +9,59 @@ export const listPhotos = async (eventId) => {
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return data;
+  
+  const bucketName = process.env.SUPABASE_STORAGE_BUCKET || 'event-photos';
+  
+  // Attach signed URLs for previews
+  const photosWithUrls = await Promise.all(data.map(async (photo) => {
+    if (photo.storage_path) {
+      const { data: signedData } = await supabase.storage.from(bucketName).createSignedUrl(photo.storage_path, 3600);
+      if (signedData?.signedUrl) {
+        photo.preview_url = signedData.signedUrl;
+      }
+    }
+    return photo;
+  }));
+  
+  return photosWithUrls;
 };
 
-export const createPhotoRecord = async (eventId, photoData) => {
+export const uploadAndProcessPhoto = async (eventId, file, metadata) => {
   const id = uuidv4();
+  const bucketName = process.env.SUPABASE_STORAGE_BUCKET || 'event-photos';
+  
+  // Clean filename and create storage path
+  const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+  const storagePath = `events/${eventId}/${id}_${sanitizedName}`;
+
+  // 1. Upload to Supabase Storage
+  const { error: uploadError } = await supabase.storage
+    .from(bucketName)
+    .upload(storagePath, file.buffer, {
+      contentType: file.mimetype,
+      upsert: true
+    });
+
+  if (uploadError) {
+    console.error('Storage upload error:', uploadError);
+    throw new Error(`Failed to upload to storage: ${uploadError.message}`);
+  }
+
+  // 2. Insert Database Record
   const { data, error } = await supabase
     .from('photos')
     .insert([{
       id,
       event_id: eventId,
-      storage_path: photoData.storage_path,
-      thumbnail_path: photoData.thumbnail_path || null,
-      preview_path: photoData.preview_path || null,
-      filename: photoData.filename,
-      status: 'uploaded',
+      storage_path: storagePath,
+      thumbnail_path: null,
+      preview_path: null,
+      filename: file.originalname,
+      status: 'uploaded', // Mock ML will mark as ready later
       face_count: 0,
-      width: photoData.width || null,
-      height: photoData.height || null,
-      size_bytes: photoData.size_bytes || null,
+      width: metadata.width ? parseInt(metadata.width) : null,
+      height: metadata.height ? parseInt(metadata.height) : null,
+      size_bytes: file.size,
       created_at: new Date().toISOString()
     }])
     .select()
@@ -35,7 +69,7 @@ export const createPhotoRecord = async (eventId, photoData) => {
 
   if (error) throw error;
   
-  // Update event photo_count
+  // 3. Update event photo_count
   const { data: event } = await supabase.from('events').select('photo_count').eq('id', eventId).single();
   if (event) {
     await supabase.from('events').update({ photo_count: (event.photo_count || 0) + 1 }).eq('id', eventId);
