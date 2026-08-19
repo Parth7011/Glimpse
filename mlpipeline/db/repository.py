@@ -1,4 +1,3 @@
-import json
 import logging
 import uuid
 from typing import Any
@@ -25,11 +24,6 @@ def get_supabase_client() -> Client | None:
                 logger.warning(f"Could not create Supabase client: {e}")
     return _supabase_client
 
-# In-memory store fallback for offline testing when no live DB/Supabase is connected
-_IN_MEMORY_EVENTS: dict[str, dict] = {}
-_IN_MEMORY_PHOTOS: dict[str, dict] = {}
-_IN_MEMORY_FACES: dict[str, list[dict]] = {}
-
 
 class EventRepository:
     @staticmethod
@@ -38,7 +32,7 @@ class EventRepository:
         supabase = get_supabase_client()
         if supabase:
             try:
-                # Ensure dummy photographer exists
+                # Ensure dummy photographer exists (for testing/setup)
                 try:
                     supabase.table("photographers").upsert({
                         "id": photographer_id,
@@ -75,20 +69,9 @@ class EventRepository:
                         cur.execute(query, (event_id, photographer_id, name, slug))
                         return cur.fetchone()
             except Exception as e:
-                logger.debug(f"Direct postgres unavailable: {e}")
+                logger.error(f"Direct postgres unavailable: {e}")
 
-        # In-memory fallback
-        event = {
-            "id": event_id,
-            "photographer_id": photographer_id,
-            "name": name,
-            "slug": slug,
-            "status": "uploading",
-            "photo_count": 0,
-            "face_count": 0
-        }
-        _IN_MEMORY_EVENTS[event_id] = event
-        return event
+        return {}
 
     @staticmethod
     def update_event_counts(event_id: str) -> dict[str, Any] | None:
@@ -109,16 +92,7 @@ class EventRepository:
                 if res.data:
                     return res.data[0]
             except Exception as e:
-                logger.warning(f"Supabase update event counts failed: {e}")
-
-        # In-memory fallback
-        if event_id in _IN_MEMORY_EVENTS:
-            photos_count = sum(1 for p in _IN_MEMORY_PHOTOS.values() if p.get("event_id") == event_id)
-            faces_count = sum(len(f_list) for p_id, f_list in _IN_MEMORY_FACES.items() if _IN_MEMORY_PHOTOS.get(p_id, {}).get("event_id") == event_id)
-            _IN_MEMORY_EVENTS[event_id]["photo_count"] = photos_count
-            _IN_MEMORY_EVENTS[event_id]["face_count"] = faces_count
-            _IN_MEMORY_EVENTS[event_id]["status"] = "ready"
-            return _IN_MEMORY_EVENTS[event_id]
+                logger.error(f"Supabase update event counts failed: {e}")
         return None
 
 
@@ -156,23 +130,8 @@ class PhotoRepository:
                 if res.data:
                     return res.data[0]
             except Exception as e:
-                logger.warning(f"Supabase upsert photo failed: {e}")
-
-        record = {
-            "id": photo_id,
-            "event_id": event_id,
-            "storage_path": storage_path,
-            "thumbnail_path": thumbnail_path,
-            "preview_path": preview_path,
-            "filename": filename,
-            "status": status,
-            "width": width,
-            "height": height,
-            "size_bytes": size_bytes,
-            "face_count": 0
-        }
-        _IN_MEMORY_PHOTOS[photo_id] = record
-        return record
+                logger.error(f"Supabase upsert photo failed: {e}")
+        return {}
 
     @staticmethod
     def update_photo_status(photo_id: str, status: str, face_count: int) -> dict[str, Any]:
@@ -187,12 +146,7 @@ class PhotoRepository:
                 if res.data:
                     return res.data[0]
             except Exception as e:
-                logger.warning(f"Supabase update photo status failed: {e}")
-
-        if photo_id in _IN_MEMORY_PHOTOS:
-            _IN_MEMORY_PHOTOS[photo_id]["status"] = status
-            _IN_MEMORY_PHOTOS[photo_id]["face_count"] = face_count
-            return _IN_MEMORY_PHOTOS[photo_id]
+                logger.error(f"Supabase update photo status failed: {e}")
         return {"id": photo_id, "status": status, "face_count": face_count}
 
     @staticmethod
@@ -205,7 +159,7 @@ class PhotoRepository:
                 return res.data
             except Exception:
                 pass
-        return _IN_MEMORY_PHOTOS.get(photo_id)
+        return None
 
 
 class FaceRepository:
@@ -260,34 +214,8 @@ class FaceRepository:
 
             except Exception as e:
                 logger.error(f"Failed to insert face embeddings to Supabase: {e}")
-
-        # In-memory fallback
-        in_memory_records = []
-        for face in faces_data:
-            face_id = str(uuid.uuid4())
-            embedding = face["embedding"]
-            embedding_vec = embedding.tolist() if isinstance(embedding, np.ndarray) else list(embedding)
-
-            record = {
-                "id": face_id,
-                "photo_id": photo_id,
-                "event_id": event_id,
-                "embedding": embedding_vec,
-                "bounding_box": {
-                    "x1": float(face["bbox"][0]),
-                    "y1": float(face["bbox"][1]),
-                    "x2": float(face["bbox"][2]),
-                    "y2": float(face["bbox"][3])
-                },
-                "det_score": float(face.get("det_score", 1.0)),
-                "gender": face.get("gender"),
-                "age": face.get("age")
-            }
-            in_memory_records.append(record)
-
-        _IN_MEMORY_FACES[photo_id] = in_memory_records
-        logger.info(f"Stored {len(in_memory_records)} face embedding(s) in in-memory repository for photo_id={photo_id}")
-        return in_memory_records
+        
+        return []
 
     @staticmethod
     def get_faces_by_photo(photo_id: str) -> list[dict[str, Any]]:
@@ -298,9 +226,8 @@ class FaceRepository:
                 res = supabase.table("faces").select("*").eq("photo_id", photo_id).execute()
                 return res.data or []
             except Exception as e:
-                logger.warning(f"Failed to query faces by photo: {e}")
-
-        return _IN_MEMORY_FACES.get(photo_id, [])
+                logger.error(f"Failed to query faces by photo: {e}")
+        return []
 
     @staticmethod
     def get_faces_by_event(event_id: str) -> list[dict[str, Any]]:
@@ -311,11 +238,5 @@ class FaceRepository:
                 res = supabase.table("faces").select("*").eq("event_id", event_id).execute()
                 return res.data or []
             except Exception as e:
-                logger.warning(f"Failed to query faces by event: {e}")
-
-        all_faces = []
-        for face_list in _IN_MEMORY_FACES.values():
-            for f in face_list:
-                if f.get("event_id") == event_id:
-                    all_faces.append(f)
-        return all_faces
+                logger.error(f"Failed to query faces by event: {e}")
+        return []
