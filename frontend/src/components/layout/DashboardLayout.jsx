@@ -1,11 +1,10 @@
 import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Calendar, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Settings, LogOut, ChevronRight } from 'lucide-react';
 import { cn } from '@/utils/utils';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', icon: LayoutDashboard, to: '/dashboard' },
-  { label: 'Events', icon: Calendar, to: '/dashboard', matchPrefix: '/events' },
   { label: 'Settings', icon: Settings, to: '/dashboard/settings' },
 ];
 
