@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/utils/constants';
@@ -39,10 +39,17 @@ export default function LandingPage() {
   }, []);
 
   const heroRef = useRef(null);
-  const { scrollYProgress: heroScroll } = useScroll({
+  const { scrollY, scrollYProgress: heroScroll } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"]
   });
+
+  const [isNavScrolled, setIsNavScrolled] = useState(false);
+  useEffect(() => {
+    return scrollY.onChange((latest) => {
+      setIsNavScrolled(latest > 50);
+    });
+  }, [scrollY]);
 
   // Parallax calculations for Hero
   const yImage1 = useTransform(heroScroll, [0, 1], ['0%', '25%']);
@@ -56,7 +63,10 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] font-sans selection:bg-[var(--accent-soft)] selection:text-[var(--accent)] overflow-x-hidden">
       
       {/* Navigation - Glass Pill style */}
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] md:w-[75%] max-w-[1200px] z-50 px-6 py-4 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-full transition-all duration-300">
+      <nav className={cn(
+        "fixed top-6 left-1/2 -translate-x-1/2 w-[90%] md:w-[75%] max-w-[1200px] z-50 px-6 py-4 bg-white/40 backdrop-blur-md border border-white/40 shadow-sm rounded-full transition-all duration-300",
+        isNavScrolled && "nav-scrolled"
+      )}>
         <div className="w-full flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold tracking-tighter text-[var(--text-primary)] flex items-center gap-1.5">
             Glimpse
@@ -117,7 +127,7 @@ export default function LandingPage() {
             transition={{ duration: 1.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="absolute top-[25%] md:top-[20%] w-[90vw] md:w-[65vw] max-w-5xl aspect-[16/9] md:aspect-[21/9] rounded-3xl overflow-hidden shadow-[var(--shadow-photo)] border border-white/20"
           >
-            <div className="absolute inset-0 bg-black/10 z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
             <img src={HERO_IMAGES[0]} className="w-full h-full object-cover" alt="Main event" />
           </motion.div>
         </div>
@@ -131,7 +141,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[clamp(3.5rem,10vw,8rem)] font-bold leading-[0.9] tracking-tighter text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.4)] mb-6"
+            className="text-[clamp(3.5rem,10vw,8rem)] font-bold leading-[0.9] tracking-tighter text-white drop-shadow-[0_4px_32px_rgba(0,0,0,0.8)] mb-6"
           >
             Every moment.<br/>Find yours.
           </motion.h1>
@@ -175,28 +185,46 @@ export default function LandingPage() {
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-8 max-w-4xl mx-auto">
             {/* Step 1 */}
-            <div className="flex-1 flex flex-col items-center relative z-10 w-full">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="flex-1 flex flex-col items-center relative z-10 w-full"
+            >
                <div className="w-16 h-16 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mb-6 shadow-sm z-10">
                  <LinkIcon className="w-6 h-6 text-[var(--accent)]" />
                </div>
                <h3 className="text-3xl font-bold tracking-tight mb-2">One link</h3>
                <p className="text-[var(--text-secondary)]">Guests open the event gallery</p>
-            </div>
+            </motion.div>
 
             {/* Connecting line (Desktop) */}
             <div className="hidden md:block absolute left-1/2 -translate-x-1/2 w-full max-w-2xl h-[1px] bg-gradient-to-r from-transparent via-[var(--border-strong)] to-transparent top-[190px]" />
 
             {/* Step 2 */}
-            <div className="flex-1 flex flex-col items-center relative z-10 w-full">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="flex-1 flex flex-col items-center relative z-10 w-full"
+            >
                <div className="w-16 h-16 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mb-6 shadow-sm z-10">
                  <Camera className="w-6 h-6 text-[var(--accent)]" />
                </div>
                <h3 className="text-3xl font-bold tracking-tight mb-2 text-[var(--accent)]">One selfie</h3>
                <p className="text-[var(--text-secondary)]">They find every matching photo</p>
-            </div>
+            </motion.div>
 
             {/* Step 3 */}
-            <div className="flex-1 flex flex-col items-center relative z-10 w-full">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+              className="flex-1 flex flex-col items-center relative z-10 w-full"
+            >
                <div className="w-16 h-16 rounded-full bg-[var(--accent)] flex items-center justify-center mb-6 shadow-md z-10">
                  <Check className="w-6 h-6 text-white" />
                </div>
@@ -206,7 +234,7 @@ export default function LandingPage() {
                  <h3 className="text-3xl font-bold tracking-tight mb-2">It's that simple.</h3>
                </div>
                <p className="text-[var(--text-secondary)]">Nothing to install or learn</p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -465,7 +493,7 @@ export default function LandingPage() {
       </section>
 
       {/* Trust & Privacy Accordion area */}
-      <section className="py-24 px-6 bg-[var(--background)] border-t border-[var(--border)]">
+      <section className="py-24 pb-32 px-6 bg-[var(--background)] border-t border-[var(--border)]">
         <div className="max-w-[1000px] mx-auto grid md:grid-cols-2 gap-16">
           <div>
             <h2 className="text-4xl md:text-6xl font-bold tracking-tighter leading-[0.95] mb-6">
@@ -474,19 +502,7 @@ export default function LandingPage() {
             <p className="text-[var(--text-secondary)]">What to know about guests, branding, privacy, and security.</p>
           </div>
           
-          <div className="space-y-0">
-            {[
-              "How do guests find their photos?",
-              "Do guests need to install an app?",
-              "Is the gallery white-label?",
-              "What happens to the selfies?"
-            ].map((q, i) => (
-              <div key={i} className="py-6 border-b border-[var(--border)] flex justify-between items-center cursor-pointer group">
-                <span className="font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">{q}</span>
-                <span className="text-[var(--accent)] text-xl font-light">+</span>
-              </div>
-            ))}
-          </div>
+          <FAQAccordion />
         </div>
       </section>
 
@@ -648,6 +664,44 @@ export default function LandingPage() {
         </div>
       </footer>
 
+    </div>
+  );
+}
+
+function FAQAccordion() {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const faqs = [
+    { q: "How do guests find their photos?", a: "Guests simply open the gallery link and take a quick selfie. Our secure facial matching technology instantly finds every photo they appear in." },
+    { q: "Do guests need to install an app?", a: "No. Everything happens right in their mobile browser. No apps to download, no accounts to create, and no passwords to remember." },
+    { q: "Is the gallery white-label?", a: "Yes. Your studio's name, logo, and branding are front and center. Glimpse stays invisible in the background." },
+    { q: "What happens to the selfies?", a: "Selfies are securely processed for matching and then immediately discarded. We do not store or use guest selfies for any other purpose." }
+  ];
+
+  return (
+    <div className="space-y-0">
+      {faqs.map((faq, i) => (
+        <div 
+          key={i} 
+          className="py-6 border-b border-[var(--border)] flex flex-col cursor-pointer group"
+          onClick={() => setOpenIndex(openIndex === i ? null : i)}
+        >
+          <div className="flex justify-between items-center">
+            <span className="font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors pr-4">{faq.q}</span>
+            <span 
+              className="text-[var(--accent)] text-xl font-light transition-transform duration-300"
+              style={{ transform: openIndex === i ? 'rotate(45deg)' : 'none' }}
+            >
+              +
+            </span>
+          </div>
+          <div className={cn("faq-answer", openIndex === i ? "open" : "")}>
+            <div className="pt-4 text-[var(--text-secondary)] leading-relaxed">
+              {faq.a}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

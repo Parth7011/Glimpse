@@ -106,7 +106,7 @@ export default function ResultsPage() {
                 onClick={() => setSelectedPhoto(match.photo)}
               >
                 <img 
-                  src={`https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80&random=${i}`} 
+                  src={match.photo.preview_url || `https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80&random=${i}`} 
                   alt="Gallery" 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                 />
@@ -166,7 +166,7 @@ export default function ResultsPage() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                src={`https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1200&q=80&random=${selectedPhoto.id}`} 
+                src={selectedPhoto.preview_url || `https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1200&q=80&random=${selectedPhoto.id}`} 
                 alt="Selected" 
                 className="max-w-full max-h-full object-contain rounded-xl shadow-[var(--shadow-photo)]"
               />

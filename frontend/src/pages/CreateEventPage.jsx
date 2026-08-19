@@ -5,7 +5,7 @@ import { eventService } from '@/services/eventService';
 import { ROUTES } from '@/utils/constants';
 import { Button, Input, Label } from '@/components/ui';
 import { useToast } from '@/components/ui/toast';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, CalendarPlus } from 'lucide-react';
 
 export default function CreateEventPage() {
   const navigate = useNavigate();
@@ -40,12 +40,15 @@ export default function CreateEventPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in duration-300">
-      <div>
-        <Link to={ROUTES.DASHBOARD} className="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] mb-6 transition-colors">
-          <ArrowLeft className="w-4 h-4 mr-1.5" /> Dashboard
+      <div className="text-center pt-8 pb-4">
+        <Link to={ROUTES.DASHBOARD} className="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] mb-8 transition-colors absolute top-8 left-8 md:static md:mb-8">
+          <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Dashboard
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--text-primary)]">Create your event</h1>
-        <p className="text-[var(--text-secondary)] mt-1">Set up a new workspace for your photos.</p>
+        <div className="w-20 h-20 rounded-[var(--radius-2xl)] bg-gradient-to-br from-[var(--accent-soft)] to-[var(--surface-soft)] flex items-center justify-center mx-auto mb-6 shadow-sm border border-[var(--border)]">
+          <CalendarPlus className="w-10 h-10 text-[var(--accent)]" />
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-[var(--text-primary)] mb-2">Create a new event</h1>
+        <p className="text-lg text-[var(--text-secondary)]">Set up a workspace for your next shoot.</p>
       </div>
 
       <div className="bg-[var(--surface)] p-8 rounded-[var(--radius-xl)] border border-[var(--border)] shadow-sm">
