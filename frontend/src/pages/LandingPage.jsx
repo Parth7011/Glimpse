@@ -52,23 +52,23 @@ export default function LandingPage() {
   const yImage1 = useTransform(heroScroll, [0, 1], ['0%', '25%']);
   const yImage2 = useTransform(heroScroll, [0, 1], ['0%', '45%']);
   const yImage3 = useTransform(heroScroll, [0, 1], ['0%', '15%']);
-  
+
   const opacityHeroText = useTransform(heroScroll, [0, 0.4], [1, 0]);
   const scaleHeroText = useTransform(heroScroll, [0, 0.5], [1, 0.95]);
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] font-sans selection:bg-[var(--accent-soft)] selection:text-[var(--accent)] overflow-x-hidden">
-      
+
       {/* Navigation */}
       <Navbar activePage="home" />
 
       {/* Immersive Photography Hero (Layered Parallax) */}
       <section ref={heroRef} className="relative min-h-[100dvh] flex flex-col items-center justify-center px-4 pt-20 overflow-hidden perspective-container bg-[var(--background)]">
-        
+
         {/* Layered Photography Background */}
         <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none mt-12">
           {/* Back image - Right */}
-          <motion.div 
+          <motion.div
             style={{ y: yImage2 }}
             initial={{ scale: 1.1, opacity: 0, rotate: -3 }}
             animate={{ scale: 1, opacity: 0.7, rotate: -3 }}
@@ -77,9 +77,9 @@ export default function LandingPage() {
           >
             <img src={HERO_IMAGES[1]} className="w-full h-full object-cover" alt="Background event" />
           </motion.div>
-          
+
           {/* Back image - Left */}
-          <motion.div 
+          <motion.div
             style={{ y: yImage3 }}
             initial={{ scale: 1.15, opacity: 0, rotate: 4 }}
             animate={{ scale: 1, opacity: 0.85, rotate: 4 }}
@@ -90,7 +90,7 @@ export default function LandingPage() {
           </motion.div>
 
           {/* Front Main Image */}
-          <motion.div 
+          <motion.div
             style={{ y: yImage1 }}
             initial={{ scale: 1.05, opacity: 0, y: 40 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -103,20 +103,20 @@ export default function LandingPage() {
         </div>
 
         {/* Hero Content Overlay */}
-        <motion.div 
+        <motion.div
           style={{ opacity: opacityHeroText, scale: scaleHeroText }}
           className="relative z-10 text-center flex flex-col items-center max-w-4xl mt-[-15vh]"
         >
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[clamp(3.5rem,10vw,8rem)] font-bold leading-[0.9] tracking-tighter text-white drop-shadow-[0_4px_32px_rgba(0,0,0,0.8)] mb-6"
+            className="text-[clamp(3.5rem,10vw,8rem)] font-bold leading-[0.9] tracking-tighter text-[#FFF9E5] drop-shadow-[0_4px_32px_rgba(0,0,0,10)] mb-5"
           >
-            Every moment.<br/>Find yours.
+            Every moment.<br />Find yours.
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -124,21 +124,23 @@ export default function LandingPage() {
           >
             Upload thousands of event photos and let guests find themselves with one simple selfie.
           </motion.p>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center gap-4"
           >
-            <Link to={ROUTES.DASHBOARD}>
+            <Link to={ROUTES.LOGIN}>
               <Button size="xl" className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white shadow-xl px-10 h-14 text-base font-semibold">
                 Create an Event
               </Button>
             </Link>
-            <Button size="xl" variant="outline" className="rounded-full bg-white/10 backdrop-blur-md text-white border-white/30 hover:bg-white/20 hover:border-white/50 shadow-xl px-10 h-14 text-base font-medium">
-              See How It Works ↓
-            </Button>
+            <Link to={ROUTES.HOWITWORKS}>
+              <Button size="xl" variant="outline" className="rounded-full bg-white/10 backdrop-blur-md text-white border-white/30 hover:bg-white/20 hover:border-white/50 shadow-xl px-10 h-14 text-base font-medium">
+                See How It Works ↓
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
       </section>
@@ -155,55 +157,55 @@ export default function LandingPage() {
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-8 max-w-4xl mx-auto">
             {/* Step 1 */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
               className="flex-1 flex flex-col items-center relative z-10 w-full"
             >
-               <div className="w-16 h-16 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mb-6 shadow-sm z-10">
-                 <LinkIcon className="w-6 h-6 text-[var(--accent)]" />
-               </div>
-               <h3 className="text-3xl font-bold tracking-tight mb-2">One link</h3>
-               <p className="text-[var(--text-secondary)]">Guests open the event gallery</p>
+              <div className="w-16 h-16 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mb-6 shadow-sm z-10">
+                <LinkIcon className="w-6 h-6 text-[var(--accent)]" />
+              </div>
+              <h3 className="text-3xl font-bold tracking-tight mb-2">One link</h3>
+              <p className="text-[var(--text-secondary)]">Guests open the event gallery</p>
             </motion.div>
 
             {/* Connecting line (Desktop) */}
             <div className="hidden md:block absolute left-1/2 -translate-x-1/2 w-full max-w-2xl h-[1px] bg-gradient-to-r from-transparent via-[var(--border-strong)] to-transparent top-[190px]" />
 
             {/* Step 2 */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
               className="flex-1 flex flex-col items-center relative z-10 w-full"
             >
-               <div className="w-16 h-16 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mb-6 shadow-sm z-10">
-                 <Camera className="w-6 h-6 text-[var(--accent)]" />
-               </div>
-               <h3 className="text-3xl font-bold tracking-tight mb-2 text-[var(--accent)]">One selfie</h3>
-               <p className="text-[var(--text-secondary)]">They find every matching photo</p>
+              <div className="w-16 h-16 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mb-6 shadow-sm z-10">
+                <Camera className="w-6 h-6 text-[var(--accent)]" />
+              </div>
+              <h3 className="text-3xl font-bold tracking-tight mb-2 text-[var(--accent)]">One selfie</h3>
+              <p className="text-[var(--text-secondary)]">They find every matching photo</p>
             </motion.div>
 
             {/* Step 3 */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.5 }}
               className="flex-1 flex flex-col items-center relative z-10 w-full"
             >
-               <div className="w-16 h-16 rounded-full bg-[var(--accent)] flex items-center justify-center mb-6 shadow-md z-10">
-                 <Check className="w-6 h-6 text-white" />
-               </div>
-               <div className="relative">
-                 {/* Decorative highlight under text */}
-                 <div className="absolute inset-x-0 bottom-1 h-3 bg-[var(--accent-soft)] -z-10 -rotate-1 rounded" />
-                 <h3 className="text-3xl font-bold tracking-tight mb-2">It's that simple.</h3>
-               </div>
-               <p className="text-[var(--text-secondary)]">Nothing to install or learn</p>
+              <div className="w-16 h-16 rounded-full bg-[var(--accent)] flex items-center justify-center mb-6 shadow-md z-10">
+                <Check className="w-6 h-6 text-white" />
+              </div>
+              <div className="relative">
+                {/* Decorative highlight under text */}
+                <div className="absolute inset-x-0 bottom-1 h-3 bg-[var(--accent-soft)] -z-10 -rotate-1 rounded" />
+                <h3 className="text-3xl font-bold tracking-tight mb-2">It's that simple.</h3>
+              </div>
+              <p className="text-[var(--text-secondary)]">Nothing to install or learn</p>
             </motion.div>
           </div>
         </div>
@@ -212,9 +214,9 @@ export default function LandingPage() {
       {/* Photographer Section - The Shoot Ends */}
       <section id="photographers" className="py-24 px-6 bg-[var(--surface-soft)]">
         <div className="max-w-[1300px] mx-auto grid lg:grid-cols-[1fr_1.2fr] gap-16 items-center">
-          
+
           {/* Text Content */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -228,19 +230,19 @@ export default function LandingPage() {
               Upload thousands of event photos and share one branded gallery. Every guest finds their own photos with one selfie—without asking your team to sort or send them.
             </p>
             <div className="flex items-center gap-6 pt-4">
-               <Link to={ROUTES.DASHBOARD}>
-                 <Button className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white shadow-md px-8 h-12 text-base font-semibold">
-                   Start free
-                 </Button>
-               </Link>
-               <button className="text-sm font-bold tracking-widest uppercase text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-2">
-                 SEE THE DIFFERENCE <span className="text-xs">↓</span>
-               </button>
+              <Link to={ROUTES.LOGIN}>
+                <Button className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white shadow-md px-8 h-12 text-base font-semibold">
+                  Start free
+                </Button>
+              </Link>
+              <button className="text-sm font-bold tracking-widest uppercase text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-2">
+                SEE THE DIFFERENCE <span className="text-xs">↓</span>
+              </button>
             </div>
           </motion.div>
 
           {/* Floating UI Mockup */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -248,54 +250,54 @@ export default function LandingPage() {
           >
             {/* The Browser/App Window */}
             <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] shadow-2xl overflow-hidden relative z-10 w-full aspect-[4/3] max-h-[600px] flex flex-col">
-               {/* Browser Header */}
-               <div className="h-12 border-b border-[var(--border)] flex items-center px-4 gap-2 bg-[var(--background)]">
-                 <div className="flex gap-1.5">
-                   <div className="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)]" />
-                   <div className="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)]" />
-                   <div className="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)]" />
-                 </div>
-                 <div className="mx-auto text-xs font-mono text-[var(--text-muted)] bg-[var(--surface)] px-24 py-1 rounded-md border border-[var(--border)]">gallery.glimpse.in</div>
-               </div>
-               
-               {/* App Header inside window */}
-               <div className="p-6 pb-2">
-                 <div className="flex items-center justify-between mb-8">
-                   <div className="flex items-center gap-3">
-                     <div className="w-8 h-8 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] font-bold text-xs flex items-center justify-center">CS</div>
-                     <span className="font-semibold text-sm">Capture Studios</span>
-                   </div>
-                   <div className="bg-[var(--accent)] text-white text-xs font-semibold px-4 py-1.5 rounded-full">Find my photos</div>
-                 </div>
-                 
-                 <div className="mb-6">
-                   <p className="text-[10px] font-bold tracking-widest text-[var(--text-muted)] uppercase mb-1">ALBUM BY CAPTURE STUDIOS</p>
-                   <h3 className="text-2xl font-bold">Aarav & Meera</h3>
-                   <div className="flex justify-between items-center mt-1 text-xs text-[var(--text-secondary)]">
-                     <span>6 July 2026</span>
-                     <span>1930 photos</span>
-                   </div>
-                 </div>
-                 
-                 {/* Fake Photo Grid */}
-                 <div className="grid grid-cols-2 gap-3 pb-6">
-                   <div className="aspect-square bg-[var(--surface-soft)] rounded-lg overflow-hidden">
-                     <img src={HERO_IMAGES[0]} className="w-full h-full object-cover opacity-80" alt="mock" />
-                   </div>
-                   <div className="grid grid-rows-2 gap-3">
-                     <div className="bg-[var(--surface-soft)] rounded-lg overflow-hidden">
-                       <img src={HERO_IMAGES[1]} className="w-full h-full object-cover opacity-80" alt="mock" />
-                     </div>
-                     <div className="bg-[var(--surface-soft)] rounded-lg overflow-hidden">
-                       <img src={HERO_IMAGES[2]} className="w-full h-full object-cover opacity-80" alt="mock" />
-                     </div>
-                   </div>
-                 </div>
-               </div>
+              {/* Browser Header */}
+              <div className="h-12 border-b border-[var(--border)] flex items-center px-4 gap-2 bg-[var(--background)]">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)]" />
+                </div>
+                <div className="mx-auto text-xs font-mono text-[var(--text-muted)] bg-[var(--surface)] px-24 py-1 rounded-md border border-[var(--border)]">gallery.glimpse.in</div>
+              </div>
+
+              {/* App Header inside window */}
+              <div className="p-6 pb-2">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] font-bold text-xs flex items-center justify-center">CS</div>
+                    <span className="font-semibold text-sm">Capture Studios</span>
+                  </div>
+                  <div className="bg-[var(--accent)] text-white text-xs font-semibold px-4 py-1.5 rounded-full">Find my photos</div>
+                </div>
+
+                <div className="mb-6">
+                  <p className="text-[10px] font-bold tracking-widest text-[var(--text-muted)] uppercase mb-1">ALBUM BY CAPTURE STUDIOS</p>
+                  <h3 className="text-2xl font-bold">Aarav & Meera</h3>
+                  <div className="flex justify-between items-center mt-1 text-xs text-[var(--text-secondary)]">
+                    <span>6 July 2026</span>
+                    <span>1930 photos</span>
+                  </div>
+                </div>
+
+                {/* Fake Photo Grid */}
+                <div className="grid grid-cols-2 gap-3 pb-6">
+                  <div className="aspect-square bg-[var(--surface-soft)] rounded-lg overflow-hidden">
+                    <img src={HERO_IMAGES[0]} className="w-full h-full object-cover opacity-80" alt="mock" />
+                  </div>
+                  <div className="grid grid-rows-2 gap-3">
+                    <div className="bg-[var(--surface-soft)] rounded-lg overflow-hidden">
+                      <img src={HERO_IMAGES[1]} className="w-full h-full object-cover opacity-80" alt="mock" />
+                    </div>
+                    <div className="bg-[var(--surface-soft)] rounded-lg overflow-hidden">
+                      <img src={HERO_IMAGES[2]} className="w-full h-full object-cover opacity-80" alt="mock" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Floating Tooltips */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
@@ -305,7 +307,7 @@ export default function LandingPage() {
               <div className="text-xs text-[var(--text-secondary)]">Visible on every screen</div>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6 }}
@@ -332,71 +334,71 @@ export default function LandingPage() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center relative">
-             
-             {/* Left - Before */}
-             <div className="bg-[#F8F9FA] rounded-2xl p-8 border border-[var(--border)]/50 relative shadow-inner">
-                <div className="absolute top-4 left-6 text-[10px] font-bold tracking-widest text-[var(--text-muted)] uppercase">BEFORE</div>
-                <div className="absolute top-4 right-6 text-[10px] font-medium text-[var(--text-secondary)]">Generic delivery</div>
-                
-                {/* Fake Windows Explorer */}
-                <div className="mt-8 bg-white border border-[#E1E4E8] rounded-md shadow-sm h-[400px] overflow-hidden flex flex-col">
-                   <div className="h-10 bg-[#F3F4F6] border-b border-[#E1E4E8] flex items-center px-3 gap-2">
-                     <div className="flex-1 bg-white border border-[#D1D5DB] rounded px-2 py-1 text-xs text-gray-500 truncate">
-                       DATA-USB (E:) \ 24f5406db4259b96b39ad15765 \
-                     </div>
-                   </div>
-                   <div className="p-4 grid grid-cols-4 gap-4 flex-1">
-                     {Array.from({length: 12}).map((_, i) => (
-                       <div key={i} className="flex flex-col items-center gap-1">
-                         <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                           <path d="M40 8H22L18 4H8C5.79 4 4.02 5.79 4.02 8L4 40C4 42.21 5.79 44 8 44H40C42.21 44 44 42.21 44 40V12C44 9.79 42.21 8 40 8Z" fill="#FACC15"/>
-                         </svg>
-                         <span className="text-[9px] text-gray-600 truncate w-full text-center">103{i}_wed_lp</span>
-                       </div>
-                     ))}
-                   </div>
-                </div>
-                <p className="text-center text-xs text-[var(--text-muted)] mt-6">Folders and filenames. No studio experience.</p>
-             </div>
 
-             {/* VS Badge */}
-             <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--surface)] border border-[var(--border)] shadow-sm items-center justify-center z-10 text-xs font-bold text-[var(--text-muted)]">
-               VS
-             </div>
+            {/* Left - Before */}
+            <div className="bg-[#F8F9FA] rounded-2xl p-8 border border-[var(--border)]/50 relative shadow-inner">
+              <div className="absolute top-4 left-6 text-[10px] font-bold tracking-widest text-[var(--text-muted)] uppercase">BEFORE</div>
+              <div className="absolute top-4 right-6 text-[10px] font-medium text-[var(--text-secondary)]">Generic delivery</div>
 
-             {/* Right - After */}
-             <div className="bg-[var(--surface-soft)] rounded-2xl p-8 border border-[var(--border)]/50 relative shadow-inner">
-                <div className="absolute top-4 left-6 text-[10px] font-bold tracking-widest text-[var(--accent)] uppercase">WITH GLIMPSE</div>
-                <div className="absolute top-4 right-6 text-[10px] font-medium text-[var(--text-secondary)]">Your studio leads</div>
-                
-                {/* Clean Gallery Mockup */}
-                <div className="mt-8 bg-[var(--surface)] border border-[var(--border)] rounded-xl shadow-lg h-[400px] overflow-hidden flex flex-col p-5">
-                   <div className="flex items-center justify-between mb-4">
-                     <div className="flex items-center gap-2">
-                       <div className="w-6 h-6 rounded-full bg-[var(--accent-soft)]" />
-                       <div className="h-3 w-20 bg-[var(--surface-soft)] rounded" />
-                     </div>
-                     <div className="h-6 w-24 bg-[var(--accent)] rounded-full" />
-                   </div>
-                   <div className="h-6 w-40 bg-[var(--text-primary)] rounded mb-2" />
-                   <div className="h-2 w-16 bg-[var(--surface-soft)] rounded mb-4" />
-                   
-                   <div className="grid grid-cols-2 gap-2 flex-1">
-                     <div className="bg-[var(--surface-soft)] rounded-md overflow-hidden relative">
-                       <img src={HERO_IMAGES[0]} className="w-full h-full object-cover" alt="mock" />
-                     </div>
-                     <div className="grid grid-rows-2 gap-2">
-                       <div className="bg-[var(--surface-soft)] rounded-md overflow-hidden">
-                         <img src={HERO_IMAGES[1]} className="w-full h-full object-cover" alt="mock" />
-                       </div>
-                       <div className="bg-[var(--surface-soft)] rounded-md overflow-hidden">
-                         <img src={HERO_IMAGES[2]} className="w-full h-full object-cover" alt="mock" />
-                       </div>
-                     </div>
-                   </div>
+              {/* Fake Windows Explorer */}
+              <div className="mt-8 bg-white border border-[#E1E4E8] rounded-md shadow-sm h-[400px] overflow-hidden flex flex-col">
+                <div className="h-10 bg-[#F3F4F6] border-b border-[#E1E4E8] flex items-center px-3 gap-2">
+                  <div className="flex-1 bg-white border border-[#D1D5DB] rounded px-2 py-1 text-xs text-gray-500 truncate">
+                    DATA-USB (E:) \ 24f5406db4259b96b39ad15765 \
+                  </div>
                 </div>
-                <p className="text-center text-xs text-[var(--text-muted)] mt-6">Studio logo · Custom cover · Premium gallery</p>
-             </div>
+                <div className="p-4 grid grid-cols-4 gap-4 flex-1">
+                  {Array.from({ length: 12 }).map((_, i) => (
+                    <div key={i} className="flex flex-col items-center gap-1">
+                      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M40 8H22L18 4H8C5.79 4 4.02 5.79 4.02 8L4 40C4 42.21 5.79 44 8 44H40C42.21 44 44 42.21 44 40V12C44 9.79 42.21 8 40 8Z" fill="#FACC15" />
+                      </svg>
+                      <span className="text-[9px] text-gray-600 truncate w-full text-center">103{i}_wed_lp</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="text-center text-xs text-[var(--text-muted)] mt-6">Folders and filenames. No studio experience.</p>
+            </div>
+
+            {/* VS Badge */}
+            <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--surface)] border border-[var(--border)] shadow-sm items-center justify-center z-10 text-xs font-bold text-[var(--text-muted)]">
+              VS
+            </div>
+
+            {/* Right - After */}
+            <div className="bg-[var(--surface-soft)] rounded-2xl p-8 border border-[var(--border)]/50 relative shadow-inner">
+              <div className="absolute top-4 left-6 text-[10px] font-bold tracking-widest text-[var(--accent)] uppercase">WITH GLIMPSE</div>
+              <div className="absolute top-4 right-6 text-[10px] font-medium text-[var(--text-secondary)]">Your studio leads</div>
+
+              {/* Clean Gallery Mockup */}
+              <div className="mt-8 bg-[var(--surface)] border border-[var(--border)] rounded-xl shadow-lg h-[400px] overflow-hidden flex flex-col p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-[var(--accent-soft)]" />
+                    <div className="h-3 w-20 bg-[var(--surface-soft)] rounded" />
+                  </div>
+                  <div className="h-6 w-24 bg-[var(--accent)] rounded-full" />
+                </div>
+                <div className="h-6 w-40 bg-[var(--text-primary)] rounded mb-2" />
+                <div className="h-2 w-16 bg-[var(--surface-soft)] rounded mb-4" />
+
+                <div className="grid grid-cols-2 gap-2 flex-1">
+                  <div className="bg-[var(--surface-soft)] rounded-md overflow-hidden relative">
+                    <img src={HERO_IMAGES[0]} className="w-full h-full object-cover" alt="mock" />
+                  </div>
+                  <div className="grid grid-rows-2 gap-2">
+                    <div className="bg-[var(--surface-soft)] rounded-md overflow-hidden">
+                      <img src={HERO_IMAGES[1]} className="w-full h-full object-cover" alt="mock" />
+                    </div>
+                    <div className="bg-[var(--surface-soft)] rounded-md overflow-hidden">
+                      <img src={HERO_IMAGES[2]} className="w-full h-full object-cover" alt="mock" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-center text-xs text-[var(--text-muted)] mt-6">Studio logo · Custom cover · Premium gallery</p>
+            </div>
           </div>
         </div>
       </section>
@@ -405,7 +407,7 @@ export default function LandingPage() {
       <section className="py-32 px-6 bg-[var(--surface)]">
         <div className="max-w-[1000px] mx-auto">
           <h2 className="text-5xl md:text-6xl font-bold tracking-tighter leading-[0.95] mb-6">
-            Less time answering guests.<br/>
+            Less time answering guests.<br />
             <span className="text-[var(--accent)]">More control</span> over delivery.
           </h2>
           <p className="text-xl text-[var(--text-secondary)] mb-20 max-w-2xl">
@@ -421,25 +423,25 @@ export default function LandingPage() {
         <div className="max-w-[1000px] mx-auto grid md:grid-cols-2 gap-16">
           <div>
             <h2 className="text-4xl md:text-6xl font-bold tracking-tighter leading-[0.95] mb-6">
-              Try it with<br/>confidence.
+              Try it with<br />confidence.
             </h2>
             <p className="text-[var(--text-secondary)]">What to know about guests, branding, privacy, and security.</p>
           </div>
-          
+
           <FAQAccordion faqs={[
-              { q: "How do guests find their photos?", a: "Guests simply open the gallery link and take a quick selfie. Our secure facial matching technology instantly finds every photo they appear in." },
-              { q: "Do guests need to install an app?", a: "No. Everything happens right in their mobile browser. No apps to download, no accounts to create, and no passwords to remember." },
-              { q: "Is the gallery white-label?", a: "Yes. Your studio's name, logo, and branding are front and center. Glimpse stays invisible in the background." },
-              { q: "What happens to the selfies?", a: "Selfies are securely processed for matching and then immediately discarded. We do not store or use guest selfies for any other purpose." }
-            ]} />
+            { q: "How do guests find their photos?", a: "Guests simply open the gallery link and take a quick selfie. Our secure facial matching technology instantly finds every photo they appear in." },
+            { q: "Do guests need to install an app?", a: "No. Everything happens right in their mobile browser. No apps to download, no accounts to create, and no passwords to remember." },
+            { q: "Is the gallery white-label?", a: "Yes. Your studio's name, logo, and branding are front and center. Glimpse stays invisible in the background." },
+            { q: "What happens to the selfies?", a: "Selfies are securely processed for matching and then immediately discarded. We do not store or use guest selfies for any other purpose." }
+          ]} />
         </div>
       </section>
 
       {/* Dark Centered CTA (From Photo 1) */}
       <section className="bg-[#1C1814] relative overflow-hidden text-white font-sans border-t-[8px] border-[#2C2620]">
         {/* Hexagon Pattern Background */}
-        <div 
-          className="absolute inset-0 z-0 opacity-10 pointer-events-none" 
+        <div
+          className="absolute inset-0 z-0 opacity-10 pointer-events-none"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='103.923' viewBox='0 0 60 103.923' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 17.32V51.96L30 69.28L0 51.96V17.32L30 0ZM30 103.92L60 86.6V51.96L30 34.64L0 51.96V86.6L30 103.92Z' fill='none' stroke='%23FFFFFF' stroke-width='1.5'/%3E%3C/svg%3E")`,
             backgroundSize: '120px',
@@ -454,7 +456,7 @@ export default function LandingPage() {
             Run a real event on the free plan—your photos, your branding, and every guest finding themselves.
           </p>
           <div className="flex items-center gap-4 mb-8">
-            <Link to={ROUTES.DASHBOARD}>
+            <Link to={ROUTES.LOGIN}>
               <Button size="lg" className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-black shadow-xl px-8 h-12 text-sm font-bold transition-transform hover:scale-105 border-0">
                 Start free
               </Button>

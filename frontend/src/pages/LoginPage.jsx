@@ -13,7 +13,11 @@ export default function LoginPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Simulate auth success
-    navigate(ROUTES.DASHBOARD);
+    if (userType === 'guest') {
+      navigate(ROUTES.GUEST_DASHBOARD);
+    } else {
+      navigate(ROUTES.DASHBOARD);
+    }
   };
 
   return (

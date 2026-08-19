@@ -14,8 +14,8 @@ export function Footer() {
           backgroundPosition: 'top center'
         }}
       />
-      <div className="relative z-10 max-w-[1300px] mx-auto px-6 pt-24 pb-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-24">
+      <div className="relative z-10 max-w-[1300px] mx-auto px-6 pt-8 pb-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-8">
           
           {/* Left Column (Brand & Info) */}
           <div className="md:col-span-5 lg:col-span-4 space-y-6">
@@ -53,9 +53,7 @@ export function Footer() {
               <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
               <li><Link to="/how-it-works" className="hover:text-white transition-colors">How it works</Link></li>
               <li><Link to="/for-photographers" className="hover:text-white transition-colors">For photographers</Link></li>
-              <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-              <li><a href="/#pricing" className="hover:text-white transition-colors">Pricing</a></li>
+              <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
             </ul>
           </div>
 
@@ -70,7 +68,7 @@ export function Footer() {
         </div>
 
         {/* Copyright Bar */}
-        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-medium text-[#6B6661]">
+        <div className="pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-medium text-[#6B6661]">
           <div>© 2026 Glimpse India. All rights reserved.</div>
           <div>A product of Logicbyts Software Solutions.</div>
         </div>

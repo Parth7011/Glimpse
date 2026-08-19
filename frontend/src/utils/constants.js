@@ -10,7 +10,9 @@ export const APP_DESCRIPTION = 'AI-powered event photo delivery. Photographers u
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
+  HOWITWORKS: '/how-it-works',
   DASHBOARD: '/dashboard',
+  GUEST_DASHBOARD: '/guest-dashboard',
   EVENTS_NEW: '/events/new',
   EVENT: id => `/events/${id}`,
   EVENT_UPLOAD: id => `/events/${id}/upload`,

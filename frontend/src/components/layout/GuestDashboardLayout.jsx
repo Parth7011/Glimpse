@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Calendar, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { Camera, Image, Settings, LogOut, ChevronRight, Search } from 'lucide-react';
 import { cn } from '@/utils/utils';
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', icon: LayoutDashboard, to: '/dashboard' },
-  { label: 'Events', icon: Calendar, to: '/dashboard', matchPrefix: '/events' },
-  { label: 'Settings', icon: Settings, to: '/dashboard/settings' },
+  { label: 'My Events', icon: Image, to: '/guest-dashboard' },
+  { label: 'Find Event', icon: Search, to: '/guest-dashboard/find' },
+  { label: 'Settings', icon: Settings, to: '/guest-dashboard/settings' },
 ];
 
 function NavLink({ item, isActive }) {
@@ -32,11 +32,10 @@ function NavLink({ item, isActive }) {
   );
 }
 
-export function DashboardLayout() {
+export function GuestDashboardLayout() {
   const location = useLocation();
 
   const isNavActive = (item) => {
-    if (item.matchPrefix && location.pathname.startsWith(item.matchPrefix)) return true;
     return location.pathname === item.to;
   };
 
@@ -65,12 +64,12 @@ export function DashboardLayout() {
         <div className="space-y-2 pt-4 border-t border-[var(--border)]">
           {/* User profile */}
           <div className="flex items-center gap-3 px-2 py-3">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center text-xs font-bold text-white shadow-sm">
-              AK
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#7C6EF6] to-[#5A4ED1] flex items-center justify-center text-xs font-bold text-white shadow-sm">
+              G
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[var(--text-primary)] truncate">Arjun Kapoor</p>
-              <p className="text-xs text-[var(--text-muted)] truncate">demo@glimpse.com</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)] truncate">Guest User</p>
+              <p className="text-xs text-[var(--text-muted)] truncate">guest@glimpse.com</p>
             </div>
           </div>
           {/* Logout */}
@@ -90,8 +89,8 @@ export function DashboardLayout() {
             </div>
             Glimpse
           </Link>
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center text-xs font-bold text-white">
-            AK
+          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#7C6EF6] to-[#5A4ED1] flex items-center justify-center text-xs font-bold text-white">
+            G
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6 lg:p-8">

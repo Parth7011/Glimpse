@@ -114,7 +114,7 @@ export default function ForPhotographersPage() {
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.28 }}
               className="flex flex-col sm:flex-row items-start gap-4">
-              <Link to={ROUTES.DASHBOARD}>
+              <Link to={ROUTES.LOGIN}>
                 <Button size="xl" className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white shadow-xl px-10 h-14 text-base font-semibold tracking-wide">
                   Start free →
                 </Button>

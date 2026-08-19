@@ -112,7 +112,7 @@ export default function HowItWorksPage() {
             <Link to={ROUTES.LOGIN} className="text-sm font-semibold text-[var(--text-primary)] hover:text-[var(--text-secondary)] transition-colors hidden sm:block px-2">
               Login
             </Link>
-            <Link to={ROUTES.DASHBOARD}>
+            <Link to={ROUTES.LOGIN}>
               <Button className="rounded-full px-6 shadow-sm font-semibold tracking-wide bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white">
                 Start free →
               </Button>
@@ -158,7 +158,7 @@ export default function HowItWorksPage() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="flex flex-col sm:flex-row items-center gap-4 mb-20"
         >
-          <Link to={ROUTES.DASHBOARD}>
+          <Link to={ROUTES.LOGIN}>
             <Button size="xl" className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white shadow-xl px-10 h-14 text-base font-semibold tracking-wide">
               Start free →
             </Button>
