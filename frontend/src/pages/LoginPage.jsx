@@ -22,12 +22,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F2EF] flex items-center justify-center p-4 md:p-8 font-sans text-[#171717]">
-      <div className="w-full max-w-[1300px] h-[90vh] min-h-[650px] max-h-[900px] bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row">
+      <div className="w-full max-w-[1300px] h-[90vh] min-h-[550px] max-h-[900px] bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row">
         
         {/* Left Side: Form */}
-        <div className="w-full lg:w-[45%] bg-[#FDF9F2] h-full flex flex-col p-6 md:p-8 relative overflow-y-auto">
+        <div className="w-full lg:w-[45%] bg-[#FDF9F2] h-full flex flex-col p-4 md:p-6 relative overflow-y-auto">
           {/* Logo */}
-          <Link to="/" className="flex flex-col mb-8 w-fit group">
+          <Link to="/" className="flex flex-col mb-4 w-fit group">
             <div className="flex items-center gap-2 mb-1">
               <Camera className="w-7 h-7 text-[#171717]" />
               <span className="text-2xl font-bold tracking-tight">Glimpse</span>
@@ -38,8 +38,8 @@ export default function LoginPage() {
           </Link>
 
           <div className="flex-1 flex flex-col justify-center max-w-[400px] w-full mx-auto">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold tracking-tight mb-2">
+            <div className="mb-4">
+              <h1 className="text-3xl font-bold tracking-tight mb-1">
                 {isLogin ? 'Welcome back' : 'Create an account'}
               </h1>
               <p className="text-sm text-[#6B6B67]">
@@ -48,7 +48,7 @@ export default function LoginPage() {
             </div>
 
             {/* Role Toggle */}
-            <div className="flex items-center gap-6 mb-6 text-sm font-medium">
+            <div className="flex items-center gap-6 mb-4 text-sm font-medium">
               <label className="flex items-center gap-2 cursor-pointer">
                 <div className={cn(
                   "w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors",
@@ -82,8 +82,8 @@ export default function LoginPage() {
             </div>
 
             {/* Social Logins */}
-            <div className="space-y-2.5 mb-6">
-              <button className="w-full bg-white border border-[#E5E5E0] rounded-xl py-3 px-4 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
+            <div className="space-y-2 mb-4">
+              <button className="w-full bg-white border border-[#E5E5E0] rounded-xl py-2.5 px-4 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -92,7 +92,7 @@ export default function LoginPage() {
                 </svg>
                 Continue with Google
               </button>
-              <button className="w-full bg-white border border-[#E5E5E0] rounded-xl py-3 px-4 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
+              <button className="w-full bg-white border border-[#E5E5E0] rounded-xl py-2.5 px-4 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.09 2.31-.86 3.5-.8 1.49.03 2.65.65 3.35 1.7-2.93 1.76-2.42 5.71.49 6.9-1.04 2.83-2.58 3.5-2.42 4.37zm-2.9-14.88c.61-1.89-.5-3.56-2.2-4.1-1.39 2.12.92 4.41 2.2 4.1z" />
                 </svg>
@@ -100,14 +100,14 @@ export default function LoginPage() {
               </button>
             </div>
 
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 mb-4">
               <div className="h-[1px] flex-1 bg-[#E5E5E0]" />
               <span className="text-[10px] uppercase font-bold text-[#9C9C97] tracking-widest">OR</span>
               <div className="h-[1px] flex-1 bg-[#E5E5E0]" />
             </div>
 
             {/* Custom Form */}
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-[#171717]">Full Name</label>
@@ -119,7 +119,7 @@ export default function LoginPage() {
                       type="text" 
                       placeholder="Enter your name" 
                       required 
-                      className="w-full pl-10 pr-4 py-3 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
+                      className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
                     />
                   </div>
                 </div>
@@ -136,7 +136,7 @@ export default function LoginPage() {
                     placeholder="Enter your email" 
                     required 
                     defaultValue="demo@glimpse.com"
-                    className="w-full pl-10 pr-4 py-3 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
+                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
                   />
                 </div>
               </div>
@@ -157,7 +157,7 @@ export default function LoginPage() {
                     placeholder="Enter your password" 
                     required 
                     defaultValue="password"
-                    className="w-full pl-10 pr-10 py-3 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
+                    className="w-full pl-10 pr-10 py-2.5 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
                   />
                   <button 
                     type="button" 
@@ -171,13 +171,13 @@ export default function LoginPage() {
 
               <button 
                 type="submit" 
-                className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold py-3.5 rounded-xl shadow-[0_4px_14px_rgba(217,154,50,0.4)] transition-transform hover:scale-[1.02]"
+                className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold py-3 rounded-xl shadow-[0_4px_14px_rgba(217,154,50,0.4)] transition-transform hover:scale-[1.02]"
               >
                 {isLogin ? 'Sign in' : 'Create account'}
               </button>
             </form>
 
-            <p className="text-center text-sm text-[#6B6B67] mt-6">
+            <p className="text-center text-sm text-[#6B6B67] mt-4">
               {isLogin ? "Don't have an account? " : "Already have an account? "}
               <button onClick={() => setIsLogin(!isLogin)} className="text-[var(--accent)] font-bold hover:underline">
                 {isLogin ? 'Sign up' : 'Sign in'}

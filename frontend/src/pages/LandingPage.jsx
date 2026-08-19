@@ -455,15 +455,12 @@ export default function LandingPage() {
           <p className="text-[#A19D98] text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto">
             Run a real event on the free plan—your photos, your branding, and every guest finding themselves.
           </p>
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex flex-col items-center gap-4 mb-8">
             <Link to={ROUTES.LOGIN}>
               <Button size="lg" className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-black shadow-xl px-8 h-12 text-sm font-bold transition-transform hover:scale-105 border-0">
                 Start free
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="rounded-full border-white/20 text-white hover:bg-white/10 hover:text-white px-8 h-12 text-sm font-bold transition-colors">
-              View plans
-            </Button>
           </div>
           <p className="text-[#6B6661] text-[11px] font-semibold tracking-widest uppercase">
             Free to start · No credit card required
