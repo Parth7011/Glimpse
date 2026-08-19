@@ -1,7 +1,8 @@
-import React from 'react';
-import { Link, useLocation, Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Settings, LogOut, ChevronRight } from 'lucide-react';
 import { cn } from '@/utils/utils';
+import { authService } from '@/services/authService';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', icon: LayoutDashboard, to: '/dashboard' },
@@ -33,10 +34,38 @@ function NavLink({ item, isActive }) {
 
 export function DashboardLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState({ name: 'Photographer', email: '' });
+
+  useEffect(() => {
+    try {
+      const userStr = localStorage.getItem('glimpse_user');
+      if (userStr) {
+        const parsedUser = JSON.parse(userStr);
+        setUser({
+          name: parsedUser.user_metadata?.name || parsedUser.name || parsedUser.email?.split('@')[0] || 'Photographer',
+          email: parsedUser.email || ''
+        });
+      }
+    } catch (e) {
+      console.error('Failed to parse user from local storage');
+    }
+  }, []);
 
   const isNavActive = (item) => {
     if (item.matchPrefix && location.pathname.startsWith(item.matchPrefix)) return true;
     return location.pathname === item.to;
+  };
+
+  const getInitials = (name) => {
+    if (!name) return 'P';
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    await authService.logout();
+    navigate('/login');
   };
 
   return (
@@ -64,19 +93,19 @@ export function DashboardLayout() {
         <div className="space-y-2 pt-4 border-t border-[var(--border)]">
           {/* User profile */}
           <div className="flex items-center gap-3 px-2 py-3">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center text-xs font-bold text-white shadow-sm">
-              AK
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center text-xs font-bold text-white shadow-sm uppercase">
+              {getInitials(user.name)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[var(--text-primary)] truncate">Arjun Kapoor</p>
-              <p className="text-xs text-[var(--text-muted)] truncate">demo@glimpse.com</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{user.name}</p>
+              <p className="text-xs text-[var(--text-muted)] truncate">{user.email}</p>
             </div>
           </div>
           {/* Logout */}
-          <Link to="/login" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--danger)] hover:bg-[var(--danger-soft)] rounded-[var(--radius-md)] transition-colors w-full">
+          <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--danger)] hover:bg-[var(--danger-soft)] rounded-[var(--radius-md)] transition-colors w-full text-left">
             <LogOut className="w-4 h-4" />
             Sign out
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -89,8 +118,8 @@ export function DashboardLayout() {
             </div>
             Glimpse
           </Link>
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center text-xs font-bold text-white">
-            AK
+          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center text-xs font-bold text-white uppercase">
+            {getInitials(user.name)}
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6 lg:p-8">

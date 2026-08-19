@@ -1,31 +1,31 @@
-/* ============================================
-   Matching Service — mock implementation
-   Later: Next.js Route Handler → FastAPI face_recognition
-   ============================================ */
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
-import { MOCK_MATCHES } from '../data/mockData';
-import { sleep } from '@/utils/utils';
 export const matchingService = {
   /**
    * Send guest selfie for face matching against event photos.
-   * 
-   * Flow: selfie → face detection → face encoding → compare against
-   * event embeddings → return matching photo IDs with similarity scores.
-   * 
-   * The selfie is NOT permanently stored.
    */
-  async matchSelfie(eventId, sessionId, _selfie) {
-    // Simulate the face processing pipeline
-    await sleep(3000);
-    return {
-      matches: MOCK_MATCHES,
-      total_found: MOCK_MATCHES.length,
-      processing_time_ms: 2847
-    };
+  async matchSelfie(eventId, sessionId, selfieFile) {
+    // In a real implementation with FormData:
+    // const formData = new FormData();
+    // formData.append('eventId', eventId);
+    // formData.append('sessionId', sessionId);
+    // formData.append('selfie', selfieFile);
+    
+    // For now, mocking the payload since we aren't doing real ML upload
+    const response = await fetch(`${API_URL}/matches/selfie`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventId, sessionId })
+    });
+    
+    if (!response.ok) throw new Error('Failed to match selfie');
+    return await response.json();
   },
+  
   /** Get previously computed matches for a session */
   async getMatches(sessionId) {
-    await sleep(400);
-    return MOCK_MATCHES;
+    const response = await fetch(`${API_URL}/matches/${sessionId}`);
+    if (!response.ok) throw new Error('Failed to fetch matches');
+    return await response.json();
   }
 };

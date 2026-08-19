@@ -1,22 +1,44 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES } from '@/utils/constants';
-import { Camera, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Camera, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { cn } from '@/utils/utils';
+import { authService } from '../services/authService';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [userType, setUserType] = useState('photographer'); // 'photographer' or 'guest'
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Form state
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate auth success
+    setError(null);
+    
     if (userType === 'guest') {
       navigate(ROUTES.GUEST_DASHBOARD);
-    } else {
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      if (isLogin) {
+        await authService.login({ email, password });
+      } else {
+        await authService.register({ name, email, password });
+      }
       navigate(ROUTES.DASHBOARD);
+    } catch (err) {
+      setError(err.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,30 +103,11 @@ export default function LoginPage() {
               </label>
             </div>
 
-            {/* Social Logins */}
-            <div className="space-y-2 mb-4">
-              <button className="w-full bg-white border border-[#E5E5E0] rounded-xl py-2.5 px-4 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                </svg>
-                Continue with Google
-              </button>
-              <button className="w-full bg-white border border-[#E5E5E0] rounded-xl py-2.5 px-4 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.09 2.31-.86 3.5-.8 1.49.03 2.65.65 3.35 1.7-2.93 1.76-2.42 5.71.49 6.9-1.04 2.83-2.58 3.5-2.42 4.37zm-2.9-14.88c.61-1.89-.5-3.56-2.2-4.1-1.39 2.12.92 4.41 2.2 4.1z" />
-                </svg>
-                Continue with Apple
-              </button>
-            </div>
-
-            <div className="flex items-center gap-4 mb-4">
-              <div className="h-[1px] flex-1 bg-[#E5E5E0]" />
-              <span className="text-[10px] uppercase font-bold text-[#9C9C97] tracking-widest">OR</span>
-              <div className="h-[1px] flex-1 bg-[#E5E5E0]" />
-            </div>
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-sm font-medium">
+                {error}
+              </div>
+            )}
 
             {/* Custom Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -118,7 +121,9 @@ export default function LoginPage() {
                     <input 
                       type="text" 
                       placeholder="Enter your name" 
-                      required 
+                      required={!isLogin}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
                     />
                   </div>
@@ -135,7 +140,8 @@ export default function LoginPage() {
                     type="email" 
                     placeholder="Enter your email" 
                     required 
-                    defaultValue="demo@glimpse.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
                   />
                 </div>
@@ -156,7 +162,8 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"} 
                     placeholder="Enter your password" 
                     required 
-                    defaultValue="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-10 pr-10 py-2.5 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
                   />
                   <button 
@@ -171,15 +178,23 @@ export default function LoginPage() {
 
               <button 
                 type="submit" 
-                className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold py-3 rounded-xl shadow-[0_4px_14px_rgba(217,154,50,0.4)] transition-transform hover:scale-[1.02]"
+                disabled={loading}
+                className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold py-3 rounded-xl shadow-[0_4px_14px_rgba(217,154,50,0.4)] transition-transform hover:scale-[1.02] flex items-center justify-center disabled:opacity-70 disabled:hover:scale-100"
               >
-                {isLogin ? 'Sign in' : 'Create account'}
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isLogin ? 'Sign in' : 'Create account')}
               </button>
             </form>
 
             <p className="text-center text-sm text-[#6B6B67] mt-4">
               {isLogin ? "Don't have an account? " : "Already have an account? "}
-              <button onClick={() => setIsLogin(!isLogin)} className="text-[var(--accent)] font-bold hover:underline">
+              <button 
+                type="button"
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setError(null);
+                }} 
+                className="text-[var(--accent)] font-bold hover:underline"
+              >
                 {isLogin ? 'Sign up' : 'Sign in'}
               </button>
             </p>

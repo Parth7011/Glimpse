@@ -1,35 +1,66 @@
-/* ============================================
-   Auth Service — mock implementation
-   Later: Supabase Auth
-   ============================================ */
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
-import { MOCK_PHOTOGRAPHER } from '../data/mockData';
-import { sleep } from '@/utils/utils';
-let _currentUser = null;
 export const authService = {
-  /** Login with email and password */
+  async register(req) {
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req),
+    });
+    
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to register');
+    }
+    
+    // Store token
+    if (data.session?.access_token) {
+      localStorage.setItem('glimpse_token', data.session.access_token);
+      localStorage.setItem('glimpse_user', JSON.stringify(data.user));
+    }
+    
+    return data;
+  },
+
   async login(req) {
-    await sleep(800);
-    // Mock: accept any credentials
-    _currentUser = {
-      id: MOCK_PHOTOGRAPHER.id,
-      email: req.email || MOCK_PHOTOGRAPHER.email,
-      name: MOCK_PHOTOGRAPHER.name
-    };
-    return _currentUser;
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req),
+    });
+    
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to login');
+    }
+    
+    // Store token
+    if (data.session?.access_token) {
+      localStorage.setItem('glimpse_token', data.session.access_token);
+      localStorage.setItem('glimpse_user', JSON.stringify(data.user));
+    }
+    
+    return data;
   },
-  /** Logout */
+
   async logout() {
-    await sleep(300);
-    _currentUser = null;
+    localStorage.removeItem('glimpse_token');
+    localStorage.removeItem('glimpse_user');
   },
-  /** Get current authenticated user */
+
   async getUser() {
-    await sleep(200);
-    return _currentUser;
+    const userStr = localStorage.getItem('glimpse_user');
+    if (userStr) {
+      try {
+        return JSON.parse(userStr);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   },
-  /** Check if user is authenticated */
+
   isAuthenticated() {
-    return _currentUser !== null;
+    return !!localStorage.getItem('glimpse_token');
   }
 };

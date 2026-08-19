@@ -1,36 +1,29 @@
-/* ============================================
-   Download Service — mock implementation
-   Later: Next.js Route Handler → FastAPI zipfile
-   ============================================ */
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
-import { sleep } from '@/utils/utils';
 export const downloadService = {
   /** Download a single photo by ID */
   async downloadPhoto(photoId, eventId) {
-    await sleep(500);
-    // Mock: return a placeholder URL
-    return `/images/mock/photo-placeholder.jpg`;
+    const response = await fetch(`${API_URL}/downloads/photo/${photoId}`);
+    if (!response.ok) throw new Error('Failed to get download URL');
+    const data = await response.json();
+    return data.url;
   },
+  
   /** Request a ZIP of multiple photos */
   async requestZipDownload(photoIds, eventId, sessionId) {
-    await sleep(2000);
-    return {
-      status: 'ready',
-      progress_percent: 100,
-      download_url: '/mock-download.zip',
-      file_count: photoIds.length,
-      total_size_bytes: photoIds.length * 3 * 1024 * 1024
-    };
+    const response = await fetch(`${API_URL}/downloads/zip`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photoIds, eventId, sessionId })
+    });
+    if (!response.ok) throw new Error('Failed to request ZIP download');
+    return await response.json();
   },
+  
   /** Poll ZIP generation progress */
   async getZipProgress(downloadId) {
-    await sleep(300);
-    return {
-      status: 'ready',
-      progress_percent: 100,
-      download_url: '/mock-download.zip',
-      file_count: 8,
-      total_size_bytes: 24 * 1024 * 1024
-    };
+    const response = await fetch(`${API_URL}/downloads/zip/${downloadId}`);
+    if (!response.ok) throw new Error('Failed to get ZIP progress');
+    return await response.json();
   }
 };

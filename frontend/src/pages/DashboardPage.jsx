@@ -24,6 +24,24 @@ const itemVariants = {
 };
 
 export default function DashboardPage() {
+  const [userName, setUserName] = useState('Photographer');
+
+  useEffect(() => {
+    try {
+      const userStr = localStorage.getItem('glimpse_user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        if (user.name) {
+          setUserName(user.name.split(' ')[0]); // Get first name
+        } else if (user.email) {
+          setUserName(user.email.split('@')[0]);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse user from local storage');
+    }
+  }, []);
+
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboardStats'],
     queryFn: () => eventService.getDashboardStats()
@@ -45,7 +63,7 @@ export default function DashboardPage() {
       <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-[var(--text-primary)]">
-            {getGreeting()}, Arjun
+            {getGreeting()}, {userName}
           </h1>
           <p className="text-[var(--text-secondary)] mt-1.5 text-lg">Manage your events and photo delivery.</p>
         </div>

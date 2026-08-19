@@ -1,73 +1,71 @@
-/* ============================================
-   Photo Service — mock implementation
-   Later: Next.js Route Handlers → Supabase Storage + FastAPI
-   ============================================ */
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
-import { MOCK_PHOTOS } from '../data/mockData';
-import { sleep, generateId } from '@/utils/utils';
-let _photos = [...MOCK_PHOTOS];
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('glimpse_token');
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {})
+  };
+};
+
 export const photoService = {
   /** List photos for an event */
   async listPhotos(eventId) {
-    await sleep(500);
-    const photos = _photos.filter(p => p.event_id === eventId);
-    return {
-      photos,
-      total: photos.length
-    };
+    const response = await fetch(`${API_URL}/photos/event/${eventId}`, {
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to fetch photos');
+    return await response.json();
   },
-  /** Upload a photo (mock: just create a record) */
+  
+  /** Upload a photo metadata record to the backend */
   async uploadPhoto(eventId, file) {
-    await sleep(1200);
-    const photo = {
-      id: generateId(),
-      event_id: eventId,
-      storage_path: `/events/${eventId}/originals/${file.name}`,
-      thumbnail_path: `/events/${eventId}/thumbnails/${file.name.replace(/\.\w+$/, '.webp')}`,
-      preview_path: `/events/${eventId}/previews/${file.name.replace(/\.\w+$/, '.webp')}`,
+    // In a real flow, you'd upload the file to Supabase Storage first,
+    // then send the metadata to the backend.
+    // Since we're not touching Supabase Storage in this Express-only mode yet,
+    // we just send a mock payload representing the uploaded file.
+    const payload = {
       filename: file.name,
-      status: 'uploaded',
-      face_count: 0,
-      width: 4000,
-      height: 2667,
+      storage_path: `/events/${eventId}/originals/${file.name}`,
       size_bytes: file.size,
-      created_at: new Date().toISOString()
+      width: 4000,
+      height: 2667
     };
-    _photos = [..._photos, photo];
-    return photo;
+    
+    const response = await fetch(`${API_URL}/photos/event/${eventId}/upload`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) throw new Error('Failed to upload photo record');
+    return await response.json();
   },
+  
   /** Get a signed URL for a photo */
   async getSignedUrl(photoId) {
-    await sleep(200);
-    return {
-      url: `/images/mock/photo-placeholder.jpg`,
-      expires_at: new Date(Date.now() + 3600 * 1000).toISOString()
-    };
+    const response = await fetch(`${API_URL}/photos/${photoId}/url`, {
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to fetch signed URL');
+    return await response.json();
   },
+  
   /** Get processing progress for an event */
   async getProcessingProgress(eventId) {
-    await sleep(300);
-    const photos = _photos.filter(p => p.event_id === eventId);
-    const processed = photos.filter(p => p.status === 'ready').length;
-    const total = photos.length;
-    const percent = total > 0 ? Math.round(processed / total * 100) : 0;
-    return {
-      event_id: eventId,
-      status: percent === 100 ? 'ready' : 'processing',
-      current_step: percent === 100 ? 'complete' : 'detecting_faces',
-      total_photos: total,
-      processed_photos: processed,
-      total_faces: photos.reduce((sum, p) => sum + p.face_count, 0),
-      progress_percent: percent
-    };
+    const response = await fetch(`${API_URL}/photos/event/${eventId}/progress`, {
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to fetch progress');
+    return await response.json();
   },
+  
   /** Trigger processing for an event's photos */
   async triggerProcessing(eventId) {
-    await sleep(500);
-    // Mock: mark all photos as processing
-    _photos = _photos.map(p => p.event_id === eventId ? {
-      ...p,
-      status: 'processing'
-    } : p);
+    const response = await fetch(`${API_URL}/photos/event/${eventId}/process`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to trigger processing');
+    return await response.json();
   }
 };
