@@ -1,4 +1,4 @@
-import supabase from '../config/supabase.js';
+import supabase, { adminSupabase } from '../config/supabase.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export const listPhotos = async (eventId) => {
@@ -69,10 +69,10 @@ export const uploadAndProcessPhoto = async (eventId, file, metadata) => {
 
   if (error) throw error;
   
-  // 3. Update event photo_count
-  const { data: event } = await supabase.from('events').select('photo_count').eq('id', eventId).single();
+  // Update photo count
+  const { data: event } = await adminSupabase.from('events').select('photo_count').eq('id', eventId).single();
   if (event) {
-    await supabase.from('events').update({ photo_count: (event.photo_count || 0) + 1 }).eq('id', eventId);
+    await adminSupabase.from('events').update({ photo_count: (event.photo_count || 0) + 1 }).eq('id', eventId);
   }
   
   return data;
@@ -132,7 +132,7 @@ export const getProcessingProgress = async (eventId) => {
 export const triggerProcessing = async (eventId) => {
   // Normally this would call the FastAPI ML service.
   // For now, we just update the DB to simulate it starting.
-  const { error } = await supabase
+  const { error } = await adminSupabase
     .from('events')
     .update({ status: 'processing' })
     .eq('id', eventId);

@@ -47,6 +47,7 @@ export const getEvent = async (req, res) => {
   try {
     const photographerId = req.user.id;
     const { id } = req.params;
+    console.log("Fetching event with id:", id, "for photographer:", photographerId);
     const event = await eventService.getEvent(photographerId, id);
     res.status(200).json(event);
   } catch (error) {

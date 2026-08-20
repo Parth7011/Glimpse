@@ -2,7 +2,7 @@ import supabase, { adminSupabase } from '../config/supabase.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export const listEvents = async (photographerId) => {
-  const { data, error } = await supabase
+  const { data, error } = await adminSupabase
     .from('events')
     .select('*')
     .eq('photographer_id', photographerId)
@@ -13,7 +13,7 @@ export const listEvents = async (photographerId) => {
 };
 
 export const getDashboardStats = async (photographerId) => {
-  const { data: events, error } = await supabase
+  const { data: events, error } = await adminSupabase
     .from('events')
     .select('id, photo_count, guest_count')
     .eq('photographer_id', photographerId);
@@ -75,7 +75,7 @@ export const createEvent = async (photographerId, eventData, photographerMeta = 
 
 
 export const getEvent = async (photographerId, eventId) => {
-  const { data, error } = await supabase
+  const { data, error } = await adminSupabase
     .from('events')
     .select('*')
     .eq('id', eventId)
@@ -87,7 +87,7 @@ export const getEvent = async (photographerId, eventId) => {
 };
 
 export const getEventBySlug = async (slug) => {
-  const { data, error } = await supabase
+  const { data, error } = await adminSupabase
     .from('events')
     .select('*')
     .eq('slug', slug)
@@ -98,7 +98,7 @@ export const getEventBySlug = async (slug) => {
 };
 
 export const updateEvent = async (photographerId, eventId, updates) => {
-  const { data, error } = await supabase
+  const { data, error } = await adminSupabase
     .from('events')
     .update(updates)
     .eq('id', eventId)
@@ -111,7 +111,7 @@ export const updateEvent = async (photographerId, eventId, updates) => {
 };
 
 export const getShareInfo = async (photographerId, eventId) => {
-  const { data: event, error } = await supabase
+  const { data: event, error } = await adminSupabase
     .from('events')
     .select('id, slug')
     .eq('id', eventId)

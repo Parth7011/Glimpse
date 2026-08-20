@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const createSession = async (eventSlug) => {
   // First, find the event ID by slug
-  const { data: event, error: eventError } = await supabase
+  const { data: event, error: eventError } = await adminSupabase
     .from('events')
     .select('id')
     .eq('slug', eventSlug)
