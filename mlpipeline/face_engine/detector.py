@@ -8,6 +8,16 @@ from .utils import bytes_to_cv2_image, normalize_embedding
 
 logger = logging.getLogger(__name__)
 
+# Dynamically import spaces for Hugging Face ZeroGPU compatibility, fallback to mock if local
+try:
+    import spaces
+except ImportError:
+    class spaces:
+        @staticmethod
+        def GPU(func):
+            return func
+
+
 class FaceEngine:
     """
     Singleton / Thread-safe wrapper for InsightFace FaceAnalysis.
@@ -72,6 +82,7 @@ class FaceEngine:
         image_bgr = bytes_to_cv2_image(image_bytes)
         return self.extract_faces_from_bgr(image_bgr)
 
+    @spaces.GPU
     def extract_faces_from_bgr(self, image_bgr: np.ndarray) -> list[dict[str, Any]]:
         """
         Extracts faces directly from an OpenCV BGR image array.
