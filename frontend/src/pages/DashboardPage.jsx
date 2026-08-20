@@ -31,10 +31,10 @@ export default function DashboardPage() {
       const userStr = localStorage.getItem('glimpse_user');
       if (userStr) {
         const user = JSON.parse(userStr);
-        if (user.name) {
-          setUserName(user.name.split(' ')[0]); // Get first name
-        } else if (user.email) {
-          setUserName(user.email.split('@')[0]);
+        // Supabase stores the name in user_metadata, not directly on the user object
+        const name = user.user_metadata?.name || user.name || user.email?.split('@')[0];
+        if (name) {
+          setUserName(name);
         }
       }
     } catch (e) {

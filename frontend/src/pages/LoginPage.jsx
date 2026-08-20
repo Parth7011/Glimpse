@@ -21,20 +21,16 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    
-    if (userType === 'guest') {
-      navigate(ROUTES.GUEST_DASHBOARD);
-      return;
-    }
-    
     setLoading(true);
+
     try {
       if (isLogin) {
         await authService.login({ email, password });
       } else {
         await authService.register({ name, email, password });
       }
-      navigate(ROUTES.DASHBOARD);
+      // Route based on selected user type
+      navigate(userType === 'guest' ? ROUTES.GUEST_DASHBOARD : ROUTES.DASHBOARD);
     } catch (err) {
       setError(err.message || 'Authentication failed');
     } finally {

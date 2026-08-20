@@ -1,4 +1,4 @@
-import supabase from '../config/supabase.js';
+import supabase, { adminSupabase } from '../config/supabase.js';
 
 export const registerUser = async (email, password, name) => {
   // Sign up the user in Supabase Auth
@@ -19,18 +19,18 @@ export const registerUser = async (email, password, name) => {
   // Optionally: After successful signup, you could also insert the photographer profile 
   // into the 'photographers' table if it isn't handled by a Supabase Database trigger.
   // We'll insert it manually here for completeness.
+  // Insert the photographer profile using the admin client to bypass RLS.
   if (data.user) {
-    const { error: dbError } = await supabase
+    const { error: dbError } = await adminSupabase
       .from('photographers')
-      .insert([
+      .upsert([
         {
           id: data.user.id,
           email: data.user.email,
           name: name,
         }
-      ]);
+      ], { onConflict: 'id' });
     
-    // Ignore error if RLS or triggers already inserted it
     if (dbError) {
       console.error('Error inserting into photographers table:', dbError.message);
     }
@@ -52,8 +52,9 @@ export const loginUser = async (email, password) => {
   // Auto-sync the user to the photographers table.
   // This fixes the issue if the user signed up before the ML schema was applied
   // or if their photographer record was somehow deleted.
+  // Auto-sync the user to the photographers table using admin client to bypass RLS.
   if (data.user) {
-    const { error: dbError } = await supabase
+    const { error: dbError } = await adminSupabase
       .from('photographers')
       .upsert([
         {

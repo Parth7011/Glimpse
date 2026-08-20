@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { Camera, Image, Settings, LogOut, ChevronRight, Search } from 'lucide-react';
 import { cn } from '@/utils/utils';
@@ -34,6 +34,27 @@ function NavLink({ item, isActive }) {
 
 export function GuestDashboardLayout() {
   const location = useLocation();
+  const [user, setUser] = useState({ name: 'Guest', email: '' });
+
+  useEffect(() => {
+    try {
+      const userStr = localStorage.getItem('glimpse_user');
+      if (userStr) {
+        const parsed = JSON.parse(userStr);
+        setUser({
+          name: parsed.user_metadata?.name || parsed.name || parsed.email?.split('@')[0] || 'Guest',
+          email: parsed.email || ''
+        });
+      }
+    } catch (e) {
+      console.error('Failed to parse user from localStorage');
+    }
+  }, []);
+
+  const getInitials = (name) => {
+    if (!name) return 'G';
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
 
   const isNavActive = (item) => {
     return location.pathname === item.to;
@@ -65,11 +86,11 @@ export function GuestDashboardLayout() {
           {/* User profile */}
           <div className="flex items-center gap-3 px-2 py-3">
             <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#7C6EF6] to-[#5A4ED1] flex items-center justify-center text-xs font-bold text-white shadow-sm">
-              G
+              {getInitials(user.name)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[var(--text-primary)] truncate">Guest User</p>
-              <p className="text-xs text-[var(--text-muted)] truncate">guest@glimpse.com</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{user.name}</p>
+              <p className="text-xs text-[var(--text-muted)] truncate">{user.email || 'Guest'}</p>
             </div>
           </div>
           {/* Logout */}

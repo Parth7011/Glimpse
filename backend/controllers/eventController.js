@@ -30,7 +30,11 @@ export const getDashboardStats = async (req, res) => {
 export const createEvent = async (req, res) => {
   try {
     const photographerId = req.user.id;
-    const event = await eventService.createEvent(photographerId, req.body);
+    const photographerMeta = {
+      email: req.user.email,
+      name: req.user.user_metadata?.name || req.user.email?.split('@')[0] || 'Photographer',
+    };
+    const event = await eventService.createEvent(photographerId, req.body, photographerMeta);
     res.status(201).json(event);
   } catch (error) {
     console.error('Create event error:', error);

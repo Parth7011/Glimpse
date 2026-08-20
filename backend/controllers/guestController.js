@@ -1,5 +1,18 @@
 import * as guestService from '../services/guestService.js';
 
+export const getMyEvents = async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ error: 'email is required' });
+    const events = await guestService.getGuestEvents(email);
+    res.status(200).json({ events });
+  } catch (error) {
+    console.error('Get guest events error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 export const createSession = async (req, res) => {
   try {
     const { eventSlug } = req.body;

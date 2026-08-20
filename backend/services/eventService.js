@@ -1,4 +1,4 @@
-import supabase from '../config/supabase.js';
+import supabase, { adminSupabase } from '../config/supabase.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export const listEvents = async (photographerId) => {
@@ -29,11 +29,27 @@ export const getDashboardStats = async (photographerId) => {
   return stats;
 };
 
-export const createEvent = async (photographerId, eventData) => {
+export const createEvent = async (photographerId, eventData, photographerMeta = {}) => {
+  // Ensure the photographer row exists before creating the event.
+  // This is a safety net for users who registered before the auto-insert was in place.
+  const { error: upsertErr } = await adminSupabase
+    .from('photographers')
+    .upsert([
+      {
+        id: photographerId,
+        email: photographerMeta.email || `${photographerId}@glimpse.local`,
+        name: photographerMeta.name || 'Photographer',
+      }
+    ], { onConflict: 'id' });
+
+  if (upsertErr) {
+    console.warn('Photographer upsert warning (non-fatal):', upsertErr.message);
+  }
+
   const id = uuidv4();
   const slug = eventData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + id.substring(0, 6);
   
-  const { data, error } = await supabase
+  const { data, error } = await adminSupabase
     .from('events')
     .insert([
       {
@@ -56,6 +72,7 @@ export const createEvent = async (photographerId, eventData) => {
   if (error) throw error;
   return data;
 };
+
 
 export const getEvent = async (photographerId, eventId) => {
   const { data, error } = await supabase
