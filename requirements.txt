@@ -11,3 +11,4 @@ tqdm>=4.66.0
 fastapi>=0.110.0
 uvicorn[standard]>=0.27.0
 spaces
+websockets>=13.0.1

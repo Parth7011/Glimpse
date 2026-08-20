@@ -297,33 +297,33 @@ mlpipeline/
 
 ---
 
-## 6. API Reference
+## 6. API Reference (Hugging Face ZeroGPU)
 
-### Base URL
-- **Local development**: `http://localhost:8000`
-- **Production (Render)**: `https://glimpse-ml.onrender.com` (internal)
+The ML pipeline is deployed on Hugging Face Spaces using the Gradio SDK to utilize free ZeroGPU acceleration. 
+There are no traditional REST endpoints (like `/process-photo`). Instead, you communicate with the Space using the `@gradio/client` library via WebSockets/HTTP.
 
-### Interactive Docs
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
+### Space URL
+- **Production (Hugging Face)**: `https://huggingface.co/spaces/Ritish15/glimpse`
+- **Gradio API Endpoint**: `Ritish15/glimpse` (used in the client SDK)
 
 ---
 
-### `POST /process-photo`
+### `predict("/process_photo_gpu")`
 
-Process a single photographer photo — detect faces and store embeddings.
+Process a single photographer photo — detect faces and store embeddings in Supabase.
 
-**Request Body:**
-```json
-{
-    "event_id": "evt-wedding-001",
-    "storage_path": "events/evt-wedding-001/IMG_1234.jpg",
-    "photo_id": "photo-abc-123",         // optional, auto-generated UUID
-    "filename": "IMG_1234.jpg"            // optional, derived from path
-}
+**Client Request (Node.js):**
+```javascript
+import { Client } from "@gradio/client";
+
+const client = await Client.connect("Ritish15/glimpse");
+const result = await client.predict("/process_photo_gpu", { 
+    event_id: "evt-wedding-001", 
+    photo_id: "photo-abc-123", 
+});
 ```
 
-**Response (200):**
+**Response Payload (`result.data[0]` is a JSON string):**
 ```json
 {
     "photo_id": "photo-abc-123",
@@ -343,155 +343,11 @@ Process a single photographer photo — detect faces and store embeddings.
             "gender": 1,
             "age": 28
         }
-    ],
-    "error": null
-}
-```
-
----
-
-### `POST /process-batch`
-
-Batch-process multiple photos for an event (synchronous — waits for all).
-
-**Request Body:**
-```json
-{
-    "event_id": "evt-wedding-001",
-    "event_name": "Sharma Wedding",
-    "event_slug": "sharma-wedding",
-    "photos": [
-        {"storage_path": "events/evt-wedding-001/IMG_1234.jpg", "filename": "IMG_1234.jpg"},
-        {"storage_path": "events/evt-wedding-001/IMG_1235.jpg", "filename": "IMG_1235.jpg"},
-        {"storage_path": "events/evt-wedding-001/IMG_1236.jpg"}
     ]
 }
 ```
 
-**Response (200):**
-```json
-{
-    "event_id": "evt-wedding-001",
-    "total_photos_processed": 3,
-    "successful_photos": 3,
-    "failed_photos": 0,
-    "total_faces_indexed": 8,
-    "total_time_ms": 9450.12,
-    "photo_results": [ /* array of ProcessPhotoResponse */ ]
-}
-```
-
----
-
-### `POST /process-batch-async`
-
-Fire-and-forget batch processing. Returns 202 immediately; use `GET /event/{id}/status` to poll.
-
-**Request Body:** Same as `/process-batch`
-
-**Response (202):**
-```json
-{
-    "message": "Batch processing started",
-    "event_id": "evt-wedding-001",
-    "total_photos": 30
-}
-```
-
----
-
-### `GET /event/{event_id}/status`
-
-Poll event processing progress. Called by Express.js frontend polling loop.
-
-**Response (200):**
-```json
-{
-    "event_id": "evt-wedding-001",
-    "total_photos": 30,
-    "photos_ready": 25,
-    "photos_processing": 3,
-    "photos_failed": 2,
-    "total_faces_indexed": 78,
-    "is_complete": false
-}
-```
-
----
-
-### `GET /event/{event_id}/faces`
-
-Get all indexed faces for an event (embedding vectors stripped for small payloads).
-
-**Response (200):**
-```json
-{
-    "event_id": "evt-wedding-001",
-    "total_faces": 78,
-    "faces": [
-        {
-            "id": "face-uuid-1",
-            "photo_id": "photo-abc-123",
-            "event_id": "evt-wedding-001",
-            "bounding_box": {"x1": 120.5, "y1": 80.3, "x2": 280.1, "y2": 350.7},
-            "det_score": 0.94,
-            "gender": 1,
-            "age": 28
-        }
-    ]
-}
-```
-
----
-
-### `GET /photo/{photo_id}/status`
-
-Get processing status for a single photo.
-
-**Response (200):**
-```json
-{
-    "photo_id": "photo-abc-123",
-    "event_id": "evt-wedding-001",
-    "status": "ready",
-    "face_count": 3,
-    "filename": "IMG_1234.jpg",
-    "storage_path": "events/evt-wedding-001/IMG_1234.jpg"
-}
-```
-
----
-
-### `GET /photo/{photo_id}/faces`
-
-Get all faces detected in a specific photo.
-
-**Response (200):**
-```json
-{
-    "photo_id": "photo-abc-123",
-    "total_faces": 3,
-    "faces": [ /* face objects without embedding */ ]
-}
-```
-
----
-
-### `GET /health`
-
-Health check for Render warm-up and Express.js readiness probing.
-
-**Response (200):**
-```json
-{
-    "status": "ok",
-    "service": "glimpse-ml-pipeline",
-    "version": "1.0.0",
-    "model_loaded": true,
-    "model_name": "buffalo_l",
-    "embedding_dim": 512
-}
-```
+> **Note**: For batch processing, simply call `client.predict` in a loop or `Promise.all` from your Express backend. Gradio's internal queue will manage the concurrency safely.
 
 ---
 
@@ -708,12 +564,20 @@ INSIGHTFACE_DET_THRESH=0.5
 
 ## 11. How Express.js Backend Calls the ML Service
 
-The Express.js backend is the **only** caller of the ML service. Here's the integration pattern:
+The Express.js backend acts as the orchestrator. It uploads photos to Supabase, and then calls the Hugging Face ZeroGPU Space using the official `@gradio/client` SDK.
+
+### Setup
+
+Install the Hugging Face Gradio client in your Express project:
+```bash
+npm install @gradio/client
+```
 
 ### Single Photo Processing (after upload)
 
 ```javascript
 // express-api/controllers/photoController.js
+import { Client } from "@gradio/client";
 
 const processPhoto = async (req, res) => {
     const { eventId } = req.params;
@@ -723,57 +587,57 @@ const processPhoto = async (req, res) => {
     const storagePath = `events/${eventId}/${file.originalname}`;
     await supabase.storage.from('event-photos').upload(storagePath, file.buffer);
 
-    // 2. Call ML Service to process the photo
-    const mlResponse = await fetch(`${ML_SERVICE_URL}/process-photo`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            event_id: eventId,
-            storage_path: storagePath,
-            filename: file.originalname
-        })
-    });
+    // 2. Insert into PostgreSQL (status: processing)
+    const { data: photo } = await supabase.from('photos').insert({
+        event_id: eventId,
+        storage_path: storagePath,
+        status: 'processing'
+    }).select().single();
 
-    const result = await mlResponse.json();
-    // result.status === "ready", result.faces_detected === 3
+    // 3. Call HF ZeroGPU Space to extract faces & embeddings
+    try {
+        const client = await Client.connect("Ritish15/glimpse");
+        const result = await client.predict("/predict", { 
+            event_id: eventId, 
+            photo_id: photo.id, 
+        });
 
-    res.json({ success: true, ...result });
+        // The ZeroGPU Gradio app returns a JSON string in result.data[0]
+        const mlPayload = JSON.parse(result.data[0]);
+        
+        if (mlPayload.error) throw new Error(mlPayload.error);
+
+        res.json({ success: true, ...mlPayload });
+    } catch (err) {
+        console.error("ML Processing failed:", err);
+        await supabase.from('photos').update({ status: 'failed' }).eq('id', photo.id);
+        res.status(500).json({ success: false, error: "ML Pipeline failed" });
+    }
 };
 ```
 
 ### Batch Upload (async pattern)
 
-```javascript
-// 1. Upload all photos to Supabase Storage
-// 2. Fire-and-forget batch processing
-await fetch(`${ML_SERVICE_URL}/process-batch-async`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        event_id: eventId,
-        event_name: "Sharma Wedding",
-        event_slug: "sharma-wedding",
-        photos: uploadedPhotos.map(p => ({
-            storage_path: p.storagePath,
-            filename: p.originalname
-        }))
-    })
-});
-
-// 3. Frontend polls for progress
-// GET /api/events/:id/processing-status → Express → ML GET /event/:id/status
-```
-
-### Polling Processing Status (TanStack Query)
+Because Gradio handles its own request queuing, you can safely trigger multiple predictions concurrently using `Promise.all`. The Hugging Face space will dynamically allocate the GPU and queue requests.
 
 ```javascript
-// React frontend — polls every 3 seconds
-const { data } = useQuery({
-    queryKey: ['event-status', eventId],
-    queryFn: () => fetch(`/api/events/${eventId}/processing-status`).then(r => r.json()),
-    refetchInterval: data?.is_complete ? false : 3000,
-});
-// data = { total_photos: 30, photos_ready: 25, photos_processing: 3, ... }
+import { Client } from "@gradio/client";
+
+const processBatch = async (photos) => {
+    const client = await Client.connect("Ritish15/glimpse");
+    
+    // Fire all requests concurrently; Gradio's queue handles the load
+    const promises = photos.map(photo => 
+        client.predict("/process_photo_gpu", { 
+            event_id: photo.eventId, 
+            photo_id: photo.id 
+        })
+    );
+
+    // Wait for all to finish processing
+    const results = await Promise.allSettled(promises);
+    return results;
+};
 ```
 
 ---
