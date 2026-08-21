@@ -56,6 +56,18 @@ export const eventService = {
     }
     return await response.json();
   },
+
+  /** Search events by name or slug */
+  async searchEvents(query) {
+    const response = await fetch(`${API_URL}/events/search?q=${encodeURIComponent(query)}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(()=>({}));
+      throw new Error(err.error || 'Failed to search events');
+    }
+    return await response.json();
+  },
   
   /** Create a new event */
   async createEvent(req) {

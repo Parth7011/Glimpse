@@ -68,6 +68,20 @@ export const getEventBySlug = async (req, res) => {
   }
 };
 
+export const searchEvents = async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q) {
+      return res.status(200).json([]);
+    }
+    const events = await eventService.searchEvents(q);
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('Search events error:', error);
+    res.status(500).json({ error: 'Failed to search events' });
+  }
+};
+
 export const updateEvent = async (req, res) => {
   try {
     const photographerId = req.user.id;

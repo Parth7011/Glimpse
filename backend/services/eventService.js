@@ -97,6 +97,17 @@ export const getEventBySlug = async (slug) => {
   return data;
 };
 
+export const searchEvents = async (query) => {
+  const { data, error } = await adminSupabase
+    .from('events')
+    .select('*')
+    .or(`name.ilike.%${query}%,slug.ilike.%${query}%`)
+    .limit(10);
+
+  if (error) throw error;
+  return data;
+};
+
 export const updateEvent = async (photographerId, eventId, updates) => {
   const { data, error } = await adminSupabase
     .from('events')

@@ -6,13 +6,15 @@ import {
   getEvent, 
   getEventBySlug, 
   updateEvent, 
-  getShareInfo 
+  getShareInfo,
+  searchEvents
 } from '../controllers/eventController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 // Public routes
+router.get('/search', searchEvents);
 router.get('/slug/:slug', getEventBySlug);
 
 // Protected routes
