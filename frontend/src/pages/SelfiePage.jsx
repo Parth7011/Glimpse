@@ -17,6 +17,7 @@ export default function SelfiePage() {
   
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const fileInputRef = useRef(null);
   
   const [stream, setStream] = useState(null);
   const [hasPermission, setHasPermission] = useState(null);
@@ -83,6 +84,21 @@ export default function SelfiePage() {
   const retakeSelfie = () => {
     setCapturedImage(null);
     startCamera();
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setCapturedImage(e.target.result);
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        setStream(null);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const { data: event } = useQuery({
@@ -177,14 +193,24 @@ export default function SelfiePage() {
             <div className="absolute bottom-0 left-0 right-0 z-20 p-8 flex flex-col items-center justify-end bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-24">
               <button 
                 onClick={captureSelfie}
-                className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-md p-2 flex items-center justify-center hover:bg-white/30 transition-colors mb-6 shadow-lg"
+                className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-md p-1.5 flex items-center justify-center hover:bg-white/30 transition-all mb-6 shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95 group"
               >
-                <div className="w-full h-full rounded-full bg-white shadow-inner" />
+                <div className="w-full h-full rounded-full bg-white shadow-inner transition-transform group-hover:scale-95 group-active:scale-90 flex items-center justify-center" />
               </button>
-              <button className="flex items-center gap-2 text-white/90 text-sm font-medium hover:text-white transition-colors bg-black/40 px-4 py-2 rounded-full backdrop-blur-md">
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-2 text-white/90 text-sm font-medium hover:text-white transition-colors bg-black/40 px-4 py-2 rounded-full backdrop-blur-md"
+              >
                 <Upload className="w-4 h-4" />
                 Upload a selfie instead
               </button>
+              <input 
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                ref={fileInputRef} 
+                onChange={handleFileUpload} 
+              />
             </div>
           </>
         )}
@@ -210,11 +236,11 @@ export default function SelfiePage() {
                 >
                   <div className="relative w-20 h-20 mb-8 flex items-center justify-center bg-[var(--surface)] rounded-full shadow-lg border border-[var(--border)]">
                     <motion.div 
-                      className="absolute inset-0 rounded-full border-2 border-[var(--accent)] border-t-transparent"
+                      className="absolute inset-0 rounded-full border-2 border-[#7C6EF6] border-t-transparent shadow-[0_0_15px_rgba(124,110,246,0.5)]"
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                     />
-                    <Search className="w-8 h-8 text-[var(--accent)]" />
+                    <Search className="w-8 h-8 text-[#7C6EF6]" />
                   </div>
                   
                   <div className="space-y-5 w-full max-w-[240px]">
@@ -228,12 +254,12 @@ export default function SelfiePage() {
 
             {/* Actions (hidden while processing) */}
             {!isProcessing && (
-              <div className="absolute bottom-0 left-0 right-0 p-6 bg-[var(--surface)] rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] flex items-center gap-4 z-20 animate-in slide-in-from-bottom-10">
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/10 backdrop-blur-xl border-t border-white/20 shadow-[0_-10px_40px_rgba(0,0,0,0.3)] flex items-center gap-4 z-20 animate-in slide-in-from-bottom-10 rounded-t-3xl pb-10">
                 <Button 
                   variant="secondary" 
                   size="xl" 
                   onClick={retakeSelfie}
-                  className="bg-[var(--surface-soft)] text-[var(--text-primary)] hover:bg-[var(--border)] h-14 w-14 shrink-0 rounded-full p-0 shadow-sm"
+                  className="bg-white/10 text-white hover:bg-white/20 border border-white/20 h-14 w-14 shrink-0 rounded-full p-0 shadow-lg backdrop-blur-md"
                 >
                   <RefreshCw className="w-5 h-5" />
                 </Button>
@@ -241,7 +267,7 @@ export default function SelfiePage() {
                   variant="primary" 
                   size="xl" 
                   onClick={processSelfie}
-                  className="flex-1 shadow-md h-14 text-base font-semibold"
+                  className="flex-1 bg-gradient-to-r from-[#7C6EF6] to-[#5A4ED1] text-white hover:shadow-[0_8px_30px_rgba(124,110,246,0.5)] hover:-translate-y-0.5 border-none h-14 rounded-2xl text-lg font-bold transition-all shadow-xl"
                 >
                   Find My Photos
                 </Button>

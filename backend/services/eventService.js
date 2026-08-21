@@ -83,6 +83,19 @@ export const getEvent = async (photographerId, eventId) => {
     .single();
 
   if (error) throw error;
+
+  // Real-time count of photos to heal any race conditions during upload
+  const { count } = await adminSupabase
+    .from('photos')
+    .select('*', { count: 'exact', head: true })
+    .eq('event_id', eventId);
+    
+  if (count !== null) {
+    data.photo_count = count;
+    // Silently heal the db
+    adminSupabase.from('events').update({ photo_count: count }).eq('id', eventId).then();
+  }
+
   return data;
 };
 

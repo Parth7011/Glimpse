@@ -69,10 +69,14 @@ export const uploadAndProcessPhoto = async (eventId, file, metadata) => {
 
   if (error) throw error;
   
-  // Update photo count
-  const { data: event } = await adminSupabase.from('events').select('photo_count').eq('id', eventId).single();
-  if (event) {
-    await adminSupabase.from('events').update({ photo_count: (event.photo_count || 0) + 1 }).eq('id', eventId);
+  // Update photo count robustly by recounting to prevent race conditions during bulk upload
+  const { count } = await adminSupabase
+    .from('photos')
+    .select('*', { count: 'exact', head: true })
+    .eq('event_id', eventId);
+    
+  if (count !== null) {
+    await adminSupabase.from('events').update({ photo_count: count }).eq('id', eventId);
   }
   
   return data;

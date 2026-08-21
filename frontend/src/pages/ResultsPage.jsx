@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, Link, useLocation, Navigate } from 'react-router-dom';
+import { useParams, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { eventService } from '@/services/eventService';
@@ -9,12 +9,16 @@ import { Button, Skeleton } from '@/components/ui';
 import { Download, X } from 'lucide-react';
 import { useToast } from '@/components/ui/toast';
 
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+
 export default function ResultsPage() {
   const { eventSlug } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const sessionId = location.state?.sessionId;
 
@@ -34,13 +38,58 @@ export default function ResultsPage() {
     return <Navigate to={ROUTES.GUEST_EVENT(eventSlug)} replace />;
   }
 
-  const handleDownloadAll = () => {
+  const matches = Array.isArray(matchesData) ? matchesData : (matchesData?.matches || []);
+
+  const handleDownloadAll = async () => {
+    if (isDownloading || matches.length === 0) return;
+    setIsDownloading(true);
     toast('Preparing your high-res zip file...', 'success');
+    
+    try {
+      const zip = new JSZip();
+      
+      const fetchPromises = matches.map(async (match, index) => {
+        const url = match.preview_url || match.thumbnail_url;
+        if (!url) return;
+        
+        const response = await fetch(url);
+        const blob = await response.blob();
+        
+        // Extract filename or generate one
+        const filename = url.split('/').pop()?.split('?')[0] || `photo_${index + 1}.jpg`;
+        zip.file(filename, blob);
+      });
+      
+      await Promise.all(fetchPromises);
+      
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, `${event?.name || 'event'}_photos.zip`);
+      toast('Download complete!', 'success');
+    } catch (err) {
+      console.error('Download error:', err);
+      toast('Failed to download photos.', 'error');
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
-  const handleDownloadSingle = (e, photo) => {
+  const handleDownloadSingle = async (e, photo) => {
     e.stopPropagation();
     toast('Downloading photo...', 'success');
+    
+    try {
+      const url = photo.preview_url || photo.thumbnail_url;
+      if (!url) return;
+      
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const filename = url.split('/').pop()?.split('?')[0] || 'photo.jpg';
+      
+      saveAs(blob, filename);
+    } catch (err) {
+      console.error('Download error:', err);
+      toast('Failed to download photo.', 'error');
+    }
   };
 
   if (eventLoading || matchesLoading) {
@@ -64,7 +113,7 @@ export default function ResultsPage() {
     );
   }
 
-  const matches = Array.isArray(matchesData) ? matchesData : (matchesData?.matches || []);
+
 
   return (
     <div className="flex-1 flex flex-col bg-[var(--background)] relative min-h-[100dvh]">
