@@ -564,53 +564,49 @@ INSIGHTFACE_DET_THRESH=0.5
 
 ## 11. How Express.js Backend Calls the ML Service
 
-The Express.js backend acts as the orchestrator. It uploads photos to Supabase, and then calls the Hugging Face ZeroGPU Space using the official `@gradio/client` SDK.
-
-### Setup
-
-Install the Hugging Face Gradio client in your Express project:
-```bash
-npm install @gradio/client
-```
+The Express.js backend acts as the orchestrator. It uploads photos to Supabase, and then fires a standard HTTP POST request to the Modal FastAPI service.
 
 ### Single Photo Processing (after upload)
 
 ```javascript
 // express-api/controllers/photoController.js
-import { Client } from "@gradio/client";
-
 const processPhoto = async (req, res) => {
     const { eventId } = req.params;
     const file = req.file;
 
     // 1. Upload to Supabase Storage
     const storagePath = `events/${eventId}/${file.originalname}`;
-    await supabase.storage.from('event-photos').upload(storagePath, file.buffer);
+    await adminSupabase.storage.from('event-photos').upload(storagePath, file.buffer);
 
     // 2. Insert into PostgreSQL (status: processing)
-    const { data: photo } = await supabase.from('photos').insert({
+    const { data: photo } = await adminSupabase.from('photos').insert({
         event_id: eventId,
         storage_path: storagePath,
+        filename: file.originalname,
         status: 'processing'
     }).select().single();
 
-    // 3. Call HF ZeroGPU Space to extract faces & embeddings
+    // 3. Call Modal Serverless GPU API to extract faces & embeddings
     try {
-        const client = await Client.connect("Ritish15/glimpse");
-        const result = await client.predict("/predict", { 
-            event_id: eventId, 
-            photo_id: photo.id, 
+        const mlUrl = "https://ritishmahajan15--glimpse-ml-pipeline-fastapi-app.modal.run";
+        const response = await fetch(`${mlUrl}/process-photo`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event_id: eventId,
+                photo_id: photo.id,
+                storage_path: photo.storage_path,
+                filename: photo.filename
+            })
         });
 
-        // The ZeroGPU Gradio app returns a JSON string in result.data[0]
-        const mlPayload = JSON.parse(result.data[0]);
+        if (!response.ok) throw new Error("Modal API Error");
+        const mlPayload = await response.json();
         
-        if (mlPayload.error) throw new Error(mlPayload.error);
-
         res.json({ success: true, ...mlPayload });
     } catch (err) {
         console.error("ML Processing failed:", err);
-        await supabase.from('photos').update({ status: 'failed' }).eq('id', photo.id);
+        await adminSupabase.from('photos').update({ status: 'failed' }).eq('id', photo.id);
         res.status(500).json({ success: false, error: "ML Pipeline failed" });
     }
 };
@@ -618,137 +614,28 @@ const processPhoto = async (req, res) => {
 
 ### Batch Upload (async pattern)
 
-Because Gradio handles its own request queuing, you can safely trigger multiple predictions concurrently using `Promise.all`. The Hugging Face space will dynamically allocate the GPU and queue requests.
+Because Modal automatically spins up multiple serverless GPU containers dynamically, you can safely trigger multiple predictions concurrently using `Promise.allSettled`. 
 
 ```javascript
-import { Client } from "@gradio/client";
-
-const processBatch = async (photos) => {
-    const client = await Client.connect("Ritish15/glimpse");
+const processBatch = async (eventId, photos) => {
+    const mlEndpoint = "https://ritishmahajan15--glimpse-ml-pipeline-fastapi-app.modal.run";
     
-    // Fire all requests concurrently; Gradio's queue handles the load
-    const promises = photos.map(photo => 
-        client.predict("/process_photo_gpu", { 
-            event_id: photo.eventId, 
-            photo_id: photo.id 
-        })
-    );
-
-    // Wait for all to finish processing
-    const results = await Promise.allSettled(promises);
-    return results;
+    // Fire all requests concurrently; Modal auto-scales GPUs instantly
+    Promise.allSettled(photos.map(async (photo) => {
+        try {
+            await fetch(`${mlEndpoint}/process-photo`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    event_id: eventId,
+                    photo_id: photo.id,
+                    storage_path: photo.storage_path,
+                    filename: photo.filename
+                })
+            });
+        } catch (err) {
+            console.error(`Failed to process photo ${photo.id}:`, err);
+        }
+    }));
 };
 ```
-
----
-
-## 12. Running the Service
-
-### Prerequisites
-
-```bash
-# Python 3.11+ required
-python3 --version
-
-# Create virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r mlpipeline/requirements.txt
-```
-
-### Start the ML API Server
-
-```bash
-# Development (with auto-reload)
-uvicorn mlpipeline.api.app:app --host 0.0.0.0 --port 8000 --reload
-
-# Production
-uvicorn mlpipeline.api.app:app --host 0.0.0.0 --port 8000 --workers 1
-```
-
-### Verify
-
-```bash
-# Health check
-curl http://localhost:8000/health
-
-# Interactive API docs
-open http://localhost:8000/docs
-```
-
----
-
-## 13. Testing
-
-### Automated Integration Test
-
-```bash
-# Run the full end-to-end test suite
-python -m mlpipeline.test_photographer_pipeline
-```
-
-This test:
-1. Initializes InsightFace model
-2. Downloads sample photos (portrait + group)
-3. Processes them through the full pipeline
-4. Verifies face detection, embedding extraction, and storage
-5. Tests batch processing
-
-### Manual API Testing
-
-```bash
-# 1. Start the server
-uvicorn mlpipeline.api.app:app --port 8000
-
-# 2. Process a photo
-curl -X POST http://localhost:8000/process-photo \
-  -H "Content-Type: application/json" \
-  -d '{
-    "event_id": "test-evt-001",
-    "storage_path": "events/test-evt-001/photo.jpg"
-  }'
-
-# 3. Check status
-curl http://localhost:8000/event/test-evt-001/status
-
-# 4. Get faces
-curl http://localhost:8000/event/test-evt-001/faces
-```
-
----
-
-## 14. Deployment on Render
-
-### Render Configuration
-
-Create a new **Web Service** on Render:
-
-| Setting | Value |
-|---|---|
-| **Name** | `glimpse-ml` |
-| **Environment** | Python |
-| **Build Command** | `pip install -r mlpipeline/requirements.txt` |
-| **Start Command** | `uvicorn mlpipeline.api.app:app --host 0.0.0.0 --port $PORT` |
-| **Plan** | Free |
-| **Health Check Path** | `/health` |
-
-### Environment Variables on Render
-
-Set these in the Render dashboard:
-
-```
-DATABASE_URL=postgresql://postgres.PROJECT:PASS@aws-0-REGION.pooler.supabase.com:5432/postgres
-SUPABASE_URL=https://PROJECT.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=sb_secret_...
-SUPABASE_STORAGE_BUCKET=event-photos
-INSIGHTFACE_MODEL=buffalo_l
-INSIGHTFACE_CTX_ID=-1
-```
-
-### Cold Start Optimization
-
-The free tier Render service spins down after 15 minutes of inactivity. The InsightFace model takes ~3-5s to load on cold start. The `lifespan` handler in `app.py` pre-loads the model on startup to minimize first-request latency.
-
-> **Tip**: The Express.js backend can call `GET /health` on startup to trigger model preloading before any user request arrives.

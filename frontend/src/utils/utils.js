@@ -50,7 +50,7 @@ export function formatNumber(num) {
 }
 
 
-}
+
 
 /** Get time-based greeting */
 export function getGreeting() {

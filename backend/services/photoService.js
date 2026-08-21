@@ -133,8 +133,6 @@ export const getProcessingProgress = async (eventId) => {
   };
 };
 
-import { Client } from "@gradio/client";
-
 export const triggerProcessing = async (eventId) => {
   // 1. Update event status to processing
   const { error: eventError } = await adminSupabase
@@ -147,7 +145,7 @@ export const triggerProcessing = async (eventId) => {
   // 2. Fetch all unprocessed photos for this event
   const { data: photos, error: fetchError } = await adminSupabase
     .from('photos')
-    .select('id')
+    .select('id, storage_path, filename')
     .eq('event_id', eventId)
     .eq('status', 'uploaded');
 
@@ -162,18 +160,26 @@ export const triggerProcessing = async (eventId) => {
 
   // 4. Send to ML Pipeline concurrently
   try {
-    const client = await Client.connect("http://127.0.0.1:7860/", {
-      hf_token: process.env.HF_TOKEN
-    });
+    const mlEndpoint = "https://ritishmahajan15--glimpse-ml-pipeline-fastapi-app.modal.run";
 
     // We do NOT wait for this to finish before returning to the frontend.
     // The ML Pipeline will process photos, and we update the event when all are done.
     Promise.allSettled(photos.map(async (photo) => {
       try {
-        await client.predict("/process_photo_gpu", { 
-            event_id: eventId, 
-            photo_id: photo.id 
+        const response = await fetch(`${mlEndpoint}/process-photo`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event_id: eventId,
+                photo_id: photo.id,
+                storage_path: photo.storage_path,
+                filename: photo.filename
+            })
         });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         console.log(`Successfully processed photo ${photo.id}`);
       } catch (err) {
         console.error(`Failed to process photo ${photo.id}:`, err);
