@@ -6,6 +6,8 @@ from mlpipeline.pipeline.photographer_pipeline import PhotographerPipeline
 # Initialize the pipeline
 pipeline = PhotographerPipeline()
 
+from mlpipeline.db.repository import PhotoRepository
+
 @spaces.GPU
 def process_photo_gpu(event_id: str, photo_id: str):
     """
@@ -13,7 +15,20 @@ def process_photo_gpu(event_id: str, photo_id: str):
     Reads the photo from Supabase, extracts faces using the GPU, and saves them.
     """
     try:
-        results = pipeline.process_event_photo(event_id, photo_id)
+        photo = PhotoRepository.get_photo(photo_id)
+        if not photo:
+            return json.dumps({"error": f"Photo with id {photo_id} not found"})
+        
+        storage_path = photo.get("storage_path")
+        if not storage_path:
+            return json.dumps({"error": "Photo has no storage_path"})
+
+        results = pipeline.process_single_photo(
+            event_id=event_id,
+            storage_path=storage_path,
+            photo_id=photo_id,
+            filename=photo.get("filename")
+        )
         return json.dumps(results)
     except Exception as e:
         return json.dumps({"error": str(e)})
