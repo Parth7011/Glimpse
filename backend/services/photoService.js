@@ -133,20 +133,57 @@ export const getProcessingProgress = async (eventId) => {
   };
 };
 
+import { Client } from "@gradio/client";
+
 export const triggerProcessing = async (eventId) => {
-  // Normally this would call the FastAPI ML service.
-  // For now, we just update the DB to simulate it starting.
-  const { error } = await adminSupabase
+  // 1. Update event status to processing
+  const { error: eventError } = await adminSupabase
     .from('events')
     .update({ status: 'processing' })
     .eq('id', eventId);
     
-  if (error) throw error;
+  if (eventError) throw eventError;
   
-  // Mock: instantly mark photos as ready
-  await supabase
+  // 2. Fetch all unprocessed photos for this event
+  const { data: photos, error: fetchError } = await adminSupabase
     .from('photos')
-    .update({ status: 'ready', face_count: 1 })
+    .select('id')
     .eq('event_id', eventId)
     .eq('status', 'uploaded');
+
+  if (fetchError) throw fetchError;
+  if (!photos || photos.length === 0) return;
+
+  // 3. Mark them as processing in the DB
+  await adminSupabase
+    .from('photos')
+    .update({ status: 'processing' })
+    .in('id', photos.map(p => p.id));
+
+  // 4. Send to ML Pipeline concurrently
+  try {
+    const client = await Client.connect("Ritish15/glimpse", {
+      hf_token: process.env.HF_TOKEN
+    });
+
+    // We do NOT wait for this to finish before returning to the frontend.
+    // The ML Pipeline will automatically update Supabase to 'ready' when it finishes!
+    photos.forEach(async (photo) => {
+      try {
+        await client.predict("/process_photo_gpu", { 
+            event_id: eventId, 
+            photo_id: photo.id 
+        });
+        console.log(`Successfully processed photo ${photo.id}`);
+      } catch (err) {
+        console.error(`Failed to process photo ${photo.id}:`, err);
+        // Fallback: Mark failed in DB if the Gradio call crashes
+        await adminSupabase.from('photos').update({ status: 'failed' }).eq('id', photo.id);
+      }
+    });
+
+  } catch (err) {
+    console.error("Failed to connect to ML Pipeline:", err);
+    throw new Error("ML Pipeline connection failed: " + err.message);
+  }
 };
