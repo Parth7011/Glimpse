@@ -22,20 +22,6 @@ export const ROUTES = {
   GUEST_RESULTS: slug => `/e/${slug}/results`
 };
 
-/** API endpoints (Next.js Route Handlers) */
-export const API = {
-  AUTH_CALLBACK: '/api/auth/callback',
-  EVENTS: '/api/events',
-  EVENT: id => `/api/events/${id}`,
-  EVENT_PHOTOS: id => `/api/events/${id}/photos`,
-  EVENT_PROCESS: id => `/api/events/${id}/process`,
-  EVENT_SHARE: id => `/api/events/${id}/share`,
-  GUEST_SESSION: '/api/guest/session',
-  GUEST_CONSENT: '/api/guest/consent',
-  GUEST_MATCH: '/api/guest/match',
-  GUEST_DOWNLOAD: '/api/guest/download',
-  PHOTO: id => `/api/photos/${id}`
-};
 
 /** Upload constraints */
 export const UPLOAD = {

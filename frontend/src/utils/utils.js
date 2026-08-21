@@ -49,14 +49,7 @@ export function formatNumber(num) {
   return num.toLocaleString('en-IN');
 }
 
-/** Sleep utility for mock loading states */
-export function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
-/** Generate a random ID (for mock data) */
-export function generateId() {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 }
 
 /** Get time-based greeting */

@@ -167,8 +167,8 @@ export const triggerProcessing = async (eventId) => {
     });
 
     // We do NOT wait for this to finish before returning to the frontend.
-    // The ML Pipeline will automatically update Supabase to 'ready' when it finishes!
-    photos.forEach(async (photo) => {
+    // The ML Pipeline will process photos, and we update the event when all are done.
+    Promise.allSettled(photos.map(async (photo) => {
       try {
         await client.predict("/process_photo_gpu", { 
             event_id: eventId, 
@@ -179,6 +179,20 @@ export const triggerProcessing = async (eventId) => {
         console.error(`Failed to process photo ${photo.id}:`, err);
         // Fallback: Mark failed in DB if the Gradio call crashes
         await adminSupabase.from('photos').update({ status: 'failed' }).eq('id', photo.id);
+      }
+    })).then(async () => {
+      try {
+        const { count: photoCount } = await adminSupabase.from('photos').select('*', { count: 'exact', head: true }).eq('event_id', eventId);
+        const { count: faceCount } = await adminSupabase.from('faces').select('*', { count: 'exact', head: true }).eq('event_id', eventId);
+        
+        await adminSupabase.from('events').update({
+          status: 'ready',
+          photo_count: photoCount || 0,
+          face_count: faceCount || 0
+        }).eq('id', eventId);
+        console.log(`Event ${eventId} marked as ready.`);
+      } catch (err) {
+        console.error(`Failed to update event ${eventId} status to ready:`, err);
       }
     });
 

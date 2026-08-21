@@ -49,7 +49,11 @@ export default function DashboardPage() {
 
   const { data: eventsData, isLoading: eventsLoading } = useQuery({
     queryKey: ['events'],
-    queryFn: () => eventService.listEvents()
+    queryFn: () => eventService.listEvents(),
+    refetchInterval: (query) => {
+      const isProcessing = query.state?.data?.events?.some(e => e.status === 'processing');
+      return isProcessing ? 3000 : false;
+    }
   });
 
   return (

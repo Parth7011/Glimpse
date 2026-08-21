@@ -1,6 +1,0 @@
-{
-  "code": "23503",
-  "details": "Key (photographer_id)=(2d27b02a-4b7a-4ec1-8997-d61bf4eaf5f8) is not present in table \"photographers\".",
-  "hint": null,
-  "message": "insert or update on table \"events\" violates foreign key constraint \"events_photographer_id_fkey\""
-}

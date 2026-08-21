@@ -13,13 +13,19 @@ export default function EventWorkspacePage() {
   const { data: event, isLoading: eventLoading } = useQuery({
     queryKey: ['event', eventId],
     queryFn: () => eventService.getEvent(eventId),
-    enabled: !!eventId
+    enabled: !!eventId,
+    refetchInterval: (query) => {
+      return query.state?.data?.status === 'processing' ? 3000 : false;
+    }
   });
 
   const { data: photosData, isLoading: photosLoading } = useQuery({
     queryKey: ['event_photos', eventId],
     queryFn: () => photoService.listPhotos(eventId),
-    enabled: !!eventId
+    enabled: !!eventId,
+    refetchInterval: (query) => {
+      return event?.status === 'processing' ? 3000 : false;
+    }
   });
 
   if (eventLoading) {
