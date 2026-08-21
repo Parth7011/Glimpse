@@ -35,7 +35,7 @@ export const uploadAndProcessPhoto = async (eventId, file, metadata) => {
   const storagePath = `events/${eventId}/${id}_${sanitizedName}`;
 
   // 1. Upload to Supabase Storage
-  const { error: uploadError } = await supabase.storage
+  const { error: uploadError } = await adminSupabase.storage
     .from(bucketName)
     .upload(storagePath, file.buffer, {
       contentType: file.mimetype,
@@ -48,7 +48,7 @@ export const uploadAndProcessPhoto = async (eventId, file, metadata) => {
   }
 
   // 2. Insert Database Record
-  const { data, error } = await supabase
+  const { data, error } = await adminSupabase
     .from('photos')
     .insert([{
       id,
@@ -162,7 +162,7 @@ export const triggerProcessing = async (eventId) => {
 
   // 4. Send to ML Pipeline concurrently
   try {
-    const client = await Client.connect("Ritish15/glimpse", {
+    const client = await Client.connect("http://127.0.0.1:7860/", {
       hf_token: process.env.HF_TOKEN
     });
 
