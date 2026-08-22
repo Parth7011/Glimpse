@@ -320,3 +320,29 @@ async def health_check():
         model_name=model_name,
         embedding_dim=settings.EMBEDDING_DIMENSION,
     )
+
+from mlpipeline.api.schemas import MatchSelfieRequest, MatchSelfieResponse
+from mlpipeline.pipeline.guest_pipeline import GuestPipeline
+
+guest_pipeline_instance = None
+def _get_guest_pipeline() -> GuestPipeline:
+    global guest_pipeline_instance
+    if guest_pipeline_instance is None:
+        guest_pipeline_instance = GuestPipeline()
+    return guest_pipeline_instance
+
+@router.post("/match-selfie", response_model=MatchSelfieResponse)
+async def match_selfie(request: MatchSelfieRequest):
+    pipeline = _get_guest_pipeline()
+    try:
+        result = pipeline.match_selfie(
+            event_id=request.event_id,
+            storage_path=request.storage_path,
+            top_k=request.top_k,
+            similarity_threshold=request.similarity_threshold
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Selfie match error: {str(e)}")
+    if "error" in result:
+        raise HTTPException(status_code=400, detail=result["error"])
+    return MatchSelfieResponse(**result)

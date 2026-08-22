@@ -127,3 +127,20 @@ class HealthResponse(BaseModel):
     model_loaded: bool
     model_name: str
     embedding_dim: int
+
+class MatchSelfieRequest(BaseModel):
+    event_id: str = Field(..., description="Event ID to search within")
+    storage_path: str = Field(..., description="Path to the uploaded guest selfie in Supabase Storage")
+    top_k: int = Field(5, description="Number of matches to return")
+    similarity_threshold: float = Field(0.40, description="Minimum cosine similarity score (e.g., 0.45)")
+
+class MatchResult(BaseModel):
+    photo_id: str
+    face_id: str
+    similarity: float
+
+class MatchSelfieResponse(BaseModel):
+    event_id: str
+    matches: list[MatchResult]
+    processing_time_ms: float
+    error: Optional[str] = None

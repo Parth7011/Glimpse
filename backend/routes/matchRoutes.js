@@ -1,13 +1,8 @@
 import express from 'express';
-import { 
-  matchSelfie, 
-  getMatches 
-} from '../controllers/matchController.js';
-
+import multer from 'multer';
+import { matchSelfie, getMatches } from '../controllers/matchController.js';
 const router = express.Router();
-
-// Match routes are public for guests
-router.post('/selfie', matchSelfie);
+const upload = multer({ storage: multer.memoryStorage() });
+router.post('/selfie', upload.single('selfie'), matchSelfie);
 router.get('/:sessionId', getMatches);
-
 export default router;

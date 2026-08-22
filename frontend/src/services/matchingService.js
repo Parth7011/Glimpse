@@ -1,28 +1,20 @@
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://glimpse-201r.onrender.com/api';
-
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 export const matchingService = {
-  /**
-   * Send guest selfie for face matching against event photos.
-   */
-  async matchSelfie(eventId, sessionId, selfieFile) {
-    // In a real implementation with FormData:
-    // const formData = new FormData();
-    // formData.append('eventId', eventId);
-    // formData.append('sessionId', sessionId);
-    // formData.append('selfie', selfieFile);
+  async matchSelfie(eventId, sessionId, selfieBase64) {
+    const formData = new FormData();
+    formData.append('eventId', eventId);
+    formData.append('sessionId', sessionId);
+    const fetchResponse = await fetch(selfieBase64);
+    const blob = await fetchResponse.blob();
+    formData.append('selfie', blob, 'selfie.jpg');
     
-    // For now, mocking the payload since we aren't doing real ML upload
-    const response = await fetch(`${API_URL}/matches/selfie`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId, sessionId })
-    });
-    
-    if (!response.ok) throw new Error('Failed to match selfie');
+    const response = await fetch(`${API_URL}/matches/selfie`, { method: 'POST', body: formData });
+    if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to match selfie');
+    }
     return await response.json();
   },
-  
-  /** Get previously computed matches for a session */
   async getMatches(sessionId) {
     const response = await fetch(`${API_URL}/matches/${sessionId}`);
     if (!response.ok) throw new Error('Failed to fetch matches');
