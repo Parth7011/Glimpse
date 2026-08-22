@@ -104,12 +104,12 @@ export default function LandingPage() {
     <div className="bg-[#0C0C0C] min-h-screen text-[#D7E2EA] font-kanit overflow-x-clip selection:bg-[#D7E2EA] selection:text-[#0C0C0C]">
       
       {/* 1. HERO SECTION */}
-      <section className="relative h-screen flex flex-col overflow-x-clip pt-6 md:pt-8">
+      <section className="relative min-h-[100dvh] flex flex-col overflow-x-clip pt-24 md:pt-18 pb-8">
         {/* Simple Navbar override */}
         <Navbar theme="dark" activePage="home" />
 
         {/* Hero Heading */}
-        <div className="flex-1 flex flex-col justify-center items-center w-full relative z-10 overflow-hidden mt-6 sm:mt-4 md:-mt-5">
+        <div className="flex-1 flex flex-col justify-center items-center w-full relative z-10 overflow-hidden">
           <motion.h1 
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -156,7 +156,7 @@ export default function LandingPage() {
             transition={{ delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
           >
             <Link to={ROUTES.LOGIN}>
-              <GradientButton>Start Free</GradientButton>
+              <GradientButton>START FREE</GradientButton>
             </Link>
           </motion.div>
         </div>

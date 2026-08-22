@@ -32,7 +32,7 @@ export function Navbar({ activePage = 'home', theme = 'light' }) {
         
         <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
           <Link to="/" className={cn(
-            "text-base transition-colors",
+            "text-lg transition-colors",
             activePage === 'home' 
               ? (isDark ? "font-semibold text-white" : "font-semibold text-[var(--accent)]")
               : (isDark ? "font-medium text-[#D7E2EA]/70 hover:text-white" : "font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]")
@@ -41,7 +41,7 @@ export function Navbar({ activePage = 'home', theme = 'light' }) {
           </Link>
           
           <Link to="/how-it-works" className={cn(
-            "text-base transition-colors",
+            "text-lg transition-colors",
             activePage === 'how-it-works' 
               ? (isDark ? "font-semibold text-white" : "font-semibold text-[var(--accent)]")
               : (isDark ? "font-medium text-[#D7E2EA]/70 hover:text-white" : "font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]")
@@ -50,7 +50,7 @@ export function Navbar({ activePage = 'home', theme = 'light' }) {
           </Link>
           
           <Link to="/for-photographers" className={cn(
-            "text-base transition-colors",
+            "text-lg transition-colors",
             activePage === 'photographers' 
               ? (isDark ? "font-semibold text-white" : "font-semibold text-[var(--accent)]")
               : (isDark ? "font-medium text-[#D7E2EA]/70 hover:text-white" : "font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]")
@@ -59,7 +59,7 @@ export function Navbar({ activePage = 'home', theme = 'light' }) {
           </Link>
           
           <Link to="/about" className={cn(
-            "text-base transition-colors",
+            "text-lg transition-colors",
             activePage === 'about' 
               ? (isDark ? "font-semibold text-white" : "font-semibold text-[var(--accent)]")
               : (isDark ? "font-medium text-[#D7E2EA]/70 hover:text-white" : "font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]")
@@ -72,11 +72,11 @@ export function Navbar({ activePage = 'home', theme = 'light' }) {
           <Link to={ROUTES.LOGIN}>
             {isDark ? (
               <Button className="rounded-full px-6 shadow-sm font-semibold tracking-wide bg-[#D7E2EA] hover:bg-white text-[#0C0C0C]">
-                Start free →
+                START FREE -&gt;
               </Button>
             ) : (
               <Button className="rounded-full px-6 shadow-sm font-semibold tracking-wide bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white">
-                Start free →
+                START FREE -&gt;
               </Button>
             )}
           </Link>
