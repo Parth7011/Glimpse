@@ -9,8 +9,10 @@ export default function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Instant scroll to top on route change to prevent conflicts with Lenis and guarantee it works
-    window.scrollTo(0, 0);
+    const timeoutId = setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, 10);
+    return () => clearTimeout(timeoutId);
   }, [pathname]);
 
   return null;
