@@ -47,7 +47,7 @@ export function EventCard({ event, onEdit, onChangeCover, onDelete }) {
           
           {/* Action Menu Button */}
           <div className="absolute top-4 right-4 z-20">
-            <div className="relative" onMouseLeave={() => setShowMenu(false)}>
+            <div className="relative">
               <button 
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenu(!showMenu); }}
                 className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white/70 hover:text-white hover:bg-black/70 transition-colors border border-white/10"
@@ -55,9 +55,17 @@ export function EventCard({ event, onEdit, onChangeCover, onDelete }) {
                 <MoreHorizontal className="w-4 h-4" />
               </button>
               
+              {/* Invisible overlay to close menu on click outside */}
+              {showMenu && (
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenu(false); }}
+                />
+              )}
+              
               {/* Dropdown Menu */}
               <div 
-                className={`absolute right-0 mt-2 w-48 bg-[#1A1A1A] border border-white/10 rounded-xl shadow-2xl overflow-hidden transition-all duration-200 origin-top-right ${showMenu ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
+                className={`absolute right-0 mt-2 w-48 bg-[#1A1A1A] border border-white/10 rounded-xl shadow-2xl overflow-hidden transition-all duration-200 origin-top-right z-50 ${showMenu ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
               >
                 <button 
