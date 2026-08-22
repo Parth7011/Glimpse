@@ -16,7 +16,6 @@ const CAROUSEL_IMAGES = [
 export default function LoginPage() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
-  const [userType, setUserType] = useState('photographer'); // 'photographer' or 'guest'
   const [showPassword, setShowPassword] = useState(false);
   
   // Form state
@@ -47,8 +46,8 @@ export default function LoginPage() {
       } else {
         await authService.register({ name, email, password });
       }
-      // Route based on selected user type
-      navigate(userType === 'guest' ? ROUTES.GUEST_DASHBOARD : ROUTES.DASHBOARD);
+      // Route based on successful login
+      navigate(ROUTES.DASHBOARD);
     } catch (err) {
       setError(err.message || 'Authentication failed');
     } finally {
@@ -111,43 +110,6 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Role Toggle */}
-            <div className="flex items-center gap-6 mb-8 text-xs font-bold uppercase tracking-widest">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div className={cn(
-                  "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
-                  userType === 'photographer' ? "border-[#D7E2EA]" : "border-white/20 group-hover:border-white/40"
-                )}>
-                  {userType === 'photographer' && <div className="w-2.5 h-2.5 rounded-full bg-[#D7E2EA] shadow-[0_0_10px_rgba(215,226,234,0.5)]" />}
-                </div>
-                <input 
-                  type="radio" 
-                  className="hidden" 
-                  checked={userType === 'photographer'} 
-                  onChange={() => setUserType('photographer')} 
-                />
-                <span className={cn("transition-colors", userType === 'photographer' ? "text-[#D7E2EA]" : "text-[#D7E2EA]/40 group-hover:text-[#D7E2EA]/60")}>
-                  Photographer
-                </span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div className={cn(
-                  "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
-                  userType === 'guest' ? "border-[#D7E2EA]" : "border-white/20 group-hover:border-white/40"
-                )}>
-                  {userType === 'guest' && <div className="w-2.5 h-2.5 rounded-full bg-[#D7E2EA] shadow-[0_0_10px_rgba(215,226,234,0.5)]" />}
-                </div>
-                <input 
-                  type="radio" 
-                  className="hidden" 
-                  checked={userType === 'guest'} 
-                  onChange={() => setUserType('guest')} 
-                />
-                <span className={cn("transition-colors", userType === 'guest' ? "text-[#D7E2EA]" : "text-[#D7E2EA]/40 group-hover:text-[#D7E2EA]/60")}>
-                  Guest
-                </span>
-              </label>
-            </div>
 
             {error && (
               <div className="mb-6 p-4 bg-red-500/10 text-red-400 border border-red-500/20 rounded-2xl text-xs font-bold uppercase tracking-wider text-center">

@@ -12,7 +12,6 @@ export const ROUTES = {
   LOGIN: '/login',
   HOWITWORKS: '/how-it-works',
   DASHBOARD: '/dashboard',
-  GUEST_DASHBOARD: '/guest-dashboard',
   EVENTS_NEW: '/events/new',
   EVENT: id => `/events/${id}`,
   EVENT_UPLOAD: id => `/events/${id}/upload`,

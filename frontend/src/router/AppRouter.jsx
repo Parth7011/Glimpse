@@ -1,15 +1,12 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { DashboardLayout, GuestLayout, GuestDashboardLayout } from '@/components/layout';
+import { DashboardLayout, GuestLayout } from '@/components/layout';
 
 // Pages
 import LandingPage from '../pages/LandingPage';
 import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import PhotographerSettingsPage from '../pages/PhotographerSettingsPage';
-import GuestDashboardPage from '../pages/GuestDashboardPage';
-import GuestSettingsPage from '../pages/GuestSettingsPage';
-import FindEventPage from '../pages/FindEventPage';
 import CreateEventPage from '../pages/CreateEventPage';
 import EventWorkspacePage from '../pages/EventWorkspacePage';
 import UploadPage from '../pages/UploadPage';
@@ -37,12 +34,6 @@ export default function AppRouter() {
         <Route path="/events/:eventId" element={<EventWorkspacePage />} />
         <Route path="/events/:eventId/upload" element={<UploadPage />} />
         <Route path="/events/:eventId/share" element={<SharePage />} />
-      </Route>
-
-      <Route element={<GuestDashboardLayout />}>
-        <Route path="/guest-dashboard" element={<GuestDashboardPage />} />
-        <Route path="/guest-dashboard/find" element={<FindEventPage />} />
-        <Route path="/guest-dashboard/settings" element={<GuestSettingsPage />} />
       </Route>
 
       <Route element={<GuestLayout />}>
