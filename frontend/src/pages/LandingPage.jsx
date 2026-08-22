@@ -120,24 +120,6 @@ export default function LandingPage() {
           </motion.h1>
         </div>
 
-        {/* Hero Portrait with Magnet */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-          className="absolute left-1/2 -translate-x-1/2 z-10 top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0"
-        >
-          <Magnet padding={150} strength={3}>
-            <div className="w-[200px] sm:w-[260px] md:w-[320px] lg:w-[380px]">
-              <img 
-                src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80" 
-                alt="Event photographer"
-                className="w-full h-auto object-cover rounded-[40px] border-4 border-[#0C0C0C] shadow-2xl"
-                style={{ filter: 'grayscale(100%) contrast(1.2)' }}
-              />
-            </div>
-          </Magnet>
-        </motion.div>
 
         {/* Bottom Bar */}
         <div className="px-6 md:px-10 pb-7 sm:pb-8 md:pb-10 flex justify-between items-end z-20">
