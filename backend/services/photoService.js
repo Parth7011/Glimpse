@@ -2,7 +2,7 @@ import supabase, { adminSupabase } from '../config/supabase.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export const listPhotos = async (eventId) => {
-  const { data, error } = await supabase
+  const { data, error } = await adminSupabase
     .from('photos')
     .select('*')
     .eq('event_id', eventId)
@@ -15,7 +15,7 @@ export const listPhotos = async (eventId) => {
   // Attach signed URLs for previews
   const photosWithUrls = await Promise.all(data.map(async (photo) => {
     if (photo.storage_path) {
-      const { data: signedData } = await supabase.storage.from(bucketName).createSignedUrl(photo.storage_path, 3600);
+      const { data: signedData } = await adminSupabase.storage.from(bucketName).createSignedUrl(photo.storage_path, 3600);
       if (signedData?.signedUrl) {
         photo.preview_url = signedData.signedUrl;
       }
@@ -83,7 +83,7 @@ export const uploadAndProcessPhoto = async (eventId, file, metadata) => {
 };
 
 export const getSignedUrl = async (photoId) => {
-  const { data: photo, error: photoError } = await supabase
+  const { data: photo, error: photoError } = await adminSupabase
     .from('photos')
     .select('storage_path')
     .eq('id', photoId)
@@ -94,7 +94,7 @@ export const getSignedUrl = async (photoId) => {
   // Since we don't have real storage setup with RLS in this mock/Express fallback,
   // we will just return a public URL if the bucket is public, or a signed URL.
   // For the hackathon, we assume the bucket 'event-photos' exists.
-  const { data, error } = await supabase
+  const { data, error } = await adminSupabase
     .storage
     .from('event-photos')
     .createSignedUrl(photo.storage_path, 3600); // 1 hour
@@ -111,7 +111,7 @@ export const getSignedUrl = async (photoId) => {
 };
 
 export const getProcessingProgress = async (eventId) => {
-  const { data: photos, error } = await supabase
+  const { data: photos, error } = await adminSupabase
     .from('photos')
     .select('status, face_count')
     .eq('event_id', eventId);
