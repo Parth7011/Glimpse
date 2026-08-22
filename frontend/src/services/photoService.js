@@ -70,5 +70,20 @@ export const photoService = {
     });
     if (!response.ok) throw new Error('Failed to trigger processing');
     return await response.json();
+  },
+
+  /** Delete a photo */
+  async deletePhoto(photoId) {
+    const response = await fetch(`${API_URL}/photos/${photoId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to delete photo');
+    }
+    
+    return response.json();
   }
 };

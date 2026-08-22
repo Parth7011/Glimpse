@@ -5,7 +5,8 @@ import {
   uploadPhoto, 
   getSignedUrl, 
   getProcessingProgress, 
-  triggerProcessing 
+  triggerProcessing,
+  deletePhoto
 } from '../controllers/photoController.js';
 const router = express.Router();
 
@@ -21,5 +22,6 @@ router.post('/event/:eventId/upload', upload.single('photo'), uploadPhoto);
 router.get('/:photoId/url', getSignedUrl);
 router.get('/event/:eventId/progress', getProcessingProgress);
 router.post('/event/:eventId/process', triggerProcessing);
+router.delete('/:photoId', deletePhoto);
 
 export default router;

@@ -207,3 +207,44 @@ export const triggerProcessing = async (eventId) => {
     throw new Error("ML Pipeline connection failed: " + err.message);
   }
 };
+
+export const removePhoto = async (photoId) => {
+  // 1. Get the storage path
+  const { data: photo, error: fetchError } = await adminSupabase
+    .from('photos')
+    .select('storage_path')
+    .eq('id', photoId)
+    .single();
+
+  if (fetchError || !photo) {
+    console.error(`Photo not found or error fetching photo ${photoId}:`, fetchError);
+    throw new Error('Photo not found');
+  }
+
+  const bucketName = process.env.SUPABASE_STORAGE_BUCKET || 'event-photos';
+
+  // 2. Delete from Supabase Storage
+  if (photo.storage_path) {
+    const { error: storageError } = await adminSupabase.storage
+      .from(bucketName)
+      .remove([photo.storage_path]);
+
+    if (storageError) {
+      console.error(`Failed to remove file from storage for photo ${photoId}:`, storageError);
+      // We log the error but still proceed to delete the db row so we don't end up with an un-deletable ghost record.
+    }
+  }
+
+  // 3. Delete from Database
+  const { error: dbError } = await adminSupabase
+    .from('photos')
+    .delete()
+    .eq('id', photoId);
+
+  if (dbError) {
+    console.error(`Failed to delete photo ${photoId} from db:`, dbError);
+    throw new Error(`Database deletion failed: ${dbError.message}`);
+  }
+
+  return true;
+};

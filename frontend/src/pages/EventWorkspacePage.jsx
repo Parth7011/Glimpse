@@ -1,14 +1,15 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { eventService } from '@/services/eventService';
 import { photoService } from '@/services/photoService';
 import { ROUTES } from '@/utils/constants';
 import { Button, Badge, Skeleton } from '@/components/ui';
-import { ArrowLeft, ImagePlus, Share2, Users, Camera } from 'lucide-react';
+import { ArrowLeft, ImagePlus, Share2, Users, Camera, Trash2 } from 'lucide-react';
 
 export default function EventWorkspacePage() {
   const { eventId } = useParams();
+  const queryClient = useQueryClient();
 
   const { data: event, isLoading: eventLoading } = useQuery({
     queryKey: ['event', eventId],
@@ -25,6 +26,14 @@ export default function EventWorkspacePage() {
     enabled: !!eventId,
     refetchInterval: (query) => {
       return event?.status === 'processing' ? 3000 : false;
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (photoId) => photoService.deletePhoto(photoId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['event_photos', eventId]);
+      queryClient.invalidateQueries(['event', eventId]);
     }
   });
 
@@ -152,8 +161,18 @@ export default function EventWorkspacePage() {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0C0C0C] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-5">
-                  <p className="text-[#D7E2EA] text-[10px] font-black uppercase tracking-widest truncate drop-shadow-lg">{photo.filename}</p>
+                  <p className="text-[#D7E2EA] text-[10px] font-black uppercase tracking-widest truncate drop-shadow-lg pr-8">{photo.filename}</p>
                 </div>
+                
+                {/* Delete Button */}
+                <button 
+                  onClick={() => deleteMutation.mutate(photo.id)}
+                  disabled={deleteMutation.isPending}
+                  className="absolute top-4 right-4 bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 disabled:opacity-50"
+                  title="Delete Photo"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
             ))}
           </div>

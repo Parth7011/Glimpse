@@ -51,9 +51,20 @@ export const triggerProcessing = async (req, res) => {
   try {
     const { eventId } = req.params;
     await photoService.triggerProcessing(eventId);
-    res.status(200).json({ message: 'Processing triggered' });
+    res.status(202).json({ message: 'Processing triggered' });
   } catch (error) {
     console.error('Trigger processing error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const deletePhoto = async (req, res) => {
+  try {
+    const { photoId } = req.params;
+    await photoService.removePhoto(photoId);
+    res.status(200).json({ message: 'Photo deleted successfully' });
+  } catch (error) {
+    console.error('Delete photo error:', error);
     res.status(500).json({ error: error.message });
   }
 };
