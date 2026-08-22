@@ -25,7 +25,7 @@ class GuestPipeline:
         img = self.storage.download_image(storage_path)
         if img is None: return {"error": "Failed to download selfie from storage"}
 
-        faces = self.engine.extract_faces(img)
+        faces = self.engine.extract_faces_from_bytes(img)
         if not faces: return {"error": "No faces detected in the selfie"}
 
         faces.sort(key=lambda f: (f["bbox"][2] - f["bbox"][0]) * (f["bbox"][3] - f["bbox"][1]), reverse=True)
