@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Image as ImageIcon, Users, Camera } from 'lucide-react';
+import { Calendar, Image as ImageIcon, Users, Camera, MoreHorizontal, Edit2, ImageIcon as ImageIcon2, Trash2 } from 'lucide-react';
 import { ROUTES } from '@/utils/constants';
 import { Badge } from '@/components/ui';
 
-export function EventCard({ event }) {
+export function EventCard({ event, onEdit, onChangeCover, onDelete }) {
+  const [showMenu, setShowMenu] = useState(false);
+  
   const getStatusColor = (status) => {
     switch (status) {
       case 'ready': return 'success';
@@ -37,10 +39,47 @@ export function EventCard({ event }) {
           <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent opacity-80" />
           
           {/* Status badge on image */}
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-4 left-4 z-20">
             <Badge variant={getStatusColor(event.status)} className="uppercase font-black tracking-widest text-[9px] shadow-[0_0_10px_rgba(0,0,0,0.5)] backdrop-blur-md px-3 py-1">
               {event.status}
             </Badge>
+          </div>
+          
+          {/* Action Menu Button */}
+          <div className="absolute top-4 right-4 z-20">
+            <div className="relative" onMouseLeave={() => setShowMenu(false)}>
+              <button 
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenu(!showMenu); }}
+                className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white/70 hover:text-white hover:bg-black/70 transition-colors border border-white/10"
+              >
+                <MoreHorizontal className="w-4 h-4" />
+              </button>
+              
+              {/* Dropdown Menu */}
+              <div 
+                className={`absolute right-0 mt-2 w-48 bg-[#1A1A1A] border border-white/10 rounded-xl shadow-2xl overflow-hidden transition-all duration-200 origin-top-right ${showMenu ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              >
+                <button 
+                  onClick={() => { setShowMenu(false); onEdit(event); }}
+                  className="w-full text-left px-4 py-3 text-xs font-bold uppercase tracking-widest text-white/70 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors"
+                >
+                  <Edit2 className="w-4 h-4" /> Edit Details
+                </button>
+                <button 
+                  onClick={() => { setShowMenu(false); onChangeCover(event); }}
+                  className="w-full text-left px-4 py-3 text-xs font-bold uppercase tracking-widest text-white/70 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors border-t border-white/5"
+                >
+                  <ImageIcon2 className="w-4 h-4" /> Change Cover
+                </button>
+                <button 
+                  onClick={() => { setShowMenu(false); onDelete(event); }}
+                  className="w-full text-left px-4 py-3 text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center gap-3 transition-colors border-t border-white/5"
+                >
+                  <Trash2 className="w-4 h-4" /> Delete Event
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div className="p-6 flex flex-col flex-1 relative z-10">

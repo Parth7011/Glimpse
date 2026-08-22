@@ -9,6 +9,7 @@ import { Camera, ImageIcon, Users, Plus, Calendar, ArrowRight } from 'lucide-rea
 import { CursorGlow } from '@/components/ui';
 
 import { StatCard, EventCard } from '@/components/dashboard';
+import { EventCoverModal, EventEditModal, EventDeleteModal } from '@/components/dashboard/EventModals';
 import { getGreeting } from '@/utils/utils';
 
 const containerVariants = {
@@ -26,6 +27,7 @@ const itemVariants = {
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Photographer');
+  const [modalState, setModalState] = useState({ type: null, event: null }); // type: 'cover' | 'edit' | 'delete'
 
   useEffect(() => {
     try {
@@ -147,12 +149,34 @@ export default function DashboardPage() {
                 key={event.id}
                 variants={itemVariants}
               >
-                <EventCard event={event} />
+                <EventCard 
+                  event={event} 
+                  onEdit={(e) => setModalState({ type: 'edit', event: e })}
+                  onChangeCover={(e) => setModalState({ type: 'cover', event: e })}
+                  onDelete={(e) => setModalState({ type: 'delete', event: e })}
+                />
               </motion.div>
             ))
           )}
         </div>
       </motion.div>
+
+      {/* Modals */}
+      <EventCoverModal 
+        isOpen={modalState.type === 'cover'} 
+        onClose={() => setModalState({ type: null, event: null })} 
+        event={modalState.event} 
+      />
+      <EventEditModal 
+        isOpen={modalState.type === 'edit'} 
+        onClose={() => setModalState({ type: null, event: null })} 
+        event={modalState.event} 
+      />
+      <EventDeleteModal 
+        isOpen={modalState.type === 'delete'} 
+        onClose={() => setModalState({ type: null, event: null })} 
+        event={modalState.event} 
+      />
     </motion.div>
   );
 }

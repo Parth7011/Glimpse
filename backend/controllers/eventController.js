@@ -1,4 +1,6 @@
 import * as eventService from '../services/eventService.js';
+import { adminSupabase } from '../config/supabase.js';
+import path from 'path';
 
 export const listEvents = async (req, res) => {
   try {
@@ -103,5 +105,60 @@ export const getShareInfo = async (req, res) => {
   } catch (error) {
     console.error('Get share info error:', error);
     res.status(500).json({ error: error.message || 'Failed to get share info' });
+  }
+};
+
+export const deleteEvent = async (req, res) => {
+  try {
+    const photographerId = req.user.id;
+    const { id } = req.params;
+    await eventService.deleteEvent(photographerId, id);
+    res.status(200).json({ message: 'Event deleted successfully' });
+  } catch (error) {
+    console.error('Delete event error:', error);
+    res.status(500).json({ error: error.message || 'Failed to delete event' });
+  }
+};
+
+export const uploadCoverPhoto = async (req, res) => {
+  try {
+    const photographerId = req.user.id;
+    const { id } = req.params;
+    
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file provided' });
+    }
+    
+    // Check if event exists and belongs to photographer
+    const event = await eventService.getEvent(photographerId, id);
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+    
+    const fileExt = path.extname(req.file.originalname) || '.jpg';
+    const fileName = `covers/${id}${fileExt}`;
+    const bucketName = process.env.SUPABASE_STORAGE_BUCKET || 'event-photos';
+    
+    const { data: uploadData, error: uploadError } = await adminSupabase.storage
+      .from(bucketName)
+      .upload(fileName, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: true
+      });
+      
+    if (uploadError) throw uploadError;
+    
+    const { data: { publicUrl } } = adminSupabase.storage
+      .from(bucketName)
+      .getPublicUrl(fileName);
+      
+    const updatedEvent = await eventService.updateEvent(photographerId, id, {
+      cover_photo_url: publicUrl
+    });
+    
+    res.status(200).json(updatedEvent);
+  } catch (error) {
+    console.error('Upload cover photo error:', error);
+    res.status(500).json({ error: error.message || 'Failed to upload cover photo' });
   }
 };

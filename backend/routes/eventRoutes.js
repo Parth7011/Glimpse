@@ -7,9 +7,14 @@ import {
   getEventBySlug, 
   updateEvent, 
   getShareInfo,
-  searchEvents
+  searchEvents,
+  deleteEvent,
+  uploadCoverPhoto
 } from '../controllers/eventController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
+import multer from 'multer';
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = express.Router();
 
@@ -25,6 +30,8 @@ router.post('/', createEvent);
 router.get('/stats', getDashboardStats);
 router.get('/:id', getEvent);
 router.put('/:id', updateEvent);
+router.delete('/:id', deleteEvent);
+router.post('/:id/cover', upload.single('cover'), uploadCoverPhoto);
 router.get('/:id/share', getShareInfo);
 
 export default router;

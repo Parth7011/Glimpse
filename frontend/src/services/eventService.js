@@ -107,5 +107,38 @@ export const eventService = {
       throw new Error(err.error || 'Failed to fetch share info');
     }
     return await response.json();
+  },
+  
+  /** Delete an event */
+  async deleteEvent(eventId) {
+    const response = await fetch(`${API_URL}/events/${eventId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(()=>({}));
+      throw new Error(err.error || 'Failed to delete event');
+    }
+    return await response.json();
+  },
+  
+  /** Upload a cover photo for an event */
+  async uploadCoverPhoto(eventId, file) {
+    const token = localStorage.getItem('glimpse_token');
+    const formData = new FormData();
+    formData.append('cover', file);
+    
+    const response = await fetch(`${API_URL}/events/${eventId}/cover`, {
+      method: 'POST',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: formData
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(()=>({}));
+      throw new Error(err.error || 'Failed to upload cover photo');
+    }
+    return await response.json();
   }
 };

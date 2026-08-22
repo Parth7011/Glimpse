@@ -152,3 +152,13 @@ export const getShareInfo = async (photographerId, eventId) => {
     qr_data: `${baseUrl}/e/${event.slug}`
   };
 };
+
+export const deleteEvent = async (photographerId, eventId) => {
+  const { error } = await adminSupabase
+    .from('events')
+    .delete()
+    .eq('id', eventId)
+    .eq('photographer_id', photographerId);
+
+  if (error) throw error;
+};
