@@ -7,3 +7,8 @@ export { Progress } from './progress';
 export { ToastProvider, useToast } from './toast';
 export { Checkbox } from './checkbox';
 export { Skeleton, SkeletonCard, SkeletonList, SkeletonGrid } from './skeleton';
+export { Magnet } from './Magnet';
+export { FadeIn } from './FadeIn';
+export { AnimatedText } from './AnimatedText';
+export { GradientButton } from './GradientButton';
+export { CursorGlow } from './CursorGlow';

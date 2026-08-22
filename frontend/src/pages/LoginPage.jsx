@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES } from '@/utils/constants';
 import { Camera, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { cn } from '@/utils/utils';
 import { authService } from '../services/authService';
+import { CursorGlow } from '@/components/ui';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const CAROUSEL_IMAGES = [
+  "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=2000",
+];
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -17,6 +25,16 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  
+  // Carousel State
+  const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % CAROUSEL_IMAGES.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,40 +57,68 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F2EF] flex items-center justify-center p-4 md:p-8 font-sans text-[#171717]">
-      <div className="w-full max-w-[1300px] h-[90vh] min-h-[550px] max-h-[900px] bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-[#0C0C0C] flex items-center justify-center p-4 md:p-8 font-kanit text-[#D7E2EA] selection:bg-[#D7E2EA] selection:text-[#0C0C0C] relative overflow-hidden">
+      
+      <CursorGlow />
+
+      {/* Animated Background Nebulas */}
+      <motion.div 
+        animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.15, 0.1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-0 left-0 w-[800px] h-[800px] bg-[#D7E2EA]/10 rounded-full blur-[150px] pointer-events-none"
+      />
+      <motion.div 
+        animate={{ scale: [1, 1.3, 1], opacity: [0.05, 0.1, 0.05], x: [0, 100, 0] }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-0 right-0 w-[1000px] h-[1000px] bg-[#D7E2EA]/5 rounded-full blur-[150px] pointer-events-none"
+      />
+
+      {/* Outer container with animated gradient border */}
+      <div className="w-full max-w-[1300px] h-[90vh] min-h-[550px] max-h-[900px] p-[1px] bg-gradient-to-br from-white/20 via-transparent to-white/5 rounded-[40px] shadow-[0_0_100px_rgba(0,0,0,0.8)] relative z-10 group">
+        <div className={cn("w-full h-full bg-[#0C0C0C] rounded-[40px] overflow-hidden flex flex-col relative", isLogin ? "lg:flex-row" : "lg:flex-row-reverse")}>
         
+        {/* Abstract subtle glow behind the whole card */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#D7E2EA]/5 rounded-full blur-[120px] pointer-events-none -z-10" />
+
         {/* Left Side: Form */}
-        <div className="w-full lg:w-[45%] bg-[#FDF9F2] h-full flex flex-col p-4 md:p-6 relative overflow-y-auto">
+        <motion.div 
+          layout 
+          transition={{ type: "spring", damping: 25, stiffness: 200 }} 
+          className={cn(
+            "w-full lg:w-[45%] bg-[#111111]/80 backdrop-blur-xl h-full flex flex-col p-6 md:p-10 relative overflow-y-auto z-10 shadow-2xl",
+            isLogin ? "border-r border-white/5" : "border-l border-white/5"
+          )}
+        >
+          
           {/* Logo */}
-          <Link to="/" className="flex flex-col mb-4 w-fit group">
+          <Link to="/" className="flex flex-col mb-8 w-fit group">
             <div className="flex items-center gap-2 mb-1">
-              <Camera className="w-7 h-7 text-[#171717]" />
-              <span className="text-2xl font-bold tracking-tight">Glimpse</span>
+              <Camera className="w-7 h-7 text-[#D7E2EA]" />
+              <span className="text-2xl font-black uppercase tracking-tight text-[#D7E2EA]">Glimpse</span>
             </div>
-            <span className="text-[10px] font-semibold text-[#6B6B67] uppercase tracking-wide group-hover:text-[var(--accent)] transition-colors">
-              Every moment. <span className="text-[var(--accent)]">Find yours.</span>
+            <span className="text-[9px] font-black text-[#D7E2EA]/40 uppercase tracking-widest group-hover:text-[#D7E2EA] transition-colors">
+              Every moment. Find yours.
             </span>
           </Link>
 
           <div className="flex-1 flex flex-col justify-center max-w-[400px] w-full mx-auto">
-            <div className="mb-4">
-              <h1 className="text-3xl font-bold tracking-tight mb-1">
-                {isLogin ? 'Welcome back' : 'Create an account'}
+            <div className="mb-8">
+              <h1 className="text-4xl font-black uppercase tracking-tight mb-2 text-[#D7E2EA]">
+                {isLogin ? 'Welcome back' : 'Create account'}
               </h1>
-              <p className="text-sm text-[#6B6B67]">
+              <p className="text-sm font-light text-[#D7E2EA]/50 uppercase tracking-wider">
                 {isLogin ? 'Sign in to continue to your account' : 'Sign up to start sharing your memories'}
               </p>
             </div>
 
             {/* Role Toggle */}
-            <div className="flex items-center gap-6 mb-4 text-sm font-medium">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="flex items-center gap-6 mb-8 text-xs font-bold uppercase tracking-widest">
+              <label className="flex items-center gap-3 cursor-pointer group">
                 <div className={cn(
-                  "w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors",
-                  userType === 'photographer' ? "border-[var(--accent)]" : "border-[#D1D1CC]"
+                  "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+                  userType === 'photographer' ? "border-[#D7E2EA]" : "border-white/20 group-hover:border-white/40"
                 )}>
-                  {userType === 'photographer' && <div className="w-2 h-2 rounded-full bg-[var(--accent)]" />}
+                  {userType === 'photographer' && <div className="w-2.5 h-2.5 rounded-full bg-[#D7E2EA] shadow-[0_0_10px_rgba(215,226,234,0.5)]" />}
                 </div>
                 <input 
                   type="radio" 
@@ -80,14 +126,16 @@ export default function LoginPage() {
                   checked={userType === 'photographer'} 
                   onChange={() => setUserType('photographer')} 
                 />
-                I'm a Photographer
+                <span className={cn("transition-colors", userType === 'photographer' ? "text-[#D7E2EA]" : "text-[#D7E2EA]/40 group-hover:text-[#D7E2EA]/60")}>
+                  Photographer
+                </span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-[#6B6B67]">
+              <label className="flex items-center gap-3 cursor-pointer group">
                 <div className={cn(
-                  "w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors",
-                  userType === 'guest' ? "border-[var(--accent)]" : "border-[#D1D1CC]"
+                  "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+                  userType === 'guest' ? "border-[#D7E2EA]" : "border-white/20 group-hover:border-white/40"
                 )}>
-                  {userType === 'guest' && <div className="w-2 h-2 rounded-full bg-[var(--accent)]" />}
+                  {userType === 'guest' && <div className="w-2.5 h-2.5 rounded-full bg-[#D7E2EA] shadow-[0_0_10px_rgba(215,226,234,0.5)]" />}
                 </div>
                 <input 
                   type="radio" 
@@ -95,24 +143,27 @@ export default function LoginPage() {
                   checked={userType === 'guest'} 
                   onChange={() => setUserType('guest')} 
                 />
-                I'm a Guest
+                <span className={cn("transition-colors", userType === 'guest' ? "text-[#D7E2EA]" : "text-[#D7E2EA]/40 group-hover:text-[#D7E2EA]/60")}>
+                  Guest
+                </span>
               </label>
             </div>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-sm font-medium">
+              <div className="mb-6 p-4 bg-red-500/10 text-red-400 border border-red-500/20 rounded-2xl text-xs font-bold uppercase tracking-wider text-center">
                 {error}
               </div>
             )}
 
             {/* Custom Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {!isLogin && (
-                <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-[#171717]">Full Name</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                      <div className="w-4 h-4 text-[#9C9C97] border-2 border-current rounded-full" />
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 ml-1">Full Name</label>
+                  <div className="relative group/input">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-transparent via-[#D7E2EA]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within/input:opacity-100 transition duration-500" />
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                      <div className="w-4 h-4 text-[#D7E2EA]/40 border-2 border-current rounded-full" />
                     </div>
                     <input 
                       type="text" 
@@ -120,17 +171,18 @@ export default function LoginPage() {
                       required={!isLogin}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
+                      className="relative w-full pl-12 pr-4 py-3.5 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm focus:outline-none focus:border-[#D7E2EA]/50 transition-all shadow-inner text-[#D7E2EA] placeholder:text-[#D7E2EA]/30 font-light z-0"
                     />
                   </div>
                 </div>
               )}
 
-              <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-[#171717]">Email address</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <Mail className="w-4 h-4 text-[#9C9C97]" />
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 ml-1">Email address</label>
+                <div className="relative group/input">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-transparent via-[#D7E2EA]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within/input:opacity-100 transition duration-500" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                    <Mail className="w-4 h-4 text-[#D7E2EA]/40" />
                   </div>
                   <input 
                     type="email" 
@@ -138,21 +190,22 @@ export default function LoginPage() {
                     required 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
+                    className="relative w-full pl-12 pr-4 py-3.5 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm focus:outline-none focus:border-[#D7E2EA]/50 transition-all shadow-inner text-[#D7E2EA] placeholder:text-[#D7E2EA]/30 font-light z-0"
                   />
                 </div>
               </div>
               
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold text-[#171717]">Password</label>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between ml-1 mr-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60">Password</label>
                   {isLogin && (
-                    <a href="#" className="text-xs font-semibold text-[var(--accent)] hover:underline">Forgot password?</a>
+                    <a href="#" className="text-[10px] font-bold uppercase tracking-wider text-[#D7E2EA] hover:text-white transition-colors">Forgot?</a>
                   )}
                 </div>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <Lock className="w-4 h-4 text-[#9C9C97]" />
+                <div className="relative group/input">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-transparent via-[#D7E2EA]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within/input:opacity-100 transition duration-500" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                    <Lock className="w-4 h-4 text-[#D7E2EA]/40" />
                   </div>
                   <input 
                     type={showPassword ? "text" : "password"} 
@@ -160,28 +213,34 @@ export default function LoginPage() {
                     required 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2.5 bg-white border border-[#E5E5E0] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all shadow-sm"
+                    className="relative w-full pl-12 pr-12 py-3.5 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm focus:outline-none focus:border-[#D7E2EA]/50 transition-all shadow-inner text-[#D7E2EA] placeholder:text-[#D7E2EA]/30 font-light z-0"
                   />
                   <button 
                     type="button" 
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#9C9C97] hover:text-[#171717] transition-colors"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#D7E2EA]/40 hover:text-[#D7E2EA] transition-colors z-10"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              <button 
-                type="submit" 
-                disabled={loading}
-                className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold py-3 rounded-xl shadow-[0_4px_14px_rgba(217,154,50,0.4)] transition-transform hover:scale-[1.02] flex items-center justify-center disabled:opacity-70 disabled:hover:scale-100"
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isLogin ? 'Sign in' : 'Create account')}
-              </button>
+              <div className="pt-2">
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="group relative w-full h-14 bg-[#D7E2EA] hover:bg-white text-[#0C0C0C] font-black uppercase tracking-widest rounded-2xl overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center disabled:opacity-70 disabled:hover:scale-100 shadow-[0_0_30px_rgba(215,226,234,0.15)]"
+                >
+                  {/* Internal animated gradient for the button */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+                  <span className="relative z-10 flex items-center gap-2">
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isLogin ? 'Sign in' : 'Create account')}
+                  </span>
+                </button>
+              </div>
             </form>
 
-            <p className="text-center text-sm text-[#6B6B67] mt-4">
+            <p className="text-center text-xs text-[#D7E2EA]/40 mt-8 font-light uppercase tracking-widest">
               {isLogin ? "Don't have an account? " : "Already have an account? "}
               <button 
                 type="button"
@@ -189,82 +248,65 @@ export default function LoginPage() {
                   setIsLogin(!isLogin);
                   setError(null);
                 }} 
-                className="text-[var(--accent)] font-bold hover:underline"
+                className="text-[#D7E2EA] font-black ml-1 hover:text-white transition-colors"
               >
                 {isLogin ? 'Sign up' : 'Sign in'}
               </button>
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Side: Visuals */}
-        <div className="hidden lg:flex w-[55%] bg-white h-full relative p-16 flex-col">
-          {/* Subtle dotted background pattern */}
-          <div className="absolute top-8 right-8 grid grid-cols-4 gap-2 opacity-20">
-            {Array.from({length: 16}).map((_, i) => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#D1D1CC]" />)}
+        <motion.div 
+          layout 
+          transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          className="hidden lg:flex w-[55%] bg-[#0C0C0C] h-full relative p-16 flex-col overflow-hidden z-0"
+        >
+          
+          {/* Full-bleed Carousel Background */}
+          <div className="absolute inset-0 z-0">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={currentImage}
+                src={CAROUSEL_IMAGES[currentImage]}
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.05 }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+                className="absolute inset-0 w-full h-full object-cover"
+                alt="Event Photography"
+              />
+            </AnimatePresence>
+            {/* Dark gradient overlays for text legibility */}
+            <div className={cn(
+              "absolute inset-0 bg-gradient-to-r",
+              isLogin ? "from-[#0C0C0C] via-[#0C0C0C]/50 to-transparent" : "from-transparent via-[#0C0C0C]/50 to-[#0C0C0C]"
+            )} />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0C0C0C]/80 via-transparent to-[#0C0C0C]/90" />
           </div>
-          <div className="absolute bottom-8 left-8 grid grid-cols-4 gap-2 opacity-20">
-            {Array.from({length: 16}).map((_, i) => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#D1D1CC]" />)}
-          </div>
-
-          <div className="relative z-10 max-w-lg mb-12">
-            <div className="text-[var(--accent)] text-6xl font-serif leading-none h-8 mb-2">“</div>
-            <h2 className="text-4xl font-bold tracking-tight leading-[1.15] mb-6">
+          
+          <motion.div layout transition={{ type: "spring", damping: 25, stiffness: 200 }} className="relative z-10 max-w-lg mb-8 mt-0">
+            <h2 className="hero-heading font-black uppercase tracking-tight leading-[0.9] mb-6 text-4xl xl:text-5xl drop-shadow-2xl">
               Bringing people closer to their memories through the power of AI.
             </h2>
-            <div className="flex items-end gap-2 text-xl text-[#6B6B67] font-medium">
+            <div className="flex items-center gap-4 text-[#D7E2EA] font-semibold text-lg uppercase tracking-widest drop-shadow-lg">
+              <div className="w-8 h-[1px] bg-white/40" />
               One selfie. Every moment you're in.
-              <span className="text-[var(--accent)] text-5xl font-serif leading-none h-6 translate-y-2">”</span>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="flex items-center gap-4 relative z-10">
-            <div className="w-12 h-12 rounded-full overflow-hidden bg-[#F1F1EE] border border-[#E5E5E0]">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80" alt="Rohan Mehta" className="w-full h-full object-cover" />
+          {/* Photographer Profile */}
+          <div className="flex items-center gap-4 relative z-10 mt-auto mb-10 bg-black/40 backdrop-blur-md p-4 rounded-3xl border border-white/10 w-fit">
+            <div className="w-14 h-14 rounded-full overflow-hidden bg-[#111111] border border-white/20 shadow-2xl">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80" alt="Rohan Mehta" className="w-full h-full object-cover grayscale" />
             </div>
             <div>
-              <div className="font-bold text-sm">Rohan Mehta</div>
-              <div className="text-xs text-[#9C9C97] font-medium">Wedding Photographer</div>
+              <div className="font-black uppercase tracking-widest text-[#D7E2EA] text-sm">Rohan Mehta</div>
+              <div className="text-[10px] text-[#D7E2EA]/70 font-bold uppercase tracking-widest">Wedding Photographer</div>
             </div>
           </div>
-
-          {/* Photos Collage */}
-          <div className="absolute bottom-10 right-10 w-[500px] h-[400px]">
-            {/* Swirl graphic */}
-            <svg className="absolute inset-0 w-full h-full text-[var(--accent)]/30 scale-125 -translate-y-10" viewBox="0 0 200 200" fill="none">
-              <path d="M 0,100 C 50,50 100,150 200,50" stroke="currentColor" strokeWidth="1" />
-            </svg>
-            
-            {/* Floating Camera Graphic */}
-            <div className="absolute top-20 right-10 w-16 h-16 border-2 border-[var(--accent)]/40 rounded-lg flex items-center justify-center rotate-12 bg-white shadow-sm">
-              <div className="w-6 h-6 border-2 border-[var(--accent)]/40 rounded-full" />
-              <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-[var(--accent)]/40 rounded-full" />
-            </div>
-
-            {/* Photo 1 (Back left) */}
-            <div className="absolute bottom-20 left-10 w-[200px] h-[240px] bg-white p-3 pb-12 shadow-[0_15px_30px_rgba(0,0,0,0.15)] rounded-sm -rotate-6 transition-transform hover:rotate-0 hover:z-20 hover:scale-105 duration-300">
-              <div className="w-full h-full bg-gray-100 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&q=80" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" alt="Wedding 1" />
-              </div>
-            </div>
-
-            {/* Photo 2 (Center prominent) */}
-            <div className="absolute bottom-32 left-32 w-[220px] h-[260px] bg-white p-3 pb-14 shadow-[0_20px_40px_rgba(0,0,0,0.2)] rounded-sm rotate-3 z-10 transition-transform hover:rotate-0 hover:z-20 hover:scale-105 duration-300">
-              <div className="w-full h-full bg-gray-100 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=80" className="w-full h-full object-cover" alt="Wedding 2" />
-              </div>
-            </div>
-
-            {/* Photo 3 (Bottom Right) */}
-            <div className="absolute bottom-10 right-20 w-[180px] h-[220px] bg-white p-2.5 pb-10 shadow-[0_10px_25px_rgba(0,0,0,0.15)] rounded-sm -rotate-3 z-0 transition-transform hover:rotate-0 hover:z-20 hover:scale-105 duration-300">
-              <div className="w-full h-full bg-gray-100 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&q=80" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" alt="Concert" />
-              </div>
-            </div>
-            
-          </div>
-        </div>
-
+        </motion.div>
+      </div>
       </div>
     </div>
   );

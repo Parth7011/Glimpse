@@ -25,6 +25,14 @@
   - Redeployed successfully in ~5 seconds (utilizing the cached image that already pre-downloaded the heavy `buffalo_l` model).
 
 ## Current State
-- The frontend is cleaned up.
+- The frontend has been completely redesigned with a premium dark cinematic aesthetic.
 - The backend successfully makes asynchronous API requests to the cloud GPU.
 - The `mlpipeline` is running live on a serverless Modal endpoint (`https://ritishmahajan15--glimpse-ml-pipeline-fastapi-app.modal.run`).
+
+## 4. Frontend Cinematic UI Overhaul
+- **Aesthetic Pivot**: The entire marketing frontend (Landing Page, How It Works, For Photographers, About) was overhauled from a light, paper-themed aesthetic (`bg-white/gray`) to a premium, immersive **3D Cinematic Dark Theme** (`bg-[#0C0C0C]` with `#D7E2EA` metallic accents and `Kanit` heavy typography).
+- **Animations & Interaction**: 
+  - Integrated `Lenis` for butter-smooth window scrolling.
+  - Implemented `Framer Motion` extensively to create staggered `FadeIn` reveals, `AnimatedText` word-by-word scroll glows, and floating 3D magnetic hover effects on cards and buttons (`GradientButton`).
+- **UI Components Restyled**: Handcrafted detailed dark-mode mockups across the site, swapping out flat white UI dashboards for sleek, glowing glassmorphism mockups to give the product a highly polished, state-of-the-art feel.
+- **Routing Fix**: Corrected a bug where `react-router-dom` route changes would maintain the previous scroll position, which conflicted with `Lenis`. Ensured `window.scrollTo(0, 0)` executes instantly on every route change.

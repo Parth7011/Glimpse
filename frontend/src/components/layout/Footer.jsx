@@ -4,39 +4,40 @@ import { Mail, Instagram, Facebook, X as XIcon, Link as LinkIcon, Youtube } from
 
 export function Footer() {
   return (
-    <footer className="bg-[#1C1814] relative overflow-hidden text-white font-sans border-t border-[#2C2620]">
-      {/* Hexagon Pattern Background */}
+    <footer className="relative bg-[#0C0C0C] text-[#D7E2EA] font-kanit overflow-hidden border-t border-[#D7E2EA]/10">
+      
+      {/* Background Glow */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#D7E2EA]/5 via-[#0C0C0C] to-[#0C0C0C]" />
+      
+      {/* Subtle Noise / Grid Pattern */}
       <div 
-        className="absolute inset-0 z-0 opacity-10 pointer-events-none" 
+        className="absolute inset-0 z-0 opacity-[0.02] pointer-events-none" 
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='103.923' viewBox='0 0 60 103.923' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 17.32V51.96L30 69.28L0 51.96V17.32L30 0ZM30 103.92L60 86.6V51.96L30 34.64L0 51.96V86.6L30 103.92Z' fill='none' stroke='%23FFFFFF' stroke-width='1.5'/%3E%3C/svg%3E")`,
-          backgroundSize: '120px',
-          backgroundPosition: 'top center'
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20z' fill='%23FFFFFF' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+          backgroundSize: '40px',
         }}
       />
-      <div className="relative z-10 max-w-[1300px] mx-auto px-6 pt-8 pb-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-8">
+
+      <div className="relative z-10 max-w-[1300px] mx-auto px-6 pt-20 pb-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-20">
           
           {/* Left Column (Brand & Info) */}
           <div className="md:col-span-5 lg:col-span-4 space-y-6">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="text-3xl font-bold tracking-tighter text-white">Glimpse</div>
-            </div>
-            <p className="text-[#A19D98] text-sm leading-relaxed max-w-[280px]">
+            <p className="text-[#D7E2EA]/70 text-sm leading-relaxed max-w-[280px]">
               AI-powered event photo delivery for photographers and studios across India.
             </p>
-            <p className="text-[#84807C] text-xs max-w-[280px]">
+            <p className="text-[#D7E2EA]/50 text-xs max-w-[280px]">
               One browser link. Private matching. Your brand.
             </p>
             
-            <div className="pt-2 flex items-center gap-2 text-[#A19D98] hover:text-white transition-colors cursor-pointer w-fit">
-              <Mail className="w-4 h-4 text-[var(--accent)]" />
+            <div className="pt-2 flex items-center gap-2 text-[#D7E2EA]/70 hover:text-white transition-colors cursor-pointer w-fit">
+              <Mail className="w-4 h-4 text-white" />
               <span className="text-sm font-semibold">hello@glimpse.in</span>
             </div>
 
             <div className="flex items-center gap-3 pt-4">
               {[Instagram, Facebook, XIcon, LinkIcon, Youtube].map((Icon, i) => (
-                <a key={i} href="#" className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all">
+                <a key={i} href="#" className="w-10 h-10 rounded-full border border-[#D7E2EA]/10 bg-[#D7E2EA]/5 flex items-center justify-center text-[#D7E2EA]/60 hover:text-white hover:bg-[#D7E2EA]/10 hover:border-[#D7E2EA]/20 transition-all">
                   <Icon className="w-4 h-4" />
                 </a>
               ))}
@@ -48,8 +49,8 @@ export function Footer() {
 
           {/* Middle Column (Explore) */}
           <div className="md:col-span-4 lg:col-span-3">
-            <h4 className="text-[10px] font-bold tracking-widest text-[#6B6661] uppercase mb-6">EXPLORE</h4>
-            <ul className="space-y-4 text-sm font-medium text-[#A19D98]">
+            <h4 className="text-xs font-black tracking-widest text-[#D7E2EA]/40 uppercase mb-6">EXPLORE</h4>
+            <ul className="space-y-4 text-sm font-medium text-[#D7E2EA]/70">
               <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
               <li><Link to="/how-it-works" className="hover:text-white transition-colors">How it works</Link></li>
               <li><Link to="/for-photographers" className="hover:text-white transition-colors">For photographers</Link></li>
@@ -59,8 +60,8 @@ export function Footer() {
 
           {/* Right Column (Legal) */}
           <div className="md:col-span-3 lg:col-span-2">
-            <h4 className="text-[10px] font-bold tracking-widest text-[#6B6661] uppercase mb-6">LEGAL</h4>
-            <ul className="space-y-4 text-sm font-medium text-[#A19D98]">
+            <h4 className="text-xs font-black tracking-widest text-[#D7E2EA]/40 uppercase mb-6">LEGAL</h4>
+            <ul className="space-y-4 text-sm font-medium text-[#D7E2EA]/70">
               <li><a href="#" className="hover:text-white transition-colors">Terms & Conditions</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
             </ul>
@@ -68,10 +69,20 @@ export function Footer() {
         </div>
 
         {/* Copyright Bar */}
-        <div className="pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-medium text-[#6B6661]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[#D7E2EA]/50 uppercase tracking-wide relative z-20">
           <div>© 2026 Glimpse India. All rights reserved.</div>
           <div>A product of Logicbyts Software Solutions.</div>
         </div>
+      </div>
+
+      {/* Massive Background Text */}
+      <div className="w-full overflow-hidden flex justify-center -mt-10 md:-mt-24 pointer-events-none select-none relative z-0">
+        <h1 
+          className="font-black uppercase tracking-tighter text-[#D7E2EA]/[0.08] text-center"
+          style={{ fontSize: 'clamp(5rem, 24vw, 400px)', lineHeight: 0.75 }}
+        >
+          GLIMPSE
+        </h1>
       </div>
     </footer>
   );

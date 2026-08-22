@@ -14,19 +14,19 @@ function NavLink({ item, isActive }) {
     <Link
       to={item.to}
       className={cn(
-        'flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-[var(--radius-md)] transition-all duration-200 group',
+        'flex items-center gap-3 px-4 py-3 text-xs font-black uppercase tracking-widest rounded-2xl transition-all duration-300 group',
         isActive
-          ? 'bg-[var(--accent-soft)] text-[var(--accent)] font-semibold'
-          : 'text-[var(--text-secondary)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]'
+          ? 'bg-[#D7E2EA] text-[#0C0C0C] shadow-[0_0_20px_rgba(215,226,234,0.3)]'
+          : 'text-[#D7E2EA]/50 hover:bg-white/5 hover:text-[#D7E2EA]'
       )}
     >
       <item.icon className={cn(
-        'w-[18px] h-[18px] shrink-0 transition-colors',
-        isActive ? 'text-[var(--accent)]' : 'text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]'
+        'w-4 h-4 shrink-0 transition-colors',
+        isActive ? 'text-[#0C0C0C]' : 'text-[#D7E2EA]/40 group-hover:text-[#D7E2EA]'
       )} />
       {item.label}
       {isActive && (
-        <ChevronRight className="w-3.5 h-3.5 ml-auto text-[var(--accent)] opacity-60" />
+        <ChevronRight className="w-4 h-4 ml-auto text-[#0C0C0C]/50" />
       )}
     </Link>
   );
@@ -69,60 +69,60 @@ export function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] flex">
+    <div className="min-h-screen bg-[#0C0C0C] flex font-kanit text-[#D7E2EA] selection:bg-[#D7E2EA] selection:text-[#0C0C0C]">
       {/* Sidebar */}
-      <aside className="hidden lg:flex flex-col w-[var(--sidebar-width)] border-r border-[var(--border)] bg-[var(--surface)] px-4 py-5 shrink-0">
+      <aside className="hidden lg:flex flex-col w-[280px] border-r border-white/5 bg-[#111111]/80 backdrop-blur-xl px-5 py-6 shrink-0 relative z-20">
         {/* Logo */}
-        <div className="px-2 mb-8">
-          <Link to="/" className="text-xl font-bold text-[var(--text-primary)] tracking-tight hover:text-[var(--accent)] transition-colors flex items-center gap-2">
-            <div className="w-8 h-8 rounded-[var(--radius-md)] bg-[var(--accent)] flex items-center justify-center">
-              <span className="text-white text-sm font-bold">G</span>
+        <div className="px-2 mb-10">
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-lg bg-[#D7E2EA] flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(215,226,234,0.5)] transition-all">
+              <span className="text-[#0C0C0C] text-sm font-black uppercase">G</span>
             </div>
-            Glimpse
+            <span className="text-2xl font-black uppercase tracking-tight text-[#D7E2EA]">Glimpse</span>
           </Link>
         </div>
 
         {/* Navigation */}
-        <nav className="space-y-1 flex-1">
+        <nav className="space-y-2 flex-1">
           {NAV_ITEMS.map((item) => (
             <NavLink key={item.label} item={item} isActive={isNavActive(item)} />
           ))}
         </nav>
 
         {/* Bottom section */}
-        <div className="space-y-2 pt-4 border-t border-[var(--border)]">
+        <div className="space-y-3 pt-6 border-t border-white/5 mt-auto">
           {/* User profile */}
-          <div className="flex items-center gap-3 px-2 py-3">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center text-xs font-bold text-white shadow-sm uppercase">
+          <div className="flex items-center gap-3 px-3 py-3 bg-[#1A1A1A] rounded-2xl border border-white/5">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#D7E2EA] to-white flex items-center justify-center text-sm font-black text-[#0C0C0C] shadow-[0_0_15px_rgba(215,226,234,0.3)] uppercase">
               {getInitials(user.name)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{user.name}</p>
-              <p className="text-xs text-[var(--text-muted)] truncate">{user.email}</p>
+              <p className="text-xs font-black text-[#D7E2EA] uppercase tracking-wider truncate">{user.name}</p>
+              <p className="text-[9px] font-bold text-[#D7E2EA]/50 uppercase tracking-widest truncate">{user.email}</p>
             </div>
           </div>
           {/* Logout */}
-          <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--danger)] hover:bg-[var(--danger-soft)] rounded-[var(--radius-md)] transition-colors w-full text-left">
-            <LogOut className="w-4 h-4" />
+          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-xs font-black uppercase tracking-widest text-[#D7E2EA]/50 hover:text-red-400 hover:bg-red-500/10 rounded-2xl transition-all w-full text-left group">
+            <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
             Sign out
           </button>
         </div>
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--surface)]">
-          <Link to="/" className="flex items-center gap-2 text-base font-bold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors">
-            <div className="w-7 h-7 rounded-[var(--radius-sm)] bg-[var(--accent)] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">G</span>
+      <div className="flex-1 flex flex-col min-w-0 relative z-10">
+        <header className="lg:hidden flex items-center justify-between px-5 py-4 border-b border-white/5 bg-[#111111]/80 backdrop-blur-xl">
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-7 h-7 rounded-lg bg-[#D7E2EA] flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(215,226,234,0.5)] transition-all">
+              <span className="text-[#0C0C0C] text-xs font-black uppercase">G</span>
             </div>
-            Glimpse
+            <span className="text-xl font-black uppercase tracking-tight text-[#D7E2EA]">Glimpse</span>
           </Link>
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center text-xs font-bold text-white uppercase">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#D7E2EA] to-white flex items-center justify-center text-xs font-black text-[#0C0C0C] shadow-md uppercase">
             {getInitials(user.name)}
           </div>
         </header>
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <main className="flex-1 p-6 md:p-8 lg:p-12 relative">
           <Outlet />
         </main>
       </div>

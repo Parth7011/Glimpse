@@ -30,7 +30,7 @@ This repository contains the hackathon prototype version of Glimpse, built to de
 
 The architecture is split into a frontend application and a dedicated face-recognition processing service.
 
-- **Frontend**: React-based UI (Vite), styled with Tailwind CSS, using TanStack Query for data fetching.
+- **Frontend**: React-based UI (Vite), styled with Tailwind CSS, utilizing `framer-motion` for complex scroll animations and `lenis` for smooth cinematic scrolling. Data fetching via TanStack Query.
 - **Backend / AI Processing**: Python (FastAPI) handling the core face recognition pipeline using `face_recognition`, `dlib`, and `numpy`.
 - **Database & Storage**: Supabase (PostgreSQL with `pgvector` for similarity search, Auth for photographer login, and Storage for images).
 - **Hosting**: Designed for Vercel (Frontend) and Render (Backend).

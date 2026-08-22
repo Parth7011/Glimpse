@@ -34,6 +34,7 @@
   /* ---------- Typography ---------- */
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-kanit: 'Kanit', sans-serif;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -140,6 +141,7 @@
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --font-kanit: var(--font-kanit);
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
@@ -232,6 +234,12 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.hero-heading {
+  background: linear-gradient(180deg, #646973 0%, #BBCCD7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Perspective container for 3D motion on landing */
@@ -377,4 +385,11 @@ body {
 @keyframes scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+
+@font-face {
+  font-family: 'Ogg';
+  src: url('https://dcym8fthxf5uu.cloudfront.net/fonts/247a073c-29f5-4a89-aa3a-741020f346fc/OggText-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
 }

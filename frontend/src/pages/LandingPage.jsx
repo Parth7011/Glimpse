@@ -2,21 +2,67 @@ import React, { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/utils/constants';
-import { Button } from '@/components/ui';
-import { Check, X as XIcon, Link as LinkIcon, Camera, CheckCircle2, Mail, Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
 import { Navbar, Footer } from '@/components/layout';
-import { ComparisonTable, FAQAccordion } from '@/components/landing';
-import { cn } from '@/utils/utils';
+import { Magnet, FadeIn, AnimatedText, GradientButton } from '@/components/ui';
 import Lenis from 'lenis';
 
-// Premium photography assets
-const HERO_IMAGES = [
-  'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1200&q=80',
-  'https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80',
-  'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=80'
+// Data from prompt
+const MARQUEE_IMAGES = [
+  "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80",
+  "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
+  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80",
+  "https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800&q=80",
+  "https://images.unsplash.com/photo-1543807535-eceef0bc6599?w=800&q=80",
+  "https://images.unsplash.com/photo-1532712938736-59c727eb113e?w=800&q=80",
+  "https://images.unsplash.com/photo-1470229722913-7c092fb12d8a?w=800&q=80",
+  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80",
+  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80",
+  "https://images.unsplash.com/photo-1530103862676-de3c9de59f9e?w=800&q=80",
+  "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=800&q=80",
+  "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80",
+  "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
+  "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80",
+  "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=800&q=80",
+  "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&q=80",
+  "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80",
+  "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800&q=80",
+  "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80",
+  "https://images.unsplash.com/photo-1511556820780-d912e42b4980?w=800&q=80",
+  "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=800&q=80"
 ];
 
+const PROJECTS = [
+  {
+    id: '01', category: 'Wedding Photography', name: 'Aarav & Meera',
+    img1: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055344_5eff02e0-87a5-41ce-b64f-eb08da8f33db.png&w=1280&q=85',
+    img2: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055431_11d841fd-8b41-46a5-82e4-b04f2407a7d8.png&w=1280&q=85',
+    img3: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055451_e317bf2d-28d4-48cc-86b0-6f72f25b6327.png&w=1280&q=85'
+  },
+  {
+    id: '02', category: 'Corporate Events', name: 'Tech Summit 2026',
+    img1: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f.png&w=1280&q=85',
+    img2: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1.png&w=1280&q=85',
+    img3: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055753_adc5dcbd-a8e6-49c0-b43a-9b030d835cea.png&w=1280&q=85'
+  },
+  {
+    id: '03', category: 'Parties & Galas', name: 'Annual Charity Gala',
+    img1: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055759_963cfb0b-4bd1-4b0f-9d0a-09bd6cf95b2f.png&w=1280&q=85',
+    img2: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_060108_438f781a-9846-4dcc-89ab-c4e6cb830f5b.png&w=1280&q=85',
+    img3: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055818_9d062121-ad7e-46b9-999a-1a6a692ef1ee.png&w=1280&q=85'
+  }
+];
+
+// Helper components
+const LiveProjectButton = () => (
+  <button className="rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition-colors">
+    Live Project
+  </button>
+);
+
 export default function LandingPage() {
+  const [scrollOffset, setScrollOffset] = useState(0);
+  const marqueeRef = useRef(null);
+  
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -35,492 +81,261 @@ export default function LandingPage() {
     }
     requestAnimationFrame(raf);
 
+    const handleScroll = () => {
+      if (marqueeRef.current) {
+        const rect = marqueeRef.current.getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        setScrollOffset((window.scrollY - top + window.innerHeight) * 0.3);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     return () => {
       lenis.destroy();
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
-  const heroRef = useRef(null);
-  const { scrollY, scrollYProgress: heroScroll } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"]
-  });
-
-
-
-  // Parallax calculations for Hero
-  const yImage1 = useTransform(heroScroll, [0, 1], ['0%', '25%']);
-  const yImage2 = useTransform(heroScroll, [0, 1], ['0%', '45%']);
-  const yImage3 = useTransform(heroScroll, [0, 1], ['0%', '15%']);
-
-  const opacityHeroText = useTransform(heroScroll, [0, 0.4], [1, 0]);
-  const scaleHeroText = useTransform(heroScroll, [0, 0.5], [1, 0.95]);
+  // Row 1 & 2 for marquee
+  const row1 = [...MARQUEE_IMAGES.slice(0, 11), ...MARQUEE_IMAGES.slice(0, 11), ...MARQUEE_IMAGES.slice(0, 11)];
+  const row2 = [...MARQUEE_IMAGES.slice(11), ...MARQUEE_IMAGES.slice(11), ...MARQUEE_IMAGES.slice(11)];
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] font-sans selection:bg-[var(--accent-soft)] selection:text-[var(--accent)] overflow-x-hidden">
+    <div className="bg-[#0C0C0C] min-h-screen text-[#D7E2EA] font-kanit overflow-x-clip selection:bg-[#D7E2EA] selection:text-[#0C0C0C]">
+      
+      {/* 1. HERO SECTION */}
+      <section className="relative h-screen flex flex-col overflow-x-clip pt-6 md:pt-8">
+        {/* Simple Navbar override */}
+        <Navbar theme="dark" activePage="home" />
 
-      {/* Navigation */}
-      <Navbar activePage="home" />
-
-      {/* Immersive Photography Hero (Layered Parallax) */}
-      <section ref={heroRef} className="relative min-h-[100dvh] flex flex-col items-center justify-center px-4 pt-20 overflow-hidden perspective-container bg-[var(--background)]">
-
-        {/* Layered Photography Background */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none mt-12">
-          {/* Back image - Right */}
-          <motion.div
-            style={{ y: yImage2 }}
-            initial={{ scale: 1.1, opacity: 0, rotate: -3 }}
-            animate={{ scale: 1, opacity: 0.7, rotate: -3 }}
-            transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-[8%] right-[2%] md:right-[10%] w-[55vw] md:w-[35vw] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl"
-          >
-            <img src={HERO_IMAGES[1]} className="w-full h-full object-cover" alt="Background event" />
-          </motion.div>
-
-          {/* Back image - Left */}
-          <motion.div
-            style={{ y: yImage3 }}
-            initial={{ scale: 1.15, opacity: 0, rotate: 4 }}
-            animate={{ scale: 1, opacity: 0.85, rotate: 4 }}
-            transition={{ duration: 1.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute bottom-[10%] left-[2%] md:left-[8%] w-[60vw] md:w-[40vw] aspect-video rounded-2xl overflow-hidden shadow-2xl"
-          >
-            <img src={HERO_IMAGES[2]} className="w-full h-full object-cover" alt="Background event" />
-          </motion.div>
-
-          {/* Front Main Image */}
-          <motion.div
-            style={{ y: yImage1 }}
-            initial={{ scale: 1.05, opacity: 0, y: 40 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ duration: 1.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-[25%] md:top-[20%] w-[90vw] md:w-[65vw] max-w-5xl aspect-[16/9] md:aspect-[21/9] rounded-3xl overflow-hidden shadow-[var(--shadow-photo)] border border-white/20"
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
-            <img src={HERO_IMAGES[0]} className="w-full h-full object-cover" alt="Main event" />
-          </motion.div>
-        </div>
-
-        {/* Hero Content Overlay */}
-        <motion.div
-          style={{ opacity: opacityHeroText, scale: scaleHeroText }}
-          className="relative z-10 text-center flex flex-col items-center max-w-4xl mt-[-15vh]"
-        >
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[clamp(3.5rem,10vw,8rem)] font-bold leading-[0.9] tracking-tighter text-[#FFF9E5] drop-shadow-[0_4px_32px_rgba(0,0,0,10)] mb-5"
-          >
-            Every moment.<br />Find yours.
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="text-lg md:text-2xl text-white/95 font-medium drop-shadow-md mb-10 max-w-xl"
-          >
-            Upload thousands of event photos and let guests find themselves with one simple selfie.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row items-center gap-4"
-          >
-            <Link to={ROUTES.LOGIN}>
-              <Button size="xl" className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white shadow-xl px-10 h-14 text-base font-semibold">
-                Create an Event
-              </Button>
-            </Link>
-            <Link to={ROUTES.HOWITWORKS}>
-              <Button size="xl" variant="outline" className="rounded-full bg-white/10 backdrop-blur-md text-white border-white/30 hover:bg-white/20 hover:border-white/50 shadow-xl px-10 h-14 text-base font-medium">
-                See How It Works ↓
-              </Button>
-            </Link>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* Story Flow (One Link, One Selfie, Result) */}
-      <section className="py-32 px-6 bg-[var(--background)] border-t border-[var(--border)]">
-        <div className="max-w-[1200px] mx-auto text-center">
-          <h2 className="text-5xl md:text-6xl lg:text-[7rem] font-bold tracking-tighter leading-[0.95] text-[var(--text-primary)] mb-6 max-w-4xl mx-auto">
-            From one gallery link to every matching photo.
-          </h2>
-          <p className="text-xl text-[var(--text-secondary)] mb-24 max-w-2xl mx-auto font-medium">
-            Guests open the gallery, take a selfie, and find themselves—without an app or instructions.
-          </p>
-
-          <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-8 max-w-4xl mx-auto">
-            {/* Step 1 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="flex-1 flex flex-col items-center relative z-10 w-full"
-            >
-              <div className="w-16 h-16 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mb-6 shadow-sm z-10">
-                <LinkIcon className="w-6 h-6 text-[var(--accent)]" />
-              </div>
-              <h3 className="text-3xl font-bold tracking-tight mb-2">One link</h3>
-              <p className="text-[var(--text-secondary)]">Guests open the event gallery</p>
-            </motion.div>
-
-            {/* Connecting line (Desktop) */}
-            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 w-full max-w-2xl h-[1px] bg-gradient-to-r from-transparent via-[var(--border-strong)] to-transparent top-[190px]" />
-
-            {/* Step 2 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="flex-1 flex flex-col items-center relative z-10 w-full"
-            >
-              <div className="w-16 h-16 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mb-6 shadow-sm z-10">
-                <Camera className="w-6 h-6 text-[var(--accent)]" />
-              </div>
-              <h3 className="text-3xl font-bold tracking-tight mb-2 text-[var(--accent)]">One selfie</h3>
-              <p className="text-[var(--text-secondary)]">They find every matching photo</p>
-            </motion.div>
-
-            {/* Step 3 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5 }}
-              className="flex-1 flex flex-col items-center relative z-10 w-full"
-            >
-              <div className="w-16 h-16 rounded-full bg-[var(--accent)] flex items-center justify-center mb-6 shadow-md z-10">
-                <Check className="w-6 h-6 text-white" />
-              </div>
-              <div className="relative">
-                {/* Decorative highlight under text */}
-                <div className="absolute inset-x-0 bottom-1 h-3 bg-[var(--accent-soft)] -z-10 -rotate-1 rounded" />
-                <h3 className="text-3xl font-bold tracking-tight mb-2">It's that simple.</h3>
-              </div>
-              <p className="text-[var(--text-secondary)]">Nothing to install or learn</p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Photographer Section - The Shoot Ends */}
-      <section id="photographers" className="py-24 px-6 bg-[var(--surface-soft)]">
-        <div className="max-w-[1300px] mx-auto grid lg:grid-cols-[1fr_1.2fr] gap-16 items-center">
-
-          {/* Text Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            className="space-y-8"
-          >
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter leading-[0.95]">
-              The shoot ends.<br />
-              <span className="text-[var(--accent)]">Your studio stays visible.</span>
-            </h2>
-            <p className="text-xl text-[var(--text-secondary)] leading-relaxed max-w-lg">
-              Upload thousands of event photos and share one branded gallery. Every guest finds their own photos with one selfie—without asking your team to sort or send them.
-            </p>
-            <div className="flex items-center gap-6 pt-4">
-              <Link to={ROUTES.LOGIN}>
-                <Button className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white shadow-md px-8 h-12 text-base font-semibold">
-                  Start free
-                </Button>
-              </Link>
-              <button className="text-sm font-bold tracking-widest uppercase text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-2">
-                SEE THE DIFFERENCE <span className="text-xs">↓</span>
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Floating UI Mockup */}
-          <motion.div
+        {/* Hero Heading */}
+        <div className="flex-1 flex flex-col justify-center items-center w-full relative z-10 overflow-hidden mt-6 sm:mt-4 md:-mt-5">
+          <motion.h1 
             initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            className="relative"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+            className="hero-heading font-black uppercase tracking-tight leading-[0.85] w-full text-center text-[12vw] sm:text-[13vw] md:text-[14vw] lg:text-[14vw]"
           >
-            {/* The Browser/App Window */}
-            <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] shadow-2xl overflow-hidden relative z-10 w-full aspect-[4/3] max-h-[600px] flex flex-col">
-              {/* Browser Header */}
-              <div className="h-12 border-b border-[var(--border)] flex items-center px-4 gap-2 bg-[var(--background)]">
-                <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)]" />
-                </div>
-                <div className="mx-auto text-xs font-mono text-[var(--text-muted)] bg-[var(--surface)] px-24 py-1 rounded-md border border-[var(--border)]">gallery.glimpse.in</div>
-              </div>
+            every moment.<br />find yours.
+          </motion.h1>
+        </div>
 
-              {/* App Header inside window */}
-              <div className="p-6 pb-2">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] font-bold text-xs flex items-center justify-center">CS</div>
-                    <span className="font-semibold text-sm">Capture Studios</span>
-                  </div>
-                  <div className="bg-[var(--accent)] text-white text-xs font-semibold px-4 py-1.5 rounded-full">Find my photos</div>
-                </div>
-
-                <div className="mb-6">
-                  <p className="text-[10px] font-bold tracking-widest text-[var(--text-muted)] uppercase mb-1">ALBUM BY CAPTURE STUDIOS</p>
-                  <h3 className="text-2xl font-bold">Aarav & Meera</h3>
-                  <div className="flex justify-between items-center mt-1 text-xs text-[var(--text-secondary)]">
-                    <span>6 July 2026</span>
-                    <span>1930 photos</span>
-                  </div>
-                </div>
-
-                {/* Fake Photo Grid */}
-                <div className="grid grid-cols-2 gap-3 pb-6">
-                  <div className="aspect-square bg-[var(--surface-soft)] rounded-lg overflow-hidden">
-                    <img src={HERO_IMAGES[0]} className="w-full h-full object-cover opacity-80" alt="mock" />
-                  </div>
-                  <div className="grid grid-rows-2 gap-3">
-                    <div className="bg-[var(--surface-soft)] rounded-lg overflow-hidden">
-                      <img src={HERO_IMAGES[1]} className="w-full h-full object-cover opacity-80" alt="mock" />
-                    </div>
-                    <div className="bg-[var(--surface-soft)] rounded-lg overflow-hidden">
-                      <img src={HERO_IMAGES[2]} className="w-full h-full object-cover opacity-80" alt="mock" />
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* Hero Portrait with Magnet */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          className="absolute left-1/2 -translate-x-1/2 z-10 top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0"
+        >
+          <Magnet padding={150} strength={3}>
+            <div className="w-[200px] sm:w-[260px] md:w-[320px] lg:w-[380px]">
+              <img 
+                src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80" 
+                alt="Event photographer"
+                className="w-full h-auto object-cover rounded-[40px] border-4 border-[#0C0C0C] shadow-2xl"
+                style={{ filter: 'grayscale(100%) contrast(1.2)' }}
+              />
             </div>
+          </Magnet>
+        </motion.div>
 
-            {/* Floating Tooltips */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              className="absolute -left-12 top-24 z-20 bg-[var(--surface)] p-4 rounded-2xl shadow-xl border border-[var(--border)] max-w-[200px]"
-            >
-              <div className="font-semibold text-sm mb-1">Capture Studios</div>
-              <div className="text-xs text-[var(--text-secondary)]">Visible on every screen</div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 }}
-              className="absolute -right-8 bottom-16 z-20 bg-[var(--surface)] p-4 rounded-2xl shadow-xl border border-[var(--border)] max-w-[200px]"
-            >
-              <div className="font-semibold text-sm mb-1 text-[var(--accent)]">One selfie</div>
-              <div className="text-xs text-[var(--text-secondary)]">24 photos found</div>
-            </motion.div>
-
+        {/* Bottom Bar */}
+        <div className="px-6 md:px-10 pb-7 sm:pb-8 md:pb-10 flex justify-between items-end z-20">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+            className="text-[#D7E2EA] font-light uppercase tracking-wide leading-snug max-w-[160px] sm:max-w-[220px] md:max-w-[260px]"
+            style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}
+          >
+            an ai-powered platform driven by face recognition to help guests find their photos with a single selfie.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <Link to={ROUTES.LOGIN}>
+              <GradientButton>Start Free</GradientButton>
+            </Link>
           </motion.div>
         </div>
       </section>
 
-      {/* Comparison Section (Before vs After) */}
-      <section className="py-32 px-6 bg-[var(--background)] overflow-hidden">
-        <div className="max-w-[1300px] mx-auto">
-          <div className="text-center mb-20 max-w-4xl mx-auto">
-            <h2 className="text-5xl md:text-6xl font-bold tracking-tighter leading-[0.95] mb-6">
-              Your gallery should look like <span className="relative inline-block"><span className="relative z-10 text-[var(--accent)]">your studio</span><div className="absolute inset-x-0 bottom-2 h-4 bg-[var(--accent-soft)] -z-10 -rotate-1 rounded" /></span>—not generic software.
-            </h2>
-            <p className="text-xl text-[var(--text-secondary)]">
-              The final client experience should carry the same care and identity as the photographs themselves.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center relative">
-
-            {/* Left - Before */}
-            <div className="bg-[#F8F9FA] rounded-2xl p-8 border border-[var(--border)]/50 relative shadow-inner">
-              <div className="absolute top-4 left-6 text-[10px] font-bold tracking-widest text-[var(--text-muted)] uppercase">BEFORE</div>
-              <div className="absolute top-4 right-6 text-[10px] font-medium text-[var(--text-secondary)]">Generic delivery</div>
-
-              {/* Fake Windows Explorer */}
-              <div className="mt-8 bg-white border border-[#E1E4E8] rounded-md shadow-sm h-[400px] overflow-hidden flex flex-col">
-                <div className="h-10 bg-[#F3F4F6] border-b border-[#E1E4E8] flex items-center px-3 gap-2">
-                  <div className="flex-1 bg-white border border-[#D1D5DB] rounded px-2 py-1 text-xs text-gray-500 truncate">
-                    DATA-USB (E:) \ 24f5406db4259b96b39ad15765 \
-                  </div>
-                </div>
-                <div className="p-4 grid grid-cols-4 gap-4 flex-1">
-                  {Array.from({ length: 12 }).map((_, i) => (
-                    <div key={i} className="flex flex-col items-center gap-1">
-                      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M40 8H22L18 4H8C5.79 4 4.02 5.79 4.02 8L4 40C4 42.21 5.79 44 8 44H40C42.21 44 44 42.21 44 40V12C44 9.79 42.21 8 40 8Z" fill="#FACC15" />
-                      </svg>
-                      <span className="text-[9px] text-gray-600 truncate w-full text-center">103{i}_wed_lp</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <p className="text-center text-xs text-[var(--text-muted)] mt-6">Folders and filenames. No studio experience.</p>
-            </div>
-
-            {/* VS Badge */}
-            <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--surface)] border border-[var(--border)] shadow-sm items-center justify-center z-10 text-xs font-bold text-[var(--text-muted)]">
-              VS
-            </div>
-
-            {/* Right - After */}
-            <div className="bg-[var(--surface-soft)] rounded-2xl p-8 border border-[var(--border)]/50 relative shadow-inner">
-              <div className="absolute top-4 left-6 text-[10px] font-bold tracking-widest text-[var(--accent)] uppercase">WITH GLIMPSE</div>
-              <div className="absolute top-4 right-6 text-[10px] font-medium text-[var(--text-secondary)]">Your studio leads</div>
-
-              {/* Clean Gallery Mockup */}
-              <div className="mt-8 bg-[var(--surface)] border border-[var(--border)] rounded-xl shadow-lg h-[400px] overflow-hidden flex flex-col p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-[var(--accent-soft)]" />
-                    <div className="h-3 w-20 bg-[var(--surface-soft)] rounded" />
-                  </div>
-                  <div className="h-6 w-24 bg-[var(--accent)] rounded-full" />
-                </div>
-                <div className="h-6 w-40 bg-[var(--text-primary)] rounded mb-2" />
-                <div className="h-2 w-16 bg-[var(--surface-soft)] rounded mb-4" />
-
-                <div className="grid grid-cols-2 gap-2 flex-1">
-                  <div className="bg-[var(--surface-soft)] rounded-md overflow-hidden relative">
-                    <img src={HERO_IMAGES[0]} className="w-full h-full object-cover" alt="mock" />
-                  </div>
-                  <div className="grid grid-rows-2 gap-2">
-                    <div className="bg-[var(--surface-soft)] rounded-md overflow-hidden">
-                      <img src={HERO_IMAGES[1]} className="w-full h-full object-cover" alt="mock" />
-                    </div>
-                    <div className="bg-[var(--surface-soft)] rounded-md overflow-hidden">
-                      <img src={HERO_IMAGES[2]} className="w-full h-full object-cover" alt="mock" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <p className="text-center text-xs text-[var(--text-muted)] mt-6">Studio logo · Custom cover · Premium gallery</p>
-            </div>
-          </div>
+      {/* 2. MARQUEE SECTION */}
+      <section ref={marqueeRef} className="bg-[#0C0C0C] pt-24 sm:pt-32 md:pt-40 pb-10 overflow-hidden flex flex-col gap-3">
+        <div 
+          className="flex gap-3 whitespace-nowrap will-change-transform w-max"
+          style={{ transform: `translate3d(${scrollOffset - 200}px, 0, 0)` }}
+        >
+          {row1.map((src, i) => (
+            <img key={`r1-${i}`} src={src} alt="Event mock" loading="lazy" className="w-[420px] h-[270px] rounded-2xl object-cover shrink-0" />
+          ))}
+        </div>
+        <div 
+          className="flex gap-3 whitespace-nowrap will-change-transform w-max"
+          style={{ transform: `translate3d(${-(scrollOffset - 200)}px, 0, 0)` }}
+        >
+          {row2.map((src, i) => (
+            <img key={`r2-${i}`} src={src} alt="Event mock" loading="lazy" className="w-[420px] h-[270px] rounded-2xl object-cover shrink-0" />
+          ))}
         </div>
       </section>
 
-      {/* Feature List Section (What slows you down vs What changes) */}
-      <section className="py-32 px-6 bg-[var(--surface)]">
-        <div className="max-w-[1000px] mx-auto">
-          <h2 className="text-5xl md:text-6xl font-bold tracking-tighter leading-[0.95] mb-6">
-            Less time answering guests.<br />
-            <span className="text-[var(--accent)]">More control</span> over delivery.
+      {/* 3. ABOUT SECTION */}
+      <section id="about" className="relative min-h-screen flex flex-col items-center justify-center px-5 sm:px-8 md:px-10 py-20 overflow-hidden bg-[#0C0C0C]">
+        <FadeIn delay={0.1} x={-80} y={0} duration={0.9} className="absolute top-[4%] left-[1%] sm:left-[2%] md:left-[4%]">
+          <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png" className="w-[120px] sm:w-[160px] md:w-[210px] drop-shadow-xl" alt="moon" />
+        </FadeIn>
+        
+        <FadeIn delay={0.25} x={-80} y={0} duration={0.9} className="absolute bottom-[8%] left-[3%] sm:left-[6%] md:left-[10%]">
+          <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png" className="w-[100px] sm:w-[140px] md:w-[180px] drop-shadow-xl" alt="3d object" />
+        </FadeIn>
+
+        <FadeIn delay={0.15} x={80} y={0} duration={0.9} className="absolute top-[4%] right-[1%] sm:right-[2%] md:right-[4%]">
+          <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/lego_icon-1.703bb594.png" className="w-[120px] sm:w-[160px] md:w-[210px] drop-shadow-xl" alt="lego" />
+        </FadeIn>
+
+        <FadeIn delay={0.3} x={80} y={0} duration={0.9} className="absolute bottom-[8%] right-[3%] sm:right-[6%] md:right-[10%]">
+          <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png" className="w-[130px] sm:w-[170px] md:w-[220px] drop-shadow-xl" alt="3d group" />
+        </FadeIn>
+
+        <FadeIn delay={0} y={40} className="w-full flex flex-col items-center gap-10 sm:gap-14 md:gap-16 relative z-10">
+          <h2 
+            className="hero-heading font-black uppercase leading-none tracking-tight text-center"
+            style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
+          >
+            About Glimpse
           </h2>
-          <p className="text-xl text-[var(--text-secondary)] mb-20 max-w-2xl">
-            Glimpse takes the repetitive work out of the handoff without taking your studio out of the experience.
-          </p>
-
-          <ComparisonTable />
-        </div>
-      </section>
-
-      {/* Trust & Privacy Accordion area */}
-      <section className="py-24 pb-32 px-6 bg-[var(--background)] border-t border-[var(--border)]">
-        <div className="max-w-[1000px] mx-auto grid md:grid-cols-2 gap-16">
-          <div>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tighter leading-[0.95] mb-6">
-              Try it with<br />confidence.
-            </h2>
-            <p className="text-[var(--text-secondary)]">What to know about guests, branding, privacy, and security.</p>
+          
+          <div className="max-w-[560px] mx-auto text-center font-medium leading-relaxed" style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)' }}>
+            <AnimatedText text="Instead of manually sorting photos or sending generic cloud links where guests have to scroll through hundreds of images, photographers use Glimpse. Guests simply open a link, take a selfie, and instantly see every photo they appear in. Let's deliver memories instantly!" />
           </div>
 
-          <FAQAccordion faqs={[
-            { q: "How do guests find their photos?", a: "Guests simply open the gallery link and take a quick selfie. Our secure facial matching technology instantly finds every photo they appear in." },
-            { q: "Do guests need to install an app?", a: "No. Everything happens right in their mobile browser. No apps to download, no accounts to create, and no passwords to remember." },
-            { q: "Is the gallery white-label?", a: "Yes. Your studio's name, logo, and branding are front and center. Glimpse stays invisible in the background." },
-            { q: "What happens to the selfies?", a: "Selfies are securely processed for matching and then immediately discarded. We do not store or use guest selfies for any other purpose." }
-          ]} />
-        </div>
-      </section>
-
-      {/* Dark Centered CTA (From Photo 1) */}
-      <section className="bg-[#1C1814] relative overflow-hidden text-white font-sans border-t-[8px] border-[#2C2620]">
-        {/* Hexagon Pattern Background */}
-        <div
-          className="absolute inset-0 z-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='103.923' viewBox='0 0 60 103.923' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 17.32V51.96L30 69.28L0 51.96V17.32L30 0ZM30 103.92L60 86.6V51.96L30 34.64L0 51.96V86.6L30 103.92Z' fill='none' stroke='%23FFFFFF' stroke-width='1.5'/%3E%3C/svg%3E")`,
-            backgroundSize: '120px',
-            backgroundPosition: 'top center'
-          }}
-        />
-        <div className="relative z-10 max-w-4xl mx-auto px-6 py-32 md:py-40 text-center flex flex-col items-center">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
-            Make your next delivery feel like your studio
-          </h2>
-          <p className="text-[#A19D98] text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto">
-            Run a real event on the free plan—your photos, your branding, and every guest finding themselves.
-          </p>
-          <div className="flex flex-col items-center gap-4 mb-8">
+          <div className="mt-16 sm:mt-20 md:mt-24">
             <Link to={ROUTES.LOGIN}>
-              <Button size="lg" className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-black shadow-xl px-8 h-12 text-sm font-bold transition-transform hover:scale-105 border-0">
-                Start free
-              </Button>
+              <GradientButton>Start Free</GradientButton>
             </Link>
           </div>
-          <p className="text-[#6B6661] text-[11px] font-semibold tracking-widest uppercase">
-            Free to start · No credit card required
-          </p>
+        </FadeIn>
+      </section>
+
+      {/* 4. SERVICES SECTION */}
+      <section id="features" className="bg-[#FFFFFF] text-[#0C0C0C] rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] px-5 sm:px-8 md:px-10 py-20 sm:py-24 md:py-32 relative z-20 shadow-2xl">
+        <h2 
+          className="font-black uppercase text-center mb-16 sm:mb-20 md:mb-28"
+          style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
+        >
+          Features
+        </h2>
+
+        <div className="max-w-5xl mx-auto flex flex-col">
+          {[
+            { id: "01", name: "Instant Matching", desc: "Guests take a selfie, give consent, and instantly find all matching photos (solo and group)." },
+            { id: "02", name: "Photographer Dashboard", desc: "Create events and upload event photos in bulk with easy organization." },
+            { id: "03", name: "Frictionless Access", desc: "A frictionless experience for guests. No app installation or account creation required." },
+            { id: "04", name: "Secure Delivery", desc: "Shareable links and QR codes that keep your studio visible and photos secure." },
+            { id: "05", name: "Bulk Downloads", desc: "Guests can download individual photos or a bulk ZIP of all their matches instantly." }
+          ].map((item, i) => (
+            <FadeIn key={item.id} delay={i * 0.1} y={20}>
+              <div className="flex flex-col md:flex-row border-b border-[#0C0C0C]/15 py-8 sm:py-10 md:py-12 group hover:bg-[#0C0C0C]/5 transition-colors px-4 rounded-xl">
+                <div 
+                  className="font-black md:w-[35%] tracking-tight"
+                  style={{ fontSize: 'clamp(3rem, 10vw, 140px)', lineHeight: 0.8 }}
+                >
+                  {item.id}
+                </div>
+                <div className="flex flex-col justify-center md:w-[65%] mt-4 md:mt-0">
+                  <h3 className="font-medium uppercase mb-2" style={{ fontSize: 'clamp(1rem, 2.2vw, 2.1rem)' }}>
+                    {item.name}
+                  </h3>
+                  <p className="font-light leading-relaxed max-w-2xl opacity-60" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 1.25rem)' }}>
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
         </div>
       </section>
 
-      {/* White Guides Section (From Photo 1) */}
-      <section className="py-24 px-6 bg-[var(--background)] border-b border-[var(--border)]">
-        <div className="max-w-[1300px] mx-auto">
-          <div className="mb-16">
-            <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-[var(--accent)] uppercase mb-4">
-              <div className="w-2 h-2 bg-[var(--accent)] rotate-45" />
-              FOR YOUR STUDIO
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-[var(--text-primary)] max-w-xl leading-[1.1]">
-              Guides for the business side of the job
-            </h2>
-          </div>
+      {/* 5. PROJECTS SECTION */}
+      <section id="usecases" className="bg-[#0C0C0C] rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 sm:-mt-12 md:-mt-14 relative z-30 pt-20 sm:pt-24 md:pt-32 pb-40">
+        <h2 
+          className="hero-heading font-black uppercase text-center mb-16 sm:mb-20 md:mb-28 px-5"
+          style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
+        >
+          Use Cases
+        </h2>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Card 1 */}
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-8 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <h3 className="text-xl font-bold text-[var(--text-primary)] leading-snug mb-4">The complete Indian wedding shot list</h3>
-              <p className="text-[var(--text-secondary)] text-sm leading-relaxed flex-1 mb-8">
-                Function by function, from haldi to vidaai, with regional variations and family portrait planning.
-              </p>
-              <a href="#" className="text-[var(--accent)] text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all w-fit">
-                Read the guide <span>→</span>
-              </a>
-            </div>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-10 flex flex-col items-center">
+          {PROJECTS.map((project, index) => {
+            const cardRef = useRef(null);
+            const { scrollYProgress } = useScroll({
+              target: cardRef,
+              offset: ["start end", "end start"]
+            });
+            const totalCards = PROJECTS.length;
+            const targetScale = 1 - (totalCards - 1 - index) * 0.03;
+            // A simple scale mapping. As you scroll past this card, it scales down slightly.
+            const scale = useTransform(scrollYProgress, [0, 1], [1, targetScale]);
+            
+            return (
+              <motion.div
+                key={project.id}
+                ref={cardRef}
+                style={{
+                  top: `calc(6rem + ${index * 28}px)`, // top-24 md:top-32 approx
+                  scale
+                }}
+                className="sticky overflow-hidden w-full border-2 border-[#D7E2EA] bg-[#0C0C0C] rounded-[40px] sm:rounded-[50px] md:rounded-[60px] p-4 sm:p-6 md:p-8 mb-16 md:mb-24 shadow-2xl"
+              >
+                {/* Top Row */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-12">
+                  <div className="flex items-end gap-6 mb-6 md:mb-0">
+                    <span className="font-black leading-none" style={{ fontSize: 'clamp(3rem, 10vw, 140px)' }}>{project.id}</span>
+                    <div className="pb-2 md:pb-4">
+                      <p className="text-[#D7E2EA]/60 uppercase tracking-widest text-sm mb-1">{project.category}</p>
+                      <h3 className="text-3xl sm:text-4xl md:text-5xl font-semibold">{project.name}</h3>
+                    </div>
+                  </div>
+                  <LiveProjectButton />
+                </div>
 
-            {/* Card 2 */}
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-8 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <h3 className="text-xl font-bold text-[var(--text-primary)] leading-snug mb-4">What belongs in your package</h3>
-              <p className="text-[var(--text-secondary)] text-sm leading-relaxed flex-1 mb-8">
-                Standard inclusions, separate line items, and how to define edited photographs clearly.
-              </p>
-              <a href="#" className="text-[var(--accent)] text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all w-fit">
-                Read the guide <span>→</span>
-              </a>
-            </div>
-
-            {/* Card 3 */}
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-8 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <h3 className="text-xl font-bold text-[var(--text-primary)] leading-snug mb-4">Culling 10,000 photos down to 600</h3>
-              <p className="text-[var(--text-secondary)] text-sm leading-relaxed flex-1 mb-8">
-                A multi-pass workflow that stops selection from consuming your week.
-              </p>
-              <a href="#" className="text-[var(--accent)] text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all w-fit">
-                Read the guide <span>→</span>
-              </a>
-            </div>
-          </div>
+                {/* Bottom Row Images */}
+                <div className="flex flex-col md:flex-row gap-4 h-[auto] md:h-[60vh] max-h-[800px]">
+                  {/* Left Column */}
+                  <div className="flex flex-col gap-4 w-full md:w-[40%]">
+                    <div 
+                      className="w-full rounded-[30px] sm:rounded-[40px] md:rounded-[50px] overflow-hidden bg-[#1A1A1A]"
+                      style={{ height: 'clamp(130px, 16vw, 230px)' }}
+                    >
+                      <img src={project.img1} alt="Project preview 1" className="w-full h-full object-cover" />
+                    </div>
+                    <div 
+                      className="w-full flex-1 rounded-[30px] sm:rounded-[40px] md:rounded-[50px] overflow-hidden bg-[#1A1A1A]"
+                      style={{ height: 'clamp(160px, 22vw, 340px)' }}
+                    >
+                      <img src={project.img2} alt="Project preview 2" className="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                  {/* Right Column */}
+                  <div className="w-full md:w-[60%] h-[300px] md:h-full rounded-[30px] sm:rounded-[40px] md:rounded-[50px] overflow-hidden bg-[#1A1A1A]">
+                    <img 
+                      src={project.img3} 
+                      alt="Project preview 3" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer from Layout */}
       <Footer />
-
     </div>
   );
 }
