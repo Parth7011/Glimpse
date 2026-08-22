@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Save, User, Camera, CreditCard, Upload } from 'lucide-react';
+import { Save, User, Camera, CreditCard, Upload, Loader2 } from 'lucide-react';
 import { Button, CursorGlow } from '@/components/ui';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { authService } from '@/services/authService';
@@ -23,6 +23,7 @@ export default function PhotographerSettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const fileInputRef = useRef(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['me'],
@@ -54,6 +55,30 @@ export default function PhotographerSettingsPage() {
       toast(error.message || 'Failed to update settings', 'error');
     }
   });
+
+  const uploadLogoMutation = useMutation({
+    mutationFn: (file) => authService.uploadLogo(file),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['me']);
+      toast('Logo uploaded successfully', 'success');
+    },
+    onError: (error) => {
+      toast(error.message || 'Failed to upload logo', 'error');
+    }
+  });
+
+  const handleLogoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast('Logo must be less than 5MB', 'error');
+      return;
+    }
+    
+    uploadLogoMutation.mutate(file);
+  };
 
   const handleSaveProfile = () => {
     updateSettingsMutation.mutate({ name: studioName, brandColor });
@@ -161,11 +186,41 @@ export default function PhotographerSettingsPage() {
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 mb-4 ml-1">Studio Logo</label>
                     <div className="flex items-center gap-8 bg-[#1A1A1A] p-6 rounded-3xl border border-white/5">
-                      <div className="w-24 h-24 rounded-full bg-[#111111] border border-white/10 flex items-center justify-center text-[#D7E2EA]/30 shadow-inner">
-                        <Camera className="w-8 h-8 opacity-50" />
+                      <div className="w-24 h-24 rounded-full bg-[#111111] border border-white/10 flex items-center justify-center text-[#D7E2EA]/30 shadow-inner overflow-hidden relative group/logo">
+                        {metadata.logoUrl ? (
+                          <img 
+                            src={import.meta.env.VITE_SUPABASE_URL + '/storage/v1/object/public/event-photos/' + metadata.logoUrl} 
+                            alt="Studio Logo" 
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                        ) : (
+                          <Camera className="w-8 h-8 opacity-50" />
+                        )}
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover/logo:opacity-100 transition-opacity">
+                          <Camera className="w-6 h-6 text-white" />
+                        </div>
                       </div>
                       <div className="space-y-3">
-                        <Button variant="secondary"><Upload className="w-4 h-4"/> Upload Logo</Button>
+                        <input 
+                          type="file" 
+                          ref={fileInputRef} 
+                          className="hidden" 
+                          accept="image/png, image/jpeg, image/webp" 
+                          onChange={handleLogoChange}
+                        />
+                        <Button 
+                          variant="secondary" 
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={uploadLogoMutation.isPending}
+                        >
+                          {uploadLogoMutation.isPending ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Upload className="w-4 h-4 mr-2" />
+                          )}
+                          {uploadLogoMutation.isPending ? 'Uploading...' : 'Upload Logo'}
+                        </Button>
                         <p className="text-[9px] font-bold uppercase tracking-widest text-[#D7E2EA]/40">Recommended size: 256x256px (PNG, JPG)</p>
                       </div>
                     </div>

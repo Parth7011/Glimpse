@@ -80,7 +80,35 @@ export const authService = {
     
     const result = await response.json();
     
-    // Update stored user
+    if (result.user) {
+      localStorage.setItem('glimpse_user', JSON.stringify(result.user));
+    }
+    
+    return result;
+  },
+
+  async uploadLogo(file) {
+    const token = localStorage.getItem('glimpse_token');
+    if (!token) throw new Error('No token found');
+    
+    const formData = new FormData();
+    formData.append('logo', file);
+    
+    const response = await fetch(`${API_URL}/auth/me/logo`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to upload logo');
+    }
+    
+    const result = await response.json();
+    
     if (result.user) {
       localStorage.setItem('glimpse_user', JSON.stringify(result.user));
     }

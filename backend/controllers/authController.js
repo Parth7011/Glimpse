@@ -1,4 +1,6 @@
 import { registerUser, loginUser, updateUserMetadata } from '../services/userService.js';
+import { adminSupabase } from '../config/supabase.js';
+import path from 'path';
 
 export const register = async (req, res) => {
   try {
@@ -63,6 +65,40 @@ export const updateMe = async (req, res) => {
     return res.status(200).json({
       message: 'Settings updated successfully',
       user: updatedUser,
+    });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
+
+export const uploadLogo = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No logo file provided' });
+    }
+    
+    const fileExt = path.extname(req.file.originalname) || '.png';
+    const fileName = `logos/${req.user.id}${fileExt}`;
+    const bucketName = process.env.SUPABASE_STORAGE_BUCKET || 'event-photos';
+    
+    const { data: uploadData, error: uploadError } = await adminSupabase.storage
+      .from(bucketName)
+      .upload(fileName, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: true
+      });
+      
+    if (uploadError) throw uploadError;
+    
+    const logoUrl = uploadData.path;
+    
+    const updatedUser = await updateUserMetadata(req.user.id, {
+      logoUrl,
+    });
+    
+    return res.status(200).json({
+      message: 'Logo uploaded successfully',
+      user: updatedUser
     });
   } catch (error) {
     return res.status(400).json({ error: error.message });
