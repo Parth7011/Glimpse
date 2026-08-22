@@ -26,7 +26,8 @@ export default function SharePage() {
 
   const handleCopyLink = () => {
     if (!shareInfo) return;
-    navigator.clipboard.writeText(shareInfo.share_url);
+    const shareUrl = `${window.location.origin}/e/${shareInfo.slug}`;
+    navigator.clipboard.writeText(shareUrl);
     toast('Link copied to clipboard', 'success');
   };
 
@@ -81,7 +82,7 @@ export default function SharePage() {
           <div className="bg-white p-6 rounded-3xl border border-white/10 mb-8 shadow-2xl group-hover:shadow-[0_0_40px_rgba(215,226,234,0.15)] transition-shadow duration-500 relative z-10">
             <QRCodeSVG 
               id="qr-code-svg"
-              value={shareInfo.qr_data} 
+              value={`${window.location.origin}/e/${shareInfo.slug}`} 
               size={220}
               level="M"
               fgColor="#111111"
@@ -101,14 +102,14 @@ export default function SharePage() {
             
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-8 relative z-10">
               <div className="flex-1 bg-[#1A1A1A] border border-white/10 rounded-2xl px-6 py-4 text-sm font-mono truncate text-[#D7E2EA] shadow-inner font-light">
-                {shareInfo.share_url}
+                {`${window.location.origin}/e/${shareInfo.slug}`}
               </div>
               <Button variant="primary" onClick={handleCopyLink} className="h-[54px] sm:w-auto">
                 <Copy className="w-4 h-4 mr-2" /> Copy
               </Button>
             </div>
             
-            <a href={shareInfo.share_url} target="_blank" rel="noopener noreferrer" className="relative z-10 inline-flex items-center text-[10px] font-black uppercase tracking-widest text-[#D7E2EA] hover:text-white transition-colors hover:drop-shadow-[0_0_10px_rgba(215,226,234,0.5)] group">
+            <a href={`${window.location.origin}/e/${shareInfo.slug}`} target="_blank" rel="noopener noreferrer" className="relative z-10 inline-flex items-center text-[10px] font-black uppercase tracking-widest text-[#D7E2EA] hover:text-white transition-colors hover:drop-shadow-[0_0_10px_rgba(215,226,234,0.5)] group">
               Open link as guest <ExternalLink className="w-3.5 h-3.5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </a>
           </div>
