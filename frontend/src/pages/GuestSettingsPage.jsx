@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, User, Shield, Bell, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui';
+import { Button, CursorGlow } from '@/components/ui';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -30,29 +30,30 @@ export default function GuestSettingsPage() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="max-w-4xl mx-auto space-y-8"
+      className="max-w-5xl mx-auto space-y-12 font-kanit relative z-10"
     >
-      <motion.div variants={itemVariants}>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--text-primary)]">Settings</h1>
-        <p className="text-[var(--text-secondary)] mt-1.5">Manage your account, privacy, and notifications.</p>
+      <CursorGlow />
+      <motion.div variants={itemVariants} className="pt-8">
+        <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-[#D7E2EA] uppercase drop-shadow-lg">Settings</h1>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 mt-2">Manage your account, privacy, and notifications.</p>
       </motion.div>
 
-      <motion.div variants={itemVariants} className="flex flex-col md:flex-row gap-8">
+      <motion.div variants={itemVariants} className="flex flex-col md:flex-row gap-10">
         
         {/* Sidebar Nav */}
-        <div className="w-full md:w-64 shrink-0">
-          <nav className="flex flex-row md:flex-col gap-1 overflow-x-auto pb-2 md:pb-0">
+        <div className="w-full md:w-72 shrink-0">
+          <nav className="flex flex-row md:flex-col gap-2 overflow-x-auto pb-4 md:pb-0">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-[var(--radius-md)] transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-4 px-5 py-4 text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all duration-300 whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'bg-[var(--surface-soft)] text-[var(--text-primary)] font-semibold shadow-sm border border-[var(--border)]'
-                    : 'text-[var(--text-secondary)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]'
+                    ? 'bg-[#111111]/80 backdrop-blur-md text-[#D7E2EA] shadow-[0_0_20px_rgba(215,226,234,0.1)] border border-white/10'
+                    : 'text-[#D7E2EA]/50 hover:bg-white/5 hover:text-[#D7E2EA]'
                 }`}
               >
-                <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-[var(--accent)]' : 'text-[var(--text-muted)]'}`} />
+                <tab.icon className={`w-4 h-4 transition-colors ${activeTab === tab.id ? 'text-[#D7E2EA]' : 'text-[#D7E2EA]/40'}`} />
                 {tab.label}
               </button>
             ))}
@@ -62,42 +63,44 @@ export default function GuestSettingsPage() {
         {/* Content Area */}
         <div className="flex-1">
           {activeTab === 'profile' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 bg-[var(--surface)] p-6 md:p-8 rounded-[var(--radius-lg)] border border-[var(--border)] shadow-sm">
-              <div>
-                <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">Account Details</h3>
-                <p className="text-sm text-[var(--text-secondary)] mb-6">Update your personal information.</p>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 bg-[#111111]/80 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
+              <div className="relative z-10">
+                <h3 className="text-2xl font-black uppercase tracking-tight text-[#D7E2EA] mb-2 drop-shadow-md">Account Details</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 mb-8">Update your personal information.</p>
                 
-                <div className="space-y-5">
+                <div className="space-y-6">
                   <div className="grid gap-2">
-                    <label className="text-sm font-medium text-[var(--text-primary)]">Full Name</label>
-                    <input type="text" defaultValue="Guest User" className="w-full p-3 bg-[var(--background)] border border-[var(--border)] rounded-[var(--radius-md)] text-sm focus:outline-none focus:border-[#7C6EF6] transition-colors" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/70 ml-1">Full Name</label>
+                    <input type="text" defaultValue="Guest User" className="w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm font-medium text-[#D7E2EA] focus:outline-none focus:border-[#D7E2EA]/50 focus:shadow-[0_0_15px_rgba(215,226,234,0.1)] transition-all" />
                   </div>
                   <div className="grid gap-2">
-                    <label className="text-sm font-medium text-[var(--text-primary)]">Email Address</label>
-                    <input type="email" defaultValue="guest@glimpse.com" className="w-full p-3 bg-[var(--background)] border border-[var(--border)] rounded-[var(--radius-md)] text-sm focus:outline-none focus:border-[#7C6EF6] transition-colors" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/70 ml-1">Email Address</label>
+                    <input type="email" defaultValue="guest@glimpse.com" className="w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm font-medium text-[#D7E2EA] focus:outline-none focus:border-[#D7E2EA]/50 focus:shadow-[0_0_15px_rgba(215,226,234,0.1)] transition-all" />
                   </div>
                 </div>
               </div>
-              <div className="pt-4 flex justify-end">
-                <Button variant="primary" style={{ backgroundColor: '#7C6EF6' }} className="gap-2 hover:bg-[#5A4ED1] text-white"><Save className="w-4 h-4"/> Save Changes</Button>
+              <div className="pt-6 border-t border-white/10 flex justify-end relative z-10 mt-8">
+                <Button variant="primary" className="h-12 px-8"><Save className="w-4 h-4 mr-2"/> Save Changes</Button>
               </div>
             </motion.div>
           )}
 
           {activeTab === 'privacy' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 bg-[var(--surface)] p-6 md:p-8 rounded-[var(--radius-lg)] border border-[var(--border)] shadow-sm">
-              <div>
-                <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">Privacy & Facial Data</h3>
-                <p className="text-sm text-[var(--text-secondary)] mb-6">Control how Glimpse uses your selfie to match photos.</p>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-10 bg-[#111111]/80 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
+              <div className="relative z-10">
+                <h3 className="text-2xl font-black uppercase tracking-tight text-[#D7E2EA] mb-2 drop-shadow-md">Privacy & Facial Data</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 mb-8">Control how Glimpse uses your selfie to match photos.</p>
                 
-                <div className="bg-[#F9FAFB] border border-gray-200 rounded-lg p-5">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-blue-100 p-2 rounded-full text-blue-600 shrink-0">
-                      <Shield className="w-5 h-5" />
+                <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 shadow-inner">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                    <div className="bg-[#D7E2EA]/10 border border-[#D7E2EA]/20 p-4 rounded-full text-[#D7E2EA] shrink-0 shadow-[0_0_15px_rgba(215,226,234,0.1)]">
+                      <Shield className="w-6 h-6" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-gray-900 mb-1">Your facial data is private</h4>
-                      <p className="text-sm text-gray-600 leading-relaxed">
+                      <h4 className="text-sm font-black uppercase tracking-wide text-[#D7E2EA] mb-2">Your facial data is private</h4>
+                      <p className="text-xs text-[#D7E2EA]/60 leading-relaxed">
                         Glimpse only uses your selfie to find you in galleries you explicitly join. We do not sell your biometric data or share your selfie with anyone else.
                       </p>
                     </div>
@@ -105,27 +108,27 @@ export default function GuestSettingsPage() {
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-[var(--border)]">
-                <h3 className="text-lg font-bold text-red-600 mb-1 flex items-center gap-2">
+              <div className="pt-8 border-t border-white/10 relative z-10">
+                <h3 className="text-lg font-black uppercase tracking-wide text-red-400 mb-2 flex items-center gap-3 drop-shadow-md">
                   <AlertTriangle className="w-5 h-5" /> Danger Zone
                 </h3>
-                <p className="text-sm text-[var(--text-secondary)] mb-6">These actions are permanent and cannot be undone.</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-red-400/50 mb-8">These actions are permanent and cannot be undone.</p>
                 
                 <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border border-red-100 bg-red-50/50 rounded-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 border border-red-500/20 bg-red-500/5 rounded-2xl">
                     <div>
-                      <h4 className="font-semibold text-gray-900 text-sm">Delete Facial Data</h4>
-                      <p className="text-xs text-gray-600 mt-1">Remove your selfie and all associated facial encodings from our servers immediately.</p>
+                      <h4 className="font-black uppercase tracking-wide text-[#D7E2EA] text-sm">Delete Facial Data</h4>
+                      <p className="text-xs text-[#D7E2EA]/50 mt-2">Remove your selfie and all associated facial encodings from our servers immediately.</p>
                     </div>
-                    <Button variant="outline" className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 whitespace-nowrap">Delete My Data</Button>
+                    <Button variant="outline" className="text-red-400 border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50 whitespace-nowrap h-12">Delete My Data</Button>
                   </div>
                   
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border border-red-100 bg-red-50/50 rounded-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 border border-red-500/20 bg-red-500/5 rounded-2xl">
                     <div>
-                      <h4 className="font-semibold text-gray-900 text-sm">Delete Account</h4>
-                      <p className="text-xs text-gray-600 mt-1">Permanently delete your account and lose access to all your past galleries.</p>
+                      <h4 className="font-black uppercase tracking-wide text-[#D7E2EA] text-sm">Delete Account</h4>
+                      <p className="text-xs text-[#D7E2EA]/50 mt-2">Permanently delete your account and lose access to all your past galleries.</p>
                     </div>
-                    <Button variant="outline" className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 whitespace-nowrap">Delete Account</Button>
+                    <Button variant="outline" className="text-red-400 border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50 whitespace-nowrap h-12">Delete Account</Button>
                   </div>
                 </div>
               </div>
@@ -133,31 +136,32 @@ export default function GuestSettingsPage() {
           )}
 
           {activeTab === 'notifications' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 bg-[var(--surface)] p-6 md:p-8 rounded-[var(--radius-lg)] border border-[var(--border)] shadow-sm">
-              <div>
-                <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">Email Preferences</h3>
-                <p className="text-sm text-[var(--text-secondary)] mb-6">Manage what updates you receive from Glimpse.</p>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 bg-[#111111]/80 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
+              <div className="relative z-10">
+                <h3 className="text-2xl font-black uppercase tracking-tight text-[#D7E2EA] mb-2 drop-shadow-md">Email Preferences</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 mb-8">Manage what updates you receive from Glimpse.</p>
                 
-                <div className="space-y-4">
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input type="checkbox" defaultChecked className="mt-1 w-4 h-4 text-[#7C6EF6] focus:ring-[#7C6EF6] border-gray-300 rounded" />
+                <div className="space-y-6">
+                  <label className="flex items-start gap-4 cursor-pointer p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10 group">
+                    <input type="checkbox" defaultChecked className="mt-1 w-5 h-5 text-[#D7E2EA] bg-[#1A1A1A] border-white/20 rounded focus:ring-offset-0 focus:ring-0 focus:ring-[#D7E2EA]/20" />
                     <div>
-                      <div className="text-sm font-medium text-gray-900">New Photo Matches</div>
-                      <div className="text-xs text-gray-500 mt-0.5">Get notified when a photographer uploads a new photo you are in.</div>
+                      <div className="text-sm font-black uppercase tracking-wide text-[#D7E2EA] group-hover:text-white transition-colors">New Photo Matches</div>
+                      <div className="text-xs text-[#D7E2EA]/50 mt-1">Get notified when a photographer uploads a new photo you are in.</div>
                     </div>
                   </label>
                   
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input type="checkbox" defaultChecked className="mt-1 w-4 h-4 text-[#7C6EF6] focus:ring-[#7C6EF6] border-gray-300 rounded" />
+                  <label className="flex items-start gap-4 cursor-pointer p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10 group">
+                    <input type="checkbox" defaultChecked className="mt-1 w-5 h-5 text-[#D7E2EA] bg-[#1A1A1A] border-white/20 rounded focus:ring-offset-0 focus:ring-0 focus:ring-[#D7E2EA]/20" />
                     <div>
-                      <div className="text-sm font-medium text-gray-900">Event Updates</div>
-                      <div className="text-xs text-gray-500 mt-0.5">Get notified when an event you joined is fully published or modified.</div>
+                      <div className="text-sm font-black uppercase tracking-wide text-[#D7E2EA] group-hover:text-white transition-colors">Event Updates</div>
+                      <div className="text-xs text-[#D7E2EA]/50 mt-1">Get notified when an event you joined is fully published or modified.</div>
                     </div>
                   </label>
                 </div>
               </div>
-              <div className="pt-4 flex justify-end">
-                <Button variant="primary" style={{ backgroundColor: '#7C6EF6' }} className="gap-2 hover:bg-[#5A4ED1] text-white"><Save className="w-4 h-4"/> Save Preferences</Button>
+              <div className="pt-6 border-t border-white/10 flex justify-end relative z-10 mt-8">
+                <Button variant="primary" className="h-12 px-8"><Save className="w-4 h-4 mr-2"/> Save Preferences</Button>
               </div>
             </motion.div>
           )}

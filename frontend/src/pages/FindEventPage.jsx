@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Loader2, ArrowLeft, CalendarDays, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui';
+import { Button, Input, CursorGlow } from '@/components/ui';
 import { ROUTES } from '@/utils/constants';
 import { eventService } from '@/services/eventService';
 
@@ -66,12 +66,13 @@ export default function FindEventPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4 md:py-16 h-full flex flex-col">
+    <div className="max-w-2xl mx-auto py-10 px-4 md:py-16 h-full flex flex-col font-kanit relative z-10">
+      <CursorGlow />
       <Link
         to={ROUTES.GUEST_DASHBOARD}
-        className="flex items-center gap-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors w-fit mb-8"
+        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 hover:text-[#D7E2EA] transition-colors w-fit mb-12 group"
       >
-        <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
       </Link>
 
       <motion.div
@@ -79,35 +80,35 @@ export default function FindEventPage() {
         animate={{ opacity: 1, y: 0 }}
         className="flex-1 flex flex-col"
       >
-        <div className="mb-10 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#7C6EF6] to-[#5A4ED1] flex items-center justify-center mx-auto mb-6 shadow-lg rotate-3">
-            <Search className="w-8 h-8 text-white -rotate-3" />
+        <div className="mb-12 text-center">
+          <div className="w-20 h-20 rounded-[2rem] bg-[#111111] border border-white/10 flex items-center justify-center mx-auto mb-8 shadow-[0_0_30px_rgba(215,226,234,0.1)] rotate-3 hover:rotate-0 hover:scale-110 transition-all duration-500">
+            <Search className="w-10 h-10 text-[#D7E2EA] -rotate-3 hover:rotate-0 transition-transform duration-500" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-[var(--text-primary)] mb-3">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-[#D7E2EA] uppercase drop-shadow-lg mb-4">
             Find your event
           </h1>
-          <p className="text-[var(--text-secondary)] text-lg">
+          <p className="text-[12px] font-bold uppercase tracking-widest text-[#D7E2EA]/50">
             Search by event name or enter the code you received.
           </p>
         </div>
 
-        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[2rem] p-6 md:p-10 shadow-xl relative">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#7C6EF6]/10 to-transparent rounded-[2rem] blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none overflow-hidden" />
+        <div className="bg-[#111111]/80 backdrop-blur-xl border border-white/5 rounded-[3rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
 
-          <form onSubmit={handleSearch} className="relative z-10 flex flex-col gap-6">
-            <div className="space-y-2">
-              <label htmlFor="eventSearch" className="text-sm font-bold text-[var(--text-primary)] ml-1">
+          <form onSubmit={handleSearch} className="relative z-10 flex flex-col gap-8">
+            <div className="space-y-4">
+              <label htmlFor="eventSearch" className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/50 block">
                 Event Name or Code
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none z-10">
                   {searching || loading ? (
-                    <Loader2 className="w-5 h-5 text-[#7C6EF6] animate-spin" />
+                    <Loader2 className="w-5 h-5 text-[#D7E2EA] animate-spin" />
                   ) : (
-                    <Search className="w-5 h-5 text-[#A19D98]" />
+                    <Search className="w-5 h-5 text-[#D7E2EA]/50" />
                   )}
                 </div>
-                <input
+                <Input
                   id="eventSearch"
                   type="text"
                   placeholder="e.g. Demo or aarav-meera-wedding"
@@ -120,11 +121,7 @@ export default function FindEventPage() {
                   }}
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  className={`w-full p-4 pl-12 pr-5 text-base bg-[var(--background)] border-2 rounded-[1rem] transition-all outline-none focus:ring-4 focus:ring-[#7C6EF6]/10 ${
-                    error
-                      ? 'border-red-400 focus:border-red-500'
-                      : 'border-[#E5E5E0] focus:border-[#7C6EF6]'
-                  }`}
+                  className={`pl-14 text-base ${error ? 'border-red-500/50 focus:border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : ''}`}
                   autoFocus
                 />
 
@@ -134,36 +131,36 @@ export default function FindEventPage() {
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
-                      className="absolute top-full left-0 right-0 mt-2 bg-white border border-[var(--border)] rounded-2xl shadow-2xl z-50 overflow-hidden max-h-[16rem] overflow-y-auto custom-scrollbar"
+                      className="absolute top-[calc(100%+0.5rem)] left-0 right-0 bg-[#1A1A1A] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden max-h-[16rem] overflow-y-auto custom-scrollbar backdrop-blur-xl"
                     >
                       {suggestions.map((event) => (
                         <button
                           key={event.slug}
                           type="button"
                           onMouseDown={() => goToEvent(event.slug)}
-                          className="w-full flex items-center gap-4 px-4 py-3 hover:bg-[#F9F8F6] transition-colors text-left group"
+                          className="w-full flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-colors text-left group border-b border-white/5 last:border-0"
                         >
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7C6EF6] to-[#5A4ED1] shrink-0 flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-xl bg-[#222222] border border-white/5 shrink-0 flex items-center justify-center overflow-hidden">
                             {event.cover_photo_url ? (
                               <img
                                 src={event.cover_photo_url}
                                 alt={event.name}
-                                className="w-full h-full rounded-xl object-cover"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                               />
                             ) : (
-                              <span className="text-white font-bold">{event.name.charAt(0).toUpperCase()}</span>
+                              <span className="text-[#D7E2EA] font-black">{event.name.charAt(0).toUpperCase()}</span>
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-[var(--text-primary)] truncate">{event.name}</p>
-                            <div className="flex items-center gap-1.5 mt-0.5">
-                              <CalendarDays className="w-3.5 h-3.5 text-[var(--text-muted)]" />
-                              <span className="text-xs text-[var(--text-muted)]">
+                            <p className="font-bold uppercase tracking-wide text-[#D7E2EA] truncate">{event.name}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <CalendarDays className="w-3.5 h-3.5 text-[#D7E2EA]/40" />
+                              <span className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/40">
                                 {new Date(event.date || event.created_at).toLocaleDateString()}
                               </span>
                             </div>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-[var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <ChevronRight className="w-4 h-4 text-[#D7E2EA]/40 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                         </button>
                       ))}
                     </motion.div>
@@ -175,7 +172,7 @@ export default function FindEventPage() {
                 <motion.p
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="text-red-500 text-sm font-semibold ml-1"
+                  className="text-red-400 text-[10px] font-bold uppercase tracking-widest mt-2"
                 >
                   {error}
                 </motion.p>
@@ -184,13 +181,9 @@ export default function FindEventPage() {
 
             <Button
               type="submit"
+              variant="primary"
               disabled={loading || !query.trim()}
-              style={{ backgroundColor: loading || !query.trim() ? '' : '#7C6EF6' }}
-              className={`w-full h-14 text-base font-bold rounded-[1rem] shadow-lg transition-all ${
-                loading || !query.trim()
-                  ? 'bg-gray-300 text-gray-500 shadow-none'
-                  : 'hover:bg-[#5A4ED1] text-white hover:shadow-xl hover:scale-[1.02]'
-              }`}
+              className="w-full h-14"
             >
               {loading ? 'Searching...' : 'Continue to Event →'}
             </Button>
