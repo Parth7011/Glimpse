@@ -107,6 +107,13 @@ export function EventEditModal({ isOpen, onClose, event }) {
   const [name, setName] = useState(event?.name || '');
   const [date, setDate] = useState(event?.date ? new Date(event.date).toISOString().split('T')[0] : '');
 
+  React.useEffect(() => {
+    if (event) {
+      setName(event.name || '');
+      setDate(event.date ? new Date(event.date).toISOString().split('T')[0] : '');
+    }
+  }, [event]);
+
   const updateEventMutation = useMutation({
     mutationFn: (updates) => eventService.updateEvent(event.id, updates),
     onSuccess: () => {
