@@ -11,7 +11,7 @@ export const matchSelfie = async (eventId, sessionId, selfieFile) => {
   // we will just fetch ALL photos for this event and create fake matches
   // in the database so the frontend has real data to read.
   
-  const { data: photos, error: photoError } = await supabase
+  const { data: photos, error: photoError } = await adminSupabase
     .from('photos')
     .select('id')
     .eq('event_id', eventId);
@@ -39,7 +39,7 @@ export const matchSelfie = async (eventId, sessionId, selfieFile) => {
   }));
   
   if (matchesToInsert.length > 0) {
-    const { error: matchError } = await supabase
+    const { error: matchError } = await adminSupabase
       .from('matches')
       .insert(matchesToInsert);
       
@@ -51,7 +51,7 @@ export const matchSelfie = async (eventId, sessionId, selfieFile) => {
 };
 
 export const getMatches = async (sessionId) => {
-  const { data, error } = await supabase
+  const { data, error } = await adminSupabase
     .from('matches')
     .select(`
       id,
@@ -69,13 +69,28 @@ export const getMatches = async (sessionId) => {
 
   if (error) throw error;
   
-  // Format to match what the frontend expects
-  const formattedMatches = data.map(m => ({
-    id: m.id,
-    photo_id: m.photos.id,
-    similarity_score: m.similarity,
-    thumbnail_url: m.photos.thumbnail_path ? supabase.storage.from('event-photos').getPublicUrl(m.photos.thumbnail_path).data.publicUrl : (m.photos.storage_path ? supabase.storage.from('event-photos').getPublicUrl(m.photos.storage_path).data.publicUrl : null),
-    preview_url: m.photos.preview_path ? supabase.storage.from('event-photos').getPublicUrl(m.photos.preview_path).data.publicUrl : (m.photos.storage_path ? supabase.storage.from('event-photos').getPublicUrl(m.photos.storage_path).data.publicUrl : null)
+  const bucketName = process.env.SUPABASE_STORAGE_BUCKET || 'event-photos';
+  
+  // Format to match what the frontend expects, using signed URLs
+  const formattedMatches = await Promise.all(data.map(async m => {
+    let previewUrl = null;
+    let thumbnailUrl = null;
+    
+    if (m.photos.storage_path) {
+      const { data: signedData } = await adminSupabase.storage.from(bucketName).createSignedUrl(m.photos.storage_path, 3600);
+      if (signedData?.signedUrl) {
+        previewUrl = signedData.signedUrl;
+        thumbnailUrl = signedData.signedUrl; // mock thumbnail with same URL
+      }
+    }
+    
+    return {
+      id: m.id,
+      photo_id: m.photos.id,
+      similarity_score: m.similarity,
+      thumbnail_url: thumbnailUrl,
+      preview_url: previewUrl
+    };
   }));
 
   return {
