@@ -94,11 +94,11 @@ export default function ResultsPage() {
 
   if (eventLoading || matchesLoading) {
     return (
-      <div className="flex-1 flex flex-col p-6 max-w-6xl mx-auto w-full pt-12 space-y-8 bg-[var(--background)] min-h-[100dvh]">
-        <Skeleton className="h-12 w-64 bg-[var(--surface)]" />
-        <Skeleton className="h-4 w-48 mb-8 bg-[var(--surface)]" />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="aspect-[3/4] w-full rounded-[var(--radius-lg)] bg-[var(--surface)]" />)}
+      <div className="flex-1 flex flex-col p-6 max-w-6xl mx-auto w-full pt-12 space-y-8 bg-[#0C0C0C] min-h-[100dvh]">
+        <Skeleton className="h-16 w-80 bg-[#1A1A1A] rounded-2xl" />
+        <Skeleton className="h-4 w-48 mb-8 bg-[#1A1A1A] rounded-full" />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="aspect-[3/4] w-full rounded-[2rem] bg-[#111111]" />)}
         </div>
       </div>
     );
@@ -106,9 +106,9 @@ export default function ResultsPage() {
 
   if (!event || !matchesData) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[var(--background)] min-h-[100dvh]">
-        <h1 className="text-2xl font-semibold mb-2 text-[var(--text-primary)]">Something went wrong</h1>
-        <p className="text-[var(--text-secondary)]">We couldn't load your gallery.</p>
+      <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[#0C0C0C] min-h-[100dvh] font-kanit">
+        <h1 className="text-3xl font-black uppercase tracking-tight mb-2 text-[#D7E2EA]">Something went wrong</h1>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50">We couldn't load your gallery.</p>
       </div>
     );
   }
@@ -116,100 +116,101 @@ export default function ResultsPage() {
 
 
   return (
-    <div className="flex-1 flex flex-col bg-[var(--background)] relative min-h-[100dvh]">
+    <div className="flex-1 flex flex-col bg-[#0C0C0C] relative min-h-[100dvh] font-kanit">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-[var(--background)]/80 backdrop-blur-md border-b border-[var(--border)] px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-30 bg-[#0C0C0C]/80 backdrop-blur-xl border-b border-white/5 px-6 py-5 flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold text-[var(--text-primary)] leading-tight flex items-center gap-2">
-            <span className="text-xl">✨</span> We found {matches.length} photos
+          <h1 className="text-2xl font-black uppercase tracking-tight text-[#D7E2EA] leading-tight flex items-center gap-3">
+            <span className="text-2xl drop-shadow-[0_0_10px_rgba(215,226,234,0.3)]">✨</span> We found {matches.length} photos
           </h1>
-          <p className="text-sm text-[var(--text-secondary)] font-medium mt-0.5">{event.name}</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 mt-1">{event.name}</p>
         </div>
-        <Button variant="primary" size="sm" className="hidden sm:flex shadow-sm" onClick={handleDownloadAll}>
+        <Button variant="primary" className="hidden sm:flex shadow-[0_0_20px_rgba(215,226,234,0.15)] h-12 px-8" onClick={handleDownloadAll}>
           Download All
         </Button>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-6xl mx-auto w-full p-4 md:p-6 pb-28">
+      <main className="flex-1 max-w-7xl mx-auto w-full p-6 pb-32">
         {matches.length === 0 ? (
-          <div className="text-center py-24 bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-xl)]">
-            <h2 className="text-xl font-semibold mb-2 text-[var(--text-primary)]">No photos found</h2>
-            <p className="text-[var(--text-secondary)] mb-6 max-w-sm mx-auto">
+          <div className="text-center py-32 bg-[#111111]/80 backdrop-blur-xl border border-white/5 rounded-[3rem] shadow-2xl relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
+            <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-[#D7E2EA] relative z-10">No photos found</h2>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 mb-10 max-w-sm mx-auto relative z-10">
               We couldn't find any photos of you in this event yet. Check back later if the photographer is still uploading.
             </p>
-            <Link to={ROUTES.GUEST_EVENT(eventSlug)}>
-              <Button variant="primary" className="shadow-sm">Take another selfie</Button>
+            <Link to={ROUTES.GUEST_EVENT(eventSlug)} className="relative z-10">
+              <Button variant="primary" className="h-14 px-8">Take another selfie</Button>
             </Link>
           </div>
         ) : (
-          <motion.div 
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6"
-            initial="hidden"
-            animate="show"
-            variants={{
-              hidden: { opacity: 0 },
-              show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-            }}
-          >
-            {matches.map((match, i) => (
-              <motion.div 
-                key={match.id}
-                variants={{
-                  hidden: { opacity: 0, y: 30 },
-                  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 20 } }
-                }}
-                className="aspect-[3/4] relative rounded-[var(--radius-lg)] overflow-hidden bg-[var(--surface-soft)] cursor-pointer group shadow-sm hover:shadow-md transition-shadow"
-                onClick={() => setSelectedPhoto(match)}
-              >
-                <img 
-                  src={match.preview_url || match.photo?.preview_url || `https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80&random=${i}`} 
-                  alt="Gallery" 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                />
-                {/* Minimal gradient for the icon only */}
-                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <button 
-                  onClick={(e) => handleDownloadSingle(e, match)}
-                  className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md text-[var(--text-primary)] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm hover:scale-110 active:scale-95"
+            <motion.div 
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: { opacity: 0 },
+                show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+              }}
+            >
+              {matches.map((match, i) => (
+                <motion.div 
+                  key={match.id}
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 20 } }
+                  }}
+                  className="aspect-[3/4] relative rounded-[2rem] overflow-hidden bg-[#1A1A1A] cursor-pointer group shadow-lg hover:shadow-[0_0_30px_rgba(215,226,234,0.15)] transition-all duration-500 border border-white/5 hover:border-[#D7E2EA]/30"
+                  onClick={() => setSelectedPhoto(match)}
                 >
-                  <Download className="w-5 h-5" />
-                </button>
-              </motion.div>
-            ))}
-          </motion.div>
+                  <img 
+                    src={match.preview_url || match.photo?.preview_url || `https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80&random=${i}`} 
+                    alt="Gallery" 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                  />
+                  {/* Minimal gradient for the icon only */}
+                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0C0C0C]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <button 
+                    onClick={(e) => handleDownloadSingle(e, match)}
+                    className="absolute bottom-4 right-4 w-12 h-12 rounded-[1.2rem] bg-white/10 backdrop-blur-xl border border-white/20 text-[#D7E2EA] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl hover:scale-110 active:scale-95 hover:bg-white/20 hover:text-white"
+                  >
+                    <Download className="w-5 h-5" />
+                  </button>
+                </motion.div>
+              ))}
+            </motion.div>
         )}
       </main>
 
       {/* Mobile sticky action */}
       {matches.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[var(--background)] via-[var(--background)]/90 to-transparent pt-12 sm:hidden z-20">
-          <Button variant="primary" className="w-full shadow-lg h-14 text-base font-semibold" onClick={handleDownloadAll}>
+        <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#0C0C0C] via-[#0C0C0C]/90 to-transparent pt-12 sm:hidden z-20">
+          <Button variant="primary" className="w-full shadow-2xl h-16 rounded-[1.5rem]" onClick={handleDownloadAll}>
             Download All Photos
           </Button>
         </div>
       )}
 
-      {/* Lightbox - Clean White/Light theme */}
+      {/* Lightbox - Premium Dark theme */}
       <AnimatePresence>
         {selectedPhoto && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[var(--surface)]/95 backdrop-blur-xl flex flex-col"
+            className="fixed inset-0 z-50 bg-[#0C0C0C]/95 backdrop-blur-2xl flex flex-col"
           >
-            <div className="flex items-center justify-between p-4 border-b border-[var(--border)]/50">
+            <div className="flex items-center justify-between p-6 border-b border-white/5">
               <button 
                 onClick={() => setSelectedPhoto(null)}
-                className="w-10 h-10 rounded-full bg-[var(--surface-soft)] flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--border)] transition-colors"
+                className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#D7E2EA] hover:bg-white/10 hover:text-white transition-all shadow-inner"
               >
                 <X className="w-6 h-6" />
               </button>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <button 
                   onClick={(e) => handleDownloadSingle(e, selectedPhoto)}
-                  className="flex items-center gap-2 bg-[var(--text-primary)] text-[var(--surface)] px-4 py-2 rounded-full font-medium text-sm hover:bg-black transition-colors"
+                  className="flex items-center gap-3 bg-[#D7E2EA] text-[#0C0C0C] px-6 py-3 rounded-[1rem] font-black uppercase tracking-widest text-[10px] hover:bg-white transition-all shadow-[0_0_20px_rgba(215,226,234,0.3)] hover:shadow-[0_0_30px_rgba(215,226,234,0.5)] hover:-translate-y-0.5"
                 >
                   <Download className="w-4 h-4" />
                   <span className="hidden sm:inline">Download</span>
@@ -217,7 +218,8 @@ export default function ResultsPage() {
               </div>
             </div>
             
-            <div className="flex-1 flex items-center justify-center p-4 sm:p-8 min-h-0">
+            <div className="flex-1 flex items-center justify-center p-6 sm:p-10 min-h-0 relative">
+              <div className="absolute inset-0 bg-gradient-to-b from-[#111111]/20 to-transparent pointer-events-none" />
               <motion.img 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -225,7 +227,7 @@ export default function ResultsPage() {
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
                 src={selectedPhoto.preview_url || `https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1200&q=80&random=${selectedPhoto.id}`} 
                 alt="Selected" 
-                className="max-w-full max-h-full object-contain rounded-xl shadow-[var(--shadow-photo)]"
+                className="max-w-full max-h-full object-contain rounded-xl shadow-2xl relative z-10"
               />
             </div>
           </motion.div>

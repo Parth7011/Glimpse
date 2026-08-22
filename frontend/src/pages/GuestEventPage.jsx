@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { eventService } from '@/services/eventService';
 import { ROUTES } from '@/utils/constants';
-import { Button, Checkbox, Label, Skeleton } from '@/components/ui';
+import { Button, Checkbox, Label, Skeleton, CursorGlow } from '@/components/ui';
 
 export default function GuestEventPage() {
   const { eventSlug } = useParams();
@@ -44,22 +44,23 @@ export default function GuestEventPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-[var(--background)] max-w-lg mx-auto w-full shadow-2xl overflow-hidden relative min-h-[100dvh]">
+    <div className="flex-1 flex flex-col bg-[#0C0C0C] font-kanit max-w-2xl mx-auto w-full shadow-2xl overflow-hidden relative min-h-[100dvh]">
+      <CursorGlow />
       <div className="flex-1 overflow-y-auto pb-32">
         {/* Cover Photo Area */}
-        <div className="h-80 sm:h-96 w-full relative group">
+        <div className="aspect-video sm:h-96 w-full relative group bg-[#111111]">
           {event.cover_photo_url ? (
             <>
               <img 
                 src={event.cover_photo_url} 
                 alt={event.name} 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80'; }}
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-[#F7F7F5]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0C0C0C] via-black/40 to-transparent opacity-90" />
             </>
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-[#7C6EF6] to-[#5A4ED1]" />
+            <div className="w-full h-full bg-gradient-to-br from-[#1A1A1A] to-[#111111]" />
           )}
           
           <motion.div 
@@ -67,30 +68,31 @@ export default function GuestEventPage() {
             animate={{ opacity: 1, y: 0 }}
             className="absolute bottom-6 left-6 right-6 z-10"
           >
-            <div className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full mb-3 border border-white/30">
-              <span className="text-white text-xs font-semibold uppercase tracking-wider shadow-sm">
+            <div className="inline-block px-4 py-1.5 bg-white/5 backdrop-blur-md rounded-full mb-4 border border-white/10 shadow-[0_0_15px_rgba(215,226,234,0.1)]">
+              <span className="text-[#D7E2EA] text-[10px] font-black uppercase tracking-widest">
                 {new Date(event.date || event.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-1 text-[var(--text-primary)] leading-tight text-balance">
+            <h1 className="text-4xl sm:text-5xl font-black tracking-tighter mb-1 text-[#D7E2EA] uppercase drop-shadow-lg leading-[0.9]">
               {event.name}
             </h1>
           </motion.div>
         </div>
 
         {/* Content */}
-        <div className="px-6 py-8 space-y-8 bg-[var(--background)] relative z-10 rounded-t-3xl -mt-6">
+        <div className="px-6 py-8 space-y-8 bg-[#0C0C0C] relative z-10 rounded-t-[3rem] -mt-8 border-t border-white/5">
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-center bg-white rounded-3xl p-6 shadow-xl shadow-[#7C6EF6]/5 border border-[#7C6EF6]/10"
+            className="text-center bg-[#111111]/80 backdrop-blur-xl rounded-[3rem] p-8 shadow-2xl border border-white/5 relative overflow-hidden group hover:border-[#D7E2EA]/30 transition-colors duration-500"
           >
-            <div className="w-14 h-14 rounded-full bg-[#EEECFF] flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">📸</span>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
+            <div className="w-16 h-16 rounded-full bg-[#1A1A1A] border border-white/10 flex items-center justify-center mx-auto mb-6 shadow-inner group-hover:scale-110 group-hover:bg-[#D7E2EA] transition-all duration-500 z-10 relative">
+              <span className="text-2xl group-hover:scale-110 transition-transform duration-500">📸</span>
             </div>
-            <h2 className="text-2xl font-bold mb-2 text-[var(--text-primary)]">Find your moments</h2>
-            <p className="text-[var(--text-secondary)] text-balance">
+            <h2 className="text-2xl font-black uppercase tracking-tight mb-2 text-[#D7E2EA] relative z-10">Find your moments</h2>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 text-balance relative z-10">
               Take one quick selfie and our AI will instantly find all the photos you're in.
             </p>
           </motion.div>
@@ -99,21 +101,21 @@ export default function GuestEventPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className={`rounded-2xl p-5 border transition-colors ${consent ? 'bg-[#EEECFF] border-[#7C6EF6]/30' : 'bg-white border-[var(--border)]'}`}
+            className={`rounded-3xl p-6 border transition-all duration-300 relative overflow-hidden ${consent ? 'bg-[#D7E2EA]/10 border-[#D7E2EA]/30 shadow-[0_0_20px_rgba(215,226,234,0.1)]' : 'bg-[#111111]/50 border-white/5 hover:border-white/20'}`}
           >
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-4 relative z-10">
               <Checkbox 
                 id="consent" 
                 checked={consent} 
                 onCheckedChange={setConsent} 
-                className="mt-1 border-[var(--border-strong)] data-[state=checked]:bg-[#7C6EF6] data-[state=checked]:border-[#7C6EF6]"
+                className="mt-1 border-white/20 data-[state=checked]:bg-[#D7E2EA] data-[state=checked]:border-[#D7E2EA] data-[state=checked]:text-[#0C0C0C]"
               />
-              <div className="space-y-1.5 leading-none">
-                <Label htmlFor="consent" className="text-sm font-semibold leading-normal cursor-pointer text-[var(--text-primary)]">
+              <div className="space-y-2 leading-none">
+                <Label htmlFor="consent" className="text-sm font-black uppercase tracking-wide cursor-pointer text-[#D7E2EA]">
                   I agree to use my selfie for matching.
                 </Label>
-                <p className="text-xs text-[var(--text-secondary)] leading-relaxed flex items-center gap-1">
-                  <span className="text-green-500">🔒</span> Secure & private. Deleted immediately.
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/40 leading-relaxed flex items-center gap-1.5">
+                  <span className="text-green-400">🔒</span> Secure & private. Deleted immediately.
                 </p>
               </div>
             </div>
@@ -122,20 +124,19 @@ export default function GuestEventPage() {
       </div>
 
       {/* Sticky Bottom Action */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[var(--background)] via-[var(--background)] to-transparent pt-12 z-20">
+      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#0C0C0C] via-[#0C0C0C] to-transparent pt-12 z-20">
         <motion.div
           whileTap={consent ? { scale: 0.98 } : {}}
         >
           <Button 
             variant="primary" 
             size="xl" 
-            className={`w-full text-lg font-bold shadow-2xl h-14 rounded-2xl transition-all ${
+            className={`w-full text-base font-black uppercase tracking-widest shadow-2xl h-16 rounded-[1.5rem] transition-all duration-300 ${
               consent 
-                ? 'bg-gradient-to-r from-[#7C6EF6] to-[#5A4ED1] text-white hover:shadow-[#7C6EF6]/40 hover:-translate-y-0.5' 
-                : 'bg-gray-200 text-gray-400 shadow-none'
+                ? 'shadow-[0_0_30px_rgba(215,226,234,0.15)] hover:shadow-[0_0_40px_rgba(215,226,234,0.3)] hover:-translate-y-1' 
+                : 'opacity-50 grayscale cursor-not-allowed shadow-none'
             }`}
             disabled={!consent}
-            style={{ backgroundColor: consent ? '' : '' }}
             onClick={handleStart}
           >
             Find My Photos

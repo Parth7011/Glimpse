@@ -133,34 +133,35 @@ export default function SelfiePage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[var(--background)] max-w-lg mx-auto w-full relative h-[100dvh] overflow-hidden shadow-2xl">
+    <div className="flex-1 flex flex-col bg-[#0C0C0C] max-w-2xl mx-auto w-full relative h-[100dvh] overflow-hidden shadow-2xl font-kanit">
       {/* Header */}
-      <div className="relative z-20 flex items-center justify-between p-4 bg-[var(--surface)] border-b border-[var(--border)]">
+      <div className="relative z-20 flex items-center justify-between p-6 bg-[#0C0C0C] border-b border-white/5">
         <button 
           onClick={() => navigate(ROUTES.GUEST_EVENT(eventSlug))}
-          className="w-10 h-10 rounded-full bg-[var(--surface-soft)] flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--border)] transition-colors"
+          className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-[#D7E2EA] hover:bg-white/10 transition-colors border border-white/10"
           disabled={isProcessing}
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <span className="font-semibold text-sm tracking-wide text-[var(--text-primary)]">Find your photos</span>
+        <span className="font-black uppercase tracking-widest text-xs text-[#D7E2EA]">Find your photos</span>
         <div className="w-10" /> {/* Spacer for centering */}
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 relative bg-[var(--surface-soft)] flex flex-col justify-center overflow-hidden">
+      <div className="flex-1 relative bg-[#111111] flex flex-col justify-center overflow-hidden">
         
         {/* Permission Denied State */}
         {hasPermission === false && !capturedImage && (
-          <div className="text-center p-8 bg-[var(--surface)] m-4 rounded-[var(--radius-xl)] border border-[var(--border)] shadow-sm space-y-4 z-10">
-            <div className="w-16 h-16 rounded-full bg-[var(--accent-soft)] flex items-center justify-center mx-auto mb-2">
-              <Camera className="w-8 h-8 text-[var(--accent)]" />
+          <div className="text-center p-10 bg-[#111111]/80 backdrop-blur-xl m-6 rounded-[3rem] border border-white/10 shadow-2xl space-y-6 z-10 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent opacity-50 pointer-events-none" />
+            <div className="w-20 h-20 rounded-[2rem] bg-[#1A1A1A] border border-white/10 shadow-inner flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-500 relative z-10">
+              <Camera className="w-10 h-10 text-red-400" />
             </div>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">Camera Access Required</h2>
-            <p className="text-[var(--text-secondary)] text-sm max-w-xs mx-auto">
+            <h2 className="text-2xl font-black uppercase tracking-tight text-[#D7E2EA] relative z-10">Camera Access Required</h2>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 max-w-xs mx-auto relative z-10">
               We need access to your camera to take a selfie and find your photos. Please allow access in your browser.
             </p>
-            <Button variant="primary" onClick={startCamera} className="mt-6 w-full h-12 shadow-sm">
+            <Button variant="primary" onClick={startCamera} className="mt-8 w-full h-14 relative z-10">
               Try Again
             </Button>
           </div>
@@ -181,25 +182,27 @@ export default function SelfiePage() {
             
             {/* Face Guide Overlay */}
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
-              <div className="w-[70vw] max-w-[280px] aspect-[3/4] border-2 border-white/60 rounded-[120px] relative shadow-[0_0_0_9999px_rgba(0,0,0,0.4)]">
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 text-white text-center w-full">
-                   <p className="font-semibold text-lg drop-shadow-md">Centre your face</p>
-                   <p className="text-sm text-white/80 drop-shadow-md">Good lighting works best</p>
+              <div className="w-[75vw] max-w-[300px] aspect-[3/4] border-[3px] border-[#D7E2EA]/40 rounded-[140px] relative shadow-[0_0_0_9999px_rgba(12,12,12,0.85)]">
+                {/* Glowing edge effect */}
+                <div className="absolute inset-[-3px] border-[3px] border-[#D7E2EA]/20 rounded-[140px] blur-sm" />
+                <div className="absolute -top-16 left-1/2 -translate-x-1/2 text-center w-full">
+                   <p className="font-black uppercase tracking-widest text-lg text-[#D7E2EA] drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">Centre your face</p>
+                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/70 mt-1 drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">Good lighting works best</p>
                 </div>
               </div>
             </div>
             
             {/* Action Bar */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 p-8 flex flex-col items-center justify-end bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-24">
+            <div className="absolute bottom-0 left-0 right-0 z-20 p-8 flex flex-col items-center justify-end bg-gradient-to-t from-[#0C0C0C] via-[#0C0C0C]/80 to-transparent pt-32">
               <button 
                 onClick={captureSelfie}
-                className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-md p-1.5 flex items-center justify-center hover:bg-white/30 transition-all mb-6 shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95 group"
+                className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-xl p-2 flex items-center justify-center hover:bg-white/20 transition-all mb-8 shadow-[0_0_30px_rgba(215,226,234,0.15)] active:scale-95 group border border-white/20"
               >
-                <div className="w-full h-full rounded-full bg-white shadow-inner transition-transform group-hover:scale-95 group-active:scale-90 flex items-center justify-center" />
+                <div className="w-full h-full rounded-full bg-[#D7E2EA] shadow-inner transition-transform group-hover:scale-95 group-active:scale-90 flex items-center justify-center" />
               </button>
               <button 
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-2 text-white/90 text-sm font-medium hover:text-white transition-colors bg-black/40 px-4 py-2 rounded-full backdrop-blur-md"
+                className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/70 hover:text-[#D7E2EA] transition-colors bg-white/5 border border-white/10 px-6 py-3 rounded-full backdrop-blur-xl hover:bg-white/10"
               >
                 <Upload className="w-4 h-4" />
                 Upload a selfie instead
@@ -232,18 +235,18 @@ export default function SelfiePage() {
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="absolute inset-0 bg-[var(--surface)]/95 backdrop-blur-md flex flex-col items-center justify-center p-8 z-30"
+                  className="absolute inset-0 bg-[#0C0C0C]/95 backdrop-blur-2xl flex flex-col items-center justify-center p-8 z-30"
                 >
-                  <div className="relative w-20 h-20 mb-8 flex items-center justify-center bg-[var(--surface)] rounded-full shadow-lg border border-[var(--border)]">
+                  <div className="relative w-24 h-24 mb-10 flex items-center justify-center bg-[#1A1A1A] rounded-[2rem] shadow-[0_0_40px_rgba(215,226,234,0.1)] border border-white/10">
                     <motion.div 
-                      className="absolute inset-0 rounded-full border-2 border-[#7C6EF6] border-t-transparent shadow-[0_0_15px_rgba(124,110,246,0.5)]"
+                      className="absolute inset-0 rounded-[2rem] border-2 border-[#D7E2EA] border-t-transparent shadow-[0_0_20px_rgba(215,226,234,0.3)]"
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                     />
-                    <Search className="w-8 h-8 text-[#7C6EF6]" />
+                    <Search className="w-10 h-10 text-[#D7E2EA]" />
                   </div>
                   
-                  <div className="space-y-5 w-full max-w-[240px]">
+                  <div className="space-y-6 w-full max-w-[280px]">
                     <ProcessStep active={processingStep >= 1} text="Selfie captured" />
                     <ProcessStep active={processingStep >= 2} text="Face detected" loading={processingStep === 1} />
                     <ProcessStep active={processingStep >= 3} text="Searching event photos..." loading={processingStep === 2} />
@@ -254,20 +257,20 @@ export default function SelfiePage() {
 
             {/* Actions (hidden while processing) */}
             {!isProcessing && (
-              <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/10 backdrop-blur-xl border-t border-white/20 shadow-[0_-10px_40px_rgba(0,0,0,0.3)] flex items-center gap-4 z-20 animate-in slide-in-from-bottom-10 rounded-t-3xl pb-10">
+              <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[#0C0C0C] via-[#0C0C0C]/80 to-transparent flex items-center gap-4 z-20 animate-in slide-in-from-bottom-10 pt-20 pb-12">
                 <Button 
                   variant="secondary" 
                   size="xl" 
                   onClick={retakeSelfie}
-                  className="bg-white/10 text-white hover:bg-white/20 border border-white/20 h-14 w-14 shrink-0 rounded-full p-0 shadow-lg backdrop-blur-md"
+                  className="bg-white/10 text-[#D7E2EA] hover:bg-white/20 border border-white/20 h-16 w-16 shrink-0 rounded-2xl p-0 shadow-lg backdrop-blur-xl"
                 >
-                  <RefreshCw className="w-5 h-5" />
+                  <RefreshCw className="w-6 h-6" />
                 </Button>
                 <Button 
                   variant="primary" 
                   size="xl" 
                   onClick={processSelfie}
-                  className="flex-1 bg-gradient-to-r from-[#7C6EF6] to-[#5A4ED1] text-white hover:shadow-[0_8px_30px_rgba(124,110,246,0.5)] hover:-translate-y-0.5 border-none h-14 rounded-2xl text-lg font-bold transition-all shadow-xl"
+                  className="flex-1 h-16 rounded-[1.5rem] text-base font-black uppercase tracking-widest shadow-xl"
                 >
                   Find My Photos
                 </Button>
