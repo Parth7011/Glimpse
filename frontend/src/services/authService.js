@@ -48,6 +48,18 @@ export const authService = {
     localStorage.removeItem('glimpse_user');
   },
 
+  async getMe() {
+    const token = localStorage.getItem('glimpse_token');
+    if (!token) throw new Error('No token found');
+    
+    const response = await fetch(`${API_URL}/auth/me`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    if (!response.ok) throw new Error('Failed to fetch user');
+    return response.json();
+  },
+
   async getUser() {
     const userStr = localStorage.getItem('glimpse_user');
     if (userStr) {

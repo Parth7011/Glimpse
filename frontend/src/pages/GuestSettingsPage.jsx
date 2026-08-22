@@ -17,12 +17,10 @@ const itemVariants = {
 };
 
 export default function GuestSettingsPage() {
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState('privacy');
 
   const tabs = [
-    { id: 'profile', label: 'My Account', icon: User },
     { id: 'privacy', label: 'Privacy & Security', icon: Shield },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
   ];
 
   return (
@@ -62,29 +60,6 @@ export default function GuestSettingsPage() {
 
         {/* Content Area */}
         <div className="flex-1">
-          {activeTab === 'profile' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 bg-[#111111]/80 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
-              <div className="relative z-10">
-                <h3 className="text-2xl font-black uppercase tracking-tight text-[#D7E2EA] mb-2 drop-shadow-md">Account Details</h3>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 mb-8">Update your personal information.</p>
-                
-                <div className="space-y-6">
-                  <div className="grid gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/70 ml-1">Full Name</label>
-                    <input type="text" defaultValue="Guest User" className="w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm font-medium text-[#D7E2EA] focus:outline-none focus:border-[#D7E2EA]/50 focus:shadow-[0_0_15px_rgba(215,226,234,0.1)] transition-all" />
-                  </div>
-                  <div className="grid gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/70 ml-1">Email Address</label>
-                    <input type="email" defaultValue="guest@glimpse.com" className="w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm font-medium text-[#D7E2EA] focus:outline-none focus:border-[#D7E2EA]/50 focus:shadow-[0_0_15px_rgba(215,226,234,0.1)] transition-all" />
-                  </div>
-                </div>
-              </div>
-              <div className="pt-6 border-t border-white/10 flex justify-end relative z-10 mt-8">
-                <Button variant="primary" className="h-12 px-8"><Save className="w-4 h-4 mr-2"/> Save Changes</Button>
-              </div>
-            </motion.div>
-          )}
 
           {activeTab === 'privacy' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-10 bg-[#111111]/80 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden">
@@ -131,37 +106,6 @@ export default function GuestSettingsPage() {
                     <Button variant="outline" className="text-red-400 border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50 whitespace-nowrap h-12">Delete Account</Button>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === 'notifications' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 bg-[#111111]/80 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
-              <div className="relative z-10">
-                <h3 className="text-2xl font-black uppercase tracking-tight text-[#D7E2EA] mb-2 drop-shadow-md">Email Preferences</h3>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 mb-8">Manage what updates you receive from Glimpse.</p>
-                
-                <div className="space-y-6">
-                  <label className="flex items-start gap-4 cursor-pointer p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10 group">
-                    <input type="checkbox" defaultChecked className="mt-1 w-5 h-5 text-[#D7E2EA] bg-[#1A1A1A] border-white/20 rounded focus:ring-offset-0 focus:ring-0 focus:ring-[#D7E2EA]/20" />
-                    <div>
-                      <div className="text-sm font-black uppercase tracking-wide text-[#D7E2EA] group-hover:text-white transition-colors">New Photo Matches</div>
-                      <div className="text-xs text-[#D7E2EA]/50 mt-1">Get notified when a photographer uploads a new photo you are in.</div>
-                    </div>
-                  </label>
-                  
-                  <label className="flex items-start gap-4 cursor-pointer p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10 group">
-                    <input type="checkbox" defaultChecked className="mt-1 w-5 h-5 text-[#D7E2EA] bg-[#1A1A1A] border-white/20 rounded focus:ring-offset-0 focus:ring-0 focus:ring-[#D7E2EA]/20" />
-                    <div>
-                      <div className="text-sm font-black uppercase tracking-wide text-[#D7E2EA] group-hover:text-white transition-colors">Event Updates</div>
-                      <div className="text-xs text-[#D7E2EA]/50 mt-1">Get notified when an event you joined is fully published or modified.</div>
-                    </div>
-                  </label>
-                </div>
-              </div>
-              <div className="pt-6 border-t border-white/10 flex justify-end relative z-10 mt-8">
-                <Button variant="primary" className="h-12 px-8"><Save className="w-4 h-4 mr-2"/> Save Preferences</Button>
               </div>
             </motion.div>
           )}

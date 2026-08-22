@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, User, Camera, CreditCard, Upload } from 'lucide-react';
 import { Button, CursorGlow } from '@/components/ui';
+import { useQuery } from '@tanstack/react-query';
+import { authService } from '@/services/authService';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -18,6 +20,13 @@ const itemVariants = {
 
 export default function PhotographerSettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => authService.getMe(),
+  });
+
+  const user = data?.user || { name: '', email: '' };
 
   const tabs = [
     { id: 'profile', label: 'Studio Profile', icon: User },
@@ -70,23 +79,22 @@ export default function PhotographerSettingsPage() {
                 <h3 className="text-2xl font-black text-[#D7E2EA] uppercase tracking-wide mb-1">Studio Information</h3>
                 <p className="text-xs font-bold text-[#D7E2EA]/50 uppercase tracking-widest mb-8">Update your studio's contact details and public name.</p>
                 
-                <div className="space-y-6">
-                  <div className="grid gap-2 relative group/input">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 ml-1">Studio Name</label>
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-transparent via-[#D7E2EA]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within/input:opacity-100 transition duration-500 pointer-events-none translate-y-3" />
-                    <input type="text" defaultValue="Arjun Kapoor Photography" className="relative w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm focus:outline-none focus:border-[#D7E2EA]/50 transition-all shadow-inner text-[#D7E2EA] placeholder:text-[#D7E2EA]/30 font-light" />
+                {isLoading ? (
+                  <div className="text-[#D7E2EA]/50">Loading profile...</div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="grid gap-2 relative group/input">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 ml-1">Studio Name</label>
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-transparent via-[#D7E2EA]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within/input:opacity-100 transition duration-500 pointer-events-none translate-y-3" />
+                      <input type="text" defaultValue={user.name} className="relative w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm focus:outline-none focus:border-[#D7E2EA]/50 transition-all shadow-inner text-[#D7E2EA] placeholder:text-[#D7E2EA]/30 font-light" />
+                    </div>
+                    <div className="grid gap-2 relative group/input">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 ml-1">Contact Email</label>
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-transparent via-[#D7E2EA]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within/input:opacity-100 transition duration-500 pointer-events-none translate-y-3" />
+                      <input type="email" defaultValue={user.email} disabled className="relative w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm focus:outline-none focus:border-[#D7E2EA]/50 transition-all shadow-inner text-[#D7E2EA]/50 placeholder:text-[#D7E2EA]/30 font-light opacity-60 cursor-not-allowed" />
+                    </div>
                   </div>
-                  <div className="grid gap-2 relative group/input">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 ml-1">Contact Email</label>
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-transparent via-[#D7E2EA]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within/input:opacity-100 transition duration-500 pointer-events-none translate-y-3" />
-                    <input type="email" defaultValue="demo@glimpse.com" className="relative w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm focus:outline-none focus:border-[#D7E2EA]/50 transition-all shadow-inner text-[#D7E2EA] placeholder:text-[#D7E2EA]/30 font-light" />
-                  </div>
-                  <div className="grid gap-2 relative group/input">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 ml-1">Phone Number</label>
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-transparent via-[#D7E2EA]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within/input:opacity-100 transition duration-500 pointer-events-none translate-y-3" />
-                    <input type="tel" defaultValue="+91 98765 43210" className="relative w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm focus:outline-none focus:border-[#D7E2EA]/50 transition-all shadow-inner text-[#D7E2EA] placeholder:text-[#D7E2EA]/30 font-light" />
-                  </div>
-                </div>
+                )}
               </div>
               <div className="pt-6 mt-6 flex justify-end border-t border-white/5 relative z-10">
                 <Button variant="primary"><Save className="w-4 h-4"/> Save Changes</Button>

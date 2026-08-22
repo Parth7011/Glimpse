@@ -5,7 +5,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/utils/utils';
 const buttonVariants = cva(
 // Base styles
-'inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7E2EA]/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer select-none relative group whitespace-nowrap', {
+'inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7E2EA]/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer select-none overflow-hidden relative group whitespace-nowrap', {
   variants: {
     variant: {
       primary: 'bg-[#D7E2EA] hover:bg-white text-[#0C0C0C] active:scale-[0.98] shadow-[0_0_20px_rgba(215,226,234,0.15)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]',
