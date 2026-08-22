@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Save, User, Camera, CreditCard, Upload } from 'lucide-react';
 import { Button, CursorGlow } from '@/components/ui';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { authService } from '@/services/authService';
+import { useToast } from '@/components/ui/toast';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -20,6 +21,8 @@ const itemVariants = {
 
 export default function PhotographerSettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data, isLoading } = useQuery({
     queryKey: ['me'],
@@ -27,6 +30,38 @@ export default function PhotographerSettingsPage() {
   });
 
   const user = data?.user || { name: '', email: '' };
+  const metadata = user?.user_metadata || {};
+
+  const [studioName, setStudioName] = useState('');
+  const [brandColor, setBrandColor] = useState('#D7E2EA');
+
+  useEffect(() => {
+    if (user.name) {
+      setStudioName(metadata.name || user.name);
+    }
+    if (metadata.brandColor) {
+      setBrandColor(metadata.brandColor);
+    }
+  }, [user, metadata.name, metadata.brandColor]);
+
+  const updateSettingsMutation = useMutation({
+    mutationFn: (newSettings) => authService.updateMe(newSettings),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['me']);
+      toast('Settings updated successfully', 'success');
+    },
+    onError: (error) => {
+      toast(error.message || 'Failed to update settings', 'error');
+    }
+  });
+
+  const handleSaveProfile = () => {
+    updateSettingsMutation.mutate({ name: studioName, brandColor });
+  };
+
+  const handleSaveBranding = () => {
+    updateSettingsMutation.mutate({ name: studioName, brandColor });
+  };
 
   const tabs = [
     { id: 'profile', label: 'Studio Profile', icon: User },
@@ -86,7 +121,12 @@ export default function PhotographerSettingsPage() {
                     <div className="grid gap-2 relative group/input">
                       <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 ml-1">Studio Name</label>
                       <div className="absolute -inset-0.5 bg-gradient-to-r from-transparent via-[#D7E2EA]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within/input:opacity-100 transition duration-500 pointer-events-none translate-y-3" />
-                      <input type="text" defaultValue={user.name} className="relative w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm focus:outline-none focus:border-[#D7E2EA]/50 transition-all shadow-inner text-[#D7E2EA] placeholder:text-[#D7E2EA]/30 font-light" />
+                      <input 
+                        type="text" 
+                        value={studioName} 
+                        onChange={(e) => setStudioName(e.target.value)}
+                        className="relative w-full p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-sm focus:outline-none focus:border-[#D7E2EA]/50 transition-all shadow-inner text-[#D7E2EA] placeholder:text-[#D7E2EA]/30 font-light" 
+                      />
                     </div>
                     <div className="grid gap-2 relative group/input">
                       <label className="text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 ml-1">Contact Email</label>
@@ -97,7 +137,14 @@ export default function PhotographerSettingsPage() {
                 )}
               </div>
               <div className="pt-6 mt-6 flex justify-end border-t border-white/5 relative z-10">
-                <Button variant="primary"><Save className="w-4 h-4"/> Save Changes</Button>
+                <Button 
+                  variant="primary" 
+                  onClick={handleSaveProfile}
+                  disabled={updateSettingsMutation.isPending}
+                >
+                  <Save className="w-4 h-4 mr-2"/> 
+                  {updateSettingsMutation.isPending ? 'Saving...' : 'Save Changes'}
+                </Button>
               </div>
             </motion.div>
           )}
@@ -124,20 +171,35 @@ export default function PhotographerSettingsPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 mb-4 ml-1">Brand Color</label>
-                    <div className="flex items-center gap-5 bg-[#1A1A1A] p-6 rounded-3xl border border-white/5">
-                      <div className="w-12 h-12 rounded-full shadow-[0_0_20px_rgba(215,226,234,0.4)] bg-[#D7E2EA] ring-2 ring-offset-4 ring-offset-[#1A1A1A] ring-[#D7E2EA] cursor-pointer" />
-                      <div className="w-12 h-12 rounded-full shadow-inner bg-[#4338CA] opacity-30 hover:opacity-100 hover:shadow-[0_0_20px_rgba(67,56,202,0.4)] cursor-pointer transition-all hover:scale-110" />
-                      <div className="w-12 h-12 rounded-full shadow-inner bg-[#10B981] opacity-30 hover:opacity-100 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] cursor-pointer transition-all hover:scale-110" />
-                      <div className="w-12 h-12 rounded-full shadow-inner bg-[#EC4899] opacity-30 hover:opacity-100 hover:shadow-[0_0_20px_rgba(236,72,153,0.4)] cursor-pointer transition-all hover:scale-110" />
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-[#D7E2EA]/60 mb-4 ml-1">Brand Color</label>
+                      <div className="flex items-center gap-5 bg-[#1A1A1A] p-6 rounded-3xl border border-white/5">
+                        {['#D7E2EA', '#4338CA', '#10B981', '#EC4899'].map(color => (
+                          <div 
+                            key={color}
+                            onClick={() => setBrandColor(color)}
+                            className={`w-12 h-12 rounded-full cursor-pointer transition-all hover:scale-110 ${
+                              brandColor === color 
+                                ? 'shadow-[0_0_20px_rgba(255,255,255,0.4)] ring-2 ring-offset-4 ring-offset-[#1A1A1A] ring-[#D7E2EA] opacity-100' 
+                                : 'shadow-inner opacity-30 hover:opacity-100'
+                            }`}
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-[#D7E2EA]/40 mt-4 ml-1">This color will be used for buttons and accents on your guest galleries.</p>
                     </div>
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-[#D7E2EA]/40 mt-4 ml-1">This color will be used for buttons and accents on your guest galleries.</p>
-                  </div>
                 </div>
               </div>
               <div className="pt-6 mt-6 flex justify-end border-t border-white/5 relative z-10">
-                <Button variant="primary"><Save className="w-4 h-4"/> Save Branding</Button>
+                <Button 
+                  variant="primary" 
+                  onClick={handleSaveBranding}
+                  disabled={updateSettingsMutation.isPending}
+                >
+                  <Save className="w-4 h-4 mr-2"/> 
+                  {updateSettingsMutation.isPending ? 'Saving...' : 'Save Branding'}
+                </Button>
               </div>
             </motion.div>
           )}

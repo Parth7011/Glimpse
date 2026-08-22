@@ -60,6 +60,34 @@ export const authService = {
     return response.json();
   },
 
+  async updateMe(data) {
+    const token = localStorage.getItem('glimpse_token');
+    if (!token) throw new Error('No token found');
+    
+    const response = await fetch(`${API_URL}/auth/me`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to update settings');
+    }
+    
+    const result = await response.json();
+    
+    // Update stored user
+    if (result.user) {
+      localStorage.setItem('glimpse_user', JSON.stringify(result.user));
+    }
+    
+    return result;
+  },
+
   async getUser() {
     const userStr = localStorage.getItem('glimpse_user');
     if (userStr) {

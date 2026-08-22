@@ -38,26 +38,26 @@ export default function SharePage() {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const img = new Image();
-    
+
     img.onload = () => {
       canvas.width = img.width + 80;
       canvas.height = img.height + 120;
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 40, 40);
-      
+
       ctx.fillStyle = '#171717';
       ctx.font = 'bold 24px Inter, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(event?.name || 'Event QR Code', canvas.width / 2, canvas.height - 40);
-      
+
       const pngFile = canvas.toDataURL('image/png');
       const downloadLink = document.createElement('a');
       downloadLink.download = `QR_${event?.slug || 'event'}.png`;
       downloadLink.href = pngFile;
       downloadLink.click();
     };
-    
+
     img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
   };
 
@@ -78,11 +78,11 @@ export default function SharePage() {
       <div className="grid md:grid-cols-5 gap-8 relative z-10">
         <div className="md:col-span-2 bg-[#111111]/80 backdrop-blur-xl p-10 rounded-[3rem] border border-white/5 shadow-2xl flex flex-col items-center text-center relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
-          
+
           <div className="bg-white p-6 rounded-3xl border border-white/10 mb-8 shadow-2xl group-hover:shadow-[0_0_40px_rgba(215,226,234,0.15)] transition-shadow duration-500 relative z-10">
-            <QRCodeSVG 
+            <QRCodeSVG
               id="qr-code-svg"
-              value={`${window.location.origin}/e/${shareInfo.slug}`} 
+              value={`${window.location.origin}/e/${shareInfo.slug}`}
               size={220}
               level="M"
               fgColor="#111111"
@@ -99,7 +99,7 @@ export default function SharePage() {
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
             <h3 className="text-2xl font-black uppercase tracking-tight mb-2 text-[#D7E2EA] relative z-10">Event Link</h3>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA]/50 mb-8 relative z-10">Share this link directly via message or email.</p>
-            
+
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-8 relative z-10">
               <div className="flex-1 bg-[#1A1A1A] border border-white/10 rounded-2xl px-6 py-4 text-sm font-mono truncate text-[#D7E2EA] shadow-inner font-light">
                 {`${window.location.origin}/e/${shareInfo.slug}`}
@@ -108,33 +108,33 @@ export default function SharePage() {
                 <Copy className="w-4 h-4 mr-2" /> Copy
               </Button>
             </div>
-            
+
             <a href={`${window.location.origin}/e/${shareInfo.slug}`} target="_blank" rel="noopener noreferrer" className="relative z-10 inline-flex items-center text-[10px] font-black uppercase tracking-widest text-[#D7E2EA] hover:text-white transition-colors hover:drop-shadow-[0_0_10px_rgba(215,226,234,0.5)] group">
               Open link as guest <ExternalLink className="w-3.5 h-3.5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </a>
           </div>
 
           <div className="bg-[#1A1A1A] p-10 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden">
-             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
-             <h3 className="text-2xl font-black uppercase tracking-tight mb-8 text-[#D7E2EA] relative z-10">How guests use this</h3>
-             <ol className="space-y-6 relative z-10">
-               <li className="flex gap-6 items-start">
-                 <div className="w-8 h-8 rounded-full bg-[#111111] border border-white/10 shadow-inner flex items-center justify-center flex-shrink-0 text-[#D7E2EA] font-black text-xs drop-shadow-md">1</div>
-                 <span className="text-xs font-bold uppercase tracking-widest text-[#D7E2EA]/70 mt-2">Guests scan the QR code or click the link.</span>
-               </li>
-               <li className="flex gap-6 items-start">
-                 <div className="w-8 h-8 rounded-full bg-[#111111] border border-white/10 shadow-inner flex items-center justify-center flex-shrink-0 text-[#D7E2EA] font-black text-xs drop-shadow-md">2</div>
-                 <span className="text-xs font-bold uppercase tracking-widest text-[#D7E2EA]/70 mt-2">They land on the event page and take one selfie.</span>
-               </li>
-               <li className="flex gap-6 items-start">
-                 <div className="w-8 h-8 rounded-full bg-[#111111] border border-white/10 shadow-inner flex items-center justify-center flex-shrink-0 text-[#D7E2EA] font-black text-xs drop-shadow-md">3</div>
-                 <span className="text-xs font-bold uppercase tracking-widest text-[#D7E2EA]/70 mt-2">Our AI matches their face against all {event.photo_count.toLocaleString()} photos.</span>
-               </li>
-               <li className="flex gap-6 items-start">
-                 <div className="w-8 h-8 rounded-full bg-[#111111] border border-white/10 shadow-inner flex items-center justify-center flex-shrink-0 text-[#D7E2EA] font-black text-xs drop-shadow-md">4</div>
-                 <span className="text-xs font-bold uppercase tracking-widest text-[#D7E2EA]/70 mt-2">They instantly view and download their personalized gallery.</span>
-               </li>
-             </ol>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
+            <h3 className="text-2xl font-black uppercase tracking-tight mb-8 text-[#D7E2EA] relative z-10">How guests use this</h3>
+            <ol className="space-y-6 relative z-10">
+              <li className="flex gap-6 items-start">
+                <div className="w-8 h-8 rounded-full bg-[#111111] border border-white/10 shadow-inner flex items-center justify-center flex-shrink-0 text-[#D7E2EA] font-black text-xs drop-shadow-md">1</div>
+                <span className="text-xs font-bold uppercase tracking-widest text-[#D7E2EA]/70 mt-2">Guests scan the QR code or click the link.</span>
+              </li>
+              <li className="flex gap-6 items-start">
+                <div className="w-8 h-8 rounded-full bg-[#111111] border border-white/10 shadow-inner flex items-center justify-center flex-shrink-0 text-[#D7E2EA] font-black text-xs drop-shadow-md">2</div>
+                <span className="text-xs font-bold uppercase tracking-widest text-[#D7E2EA]/70 mt-2">They land on the event page and take one selfie.</span>
+              </li>
+              <li className="flex gap-6 items-start">
+                <div className="w-8 h-8 rounded-full bg-[#111111] border border-white/10 shadow-inner flex items-center justify-center flex-shrink-0 text-[#D7E2EA] font-black text-xs drop-shadow-md">3</div>
+                <span className="text-xs font-bold uppercase tracking-widest text-[#D7E2EA]/70 mt-2">Our AI matches their face against all {event.photo_count.toLocaleString()} photos.</span>
+              </li>
+              <li className="flex gap-6 items-start">
+                <div className="w-8 h-8 rounded-full bg-[#111111] border border-white/10 shadow-inner flex items-center justify-center flex-shrink-0 text-[#D7E2EA] font-black text-xs drop-shadow-md">4</div>
+                <span className="text-xs font-bold uppercase tracking-widest text-[#D7E2EA]/70 mt-2">They instantly view and download their personalized gallery.</span>
+              </li>
+            </ol>
           </div>
         </div>
       </div>

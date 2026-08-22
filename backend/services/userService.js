@@ -71,3 +71,28 @@ export const loginUser = async (email, password) => {
 
   return data;
 };
+
+export const updateUserMetadata = async (userId, metadataUpdates) => {
+  // Update the user metadata in Supabase Auth
+  const { data, error } = await adminSupabase.auth.admin.updateUserById(userId, {
+    user_metadata: metadataUpdates
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  // If name is updated, sync it to the photographers table
+  if (metadataUpdates.name) {
+    const { error: dbError } = await adminSupabase
+      .from('photographers')
+      .update({ name: metadataUpdates.name })
+      .eq('id', userId);
+      
+    if (dbError) {
+      console.error('Error syncing photographer name on update:', dbError.message);
+    }
+  }
+
+  return data.user;
+};

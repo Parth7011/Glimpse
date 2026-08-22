@@ -1,4 +1,4 @@
-import { registerUser, loginUser } from '../services/userService.js';
+import { registerUser, loginUser, updateUserMetadata } from '../services/userService.js';
 
 export const register = async (req, res) => {
   try {
@@ -48,5 +48,23 @@ export const getMe = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+export const updateMe = async (req, res) => {
+  try {
+    const { name, brandColor } = req.body;
+    
+    // We update the user metadata and optionally sync the name to the photographers table
+    const updatedUser = await updateUserMetadata(req.user.id, {
+      name,
+      brandColor,
+    });
+    
+    return res.status(200).json({
+      message: 'Settings updated successfully',
+      user: updatedUser,
+    });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
   }
 };
